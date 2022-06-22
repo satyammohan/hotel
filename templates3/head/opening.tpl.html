@@ -1,0 +1,27 @@
+<table id="dataTable" border="1">
+    <thead>
+        <tr>
+            <th>Group</th><th>Name</th><th>Address</th><th>Opening Balance</th>
+        </tr>
+    </thead>
+    {foreach from=$head item=mod}
+    <tr>
+        <td>{$mod.gname}</td>
+        <td>{$mod.name}</td>
+        <td>{$mod.address1}<br>
+            {$mod.address2}</td>
+        <td><input class="ra"  size='15' value='{$mod.opening_balance}' onblur="savehead('opening_balance', this.value, '{$mod.id_head}' )">
+            {if $mod.otype==0}Db{else}Cr{/if}
+        </td>
+    </tr>
+    {/foreach}
+</table>
+<script type="text/javascript">
+    function savehead(fld, fvalue, id) {
+        var url = "index.php?module=head&func=setcreditlimit&field=" + fld + "&fvalue=" + fvalue + "&id=" + id;
+        $.post(url);
+    }
+    $(document).ready(function() {
+        tbl_handler();
+    });
+</script>
