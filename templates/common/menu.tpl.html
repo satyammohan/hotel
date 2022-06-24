@@ -1,6 +1,6 @@
 <div class="sidenav col-2">
   <a class="home active" href="index.php"><i class="fa fa-home"></i> Home</a>
-  <button class="dropdown-btn roomtype rooms user message taxmaster"><i class="fa fa-bar-chart-o"></i> Master
+  <button class="dropdown-btn roomtype rooms user message taxmaster agreement"><i class="fa fa-bar-chart-o"></i> Master
     <i class="fa fa-caret-down"></i>
   </button>
   <div class="dropdown-container">
@@ -10,7 +10,8 @@
     <!---<a class="message" href="index.php?module=message&func=listing"><i class="fa fa-desktop"></i> News Letters</a>--->
     <a class="taxmaster" href="index.php?module=taxmaster&func=listing"><i class="fa fa-percent"></i> GST Tax</a>
     <a class="corporate" href="index.php?module=corporate&func=listing"><i class="fa fa-industry"></i> Corporate</a>
-    <a class="partner" href="index.php?module=partner&func=listing"><i class="fa fa-handshake-o"></i> Partner</a>
+    <a class="user" href="index.php?module=agreement&func=listing"><i class="fa fa-user"></i> Agreement</a>
+    <!-- <a class="partner" href="index.php?module=partner&func=listing"><i class="fa fa-handshake-o"></i> Partner</a> -->
   </div>
    
   {if $smarty.session.is_admin}
