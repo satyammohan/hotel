@@ -124,6 +124,36 @@ class reservation extends common {
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("other", $data);
     }
+    function bdashboard() {
+        if (isset($_REQUEST['date'])) {
+            $date = $_REQUEST['date'];
+        } else {
+            $date = $_REQUEST['date'] = date('Y-m-d');
+        }
+        $sql = "SELECT * FROM {$this->prefix}rooms ORDER BY name";
+        $rooms = $this->m->getall($this->m->query($sql));
+        $this->sm->assign("rooms", $rooms);
+
+        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
+                WHERE date='{$date}' AND (time='' OR time IS NULL) AND !cancel_by";
+        $data = $this->m->fetch_assoc($sql);
+        $data = $this->m->fetch_assoc($sql);
+        $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
+        $data['roomnumber'] = str_replace(";", ",", $data['roomnumber']);
+        $data['roomnumber'] = str_replace(":", ",", $data['roomnumber']);
+        $rroom =  explode(',', $data['roomnumber']);
+        $this->sm->assign("reserve", array_flip($rroom));
+
+        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
+                WHERE (('{$date}' BETWEEN date AND depature_date) OR (date <= '{$date}' AND depature_date IS NULL)) AND !cancel_by";
+        $data = $this->m->fetch_assoc($sql);
+        $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
+        $data['roomnumber'] = str_replace(";", ",", $data['roomnumber']);
+        $data['roomnumber'] = str_replace(":", ",", $data['roomnumber']);
+        $aroom =  explode(',', $data['roomnumber']);
+        $this->sm->assign("data", array_flip($aroom));
+    }
+
     function dashboard() {
         if (isset($_REQUEST['date'])) {
             $date = $_REQUEST['date'];
