@@ -1,5 +1,5 @@
 <h3>
-    {if $data.id_reservation}Edit{else}Add{/if} Guest Registration<hr>
+    {if $data.id_reservation}Edit{else}Add{/if} Registration<hr>
 </h3>
 <form method="post" onsubmit="return checkform();" action="index.php?module=reservation&func={if $data.id_reservation}checkinupdate{else}checkinupdateinsert{/if}">
     <table class="table">
@@ -14,8 +14,7 @@
                 </td>
             {/if}
             <td><b>Booking Date: *</b></td>
-            <td>
-                <input type="date" name="t[date]" required value="{if $data.date}{$data.date}{else}{$smarty.now|date_format:'%Y-%m-%d'}{/if}"/><br>
+            <td><input type="date" name="t[date]" required value="{if $data.date}{$data.date}{else}{$smarty.now|date_format:'%Y-%m-%d'}{/if}"/><br>
             <td><b>Function Date: *</b></td>
             <td><input type="date" name="t[est_depature_date]" required value="{$data.est_depature_date}"/><br>
                 <input type="time" name="t[time]" value="{$data.time}"/>
@@ -29,21 +28,16 @@
             <td><input type="text" id="name" name="t[name]" required size="30" value="{$data.name}"/>
             </td>
             <td><b>No. of Persons: *</b></td>
-            <td>
-		        <input type="text" name="t[person]" required value="{$data.person}"/><br>
-		    </td>
+            <td><input type="text" name="t[person]" required value="{$data.person}"/><br></td>
         </tr>
-        <tr>
-            <td><b>Company:</b></td>
-            <td><input type="text" id="company" name="t[company]" value="{$data.company}"/></td>
-            <td><b>Gstin:</b></td>
-            <td><input type="text" id="gstin" name="t[gstin]" value="{$data.gstin}"/></td></td>
         </tr>
         <tr>
             <td><b>Address:</b></td>
             <td><input type="text" id="address" name="t[address]" value="{$data.address}"/></td>
             <td><b>City:</b></td>
             <td><input type="text" id="city" name="t[city]" value="{$data.city}"/></td>
+            <td><b>Email:</b></td>
+            <td><input type="email" id="email" name="t[email]" value="{$data.email}"/></td>
         </tr>
         <tr>
             <td><b>District:</b></td>
@@ -54,8 +48,11 @@
             <td><input type="text" id="country" name="t[country]" value="{$data.country}"/></td>
         </tr>
         <tr>
-            <td><b>Email:</b></td>
-            <td><input type="email" id="email" name="t[email]" value="{$data.email}"/></td>
+            <td><b>Company:</b></td>
+            <td><input type="text" id="company" name="t[company]" value="{$data.company}"/></td>
+            <td><b>Gstin:</b></td>
+            <td><input type="text" id="gstin" name="t[gstin]" value="{$data.gstin}"/></td></td>
+        <tr>
             <td><b>ID proof:</b></td>
             <td><input type="text" id="id_proof" name="t[id_proof]" value="{$data.id_proof}"/></td>
             <td><b>Upload ID proof:</b></td>
@@ -72,7 +69,6 @@
             <td><input type="text" id="days" name="t[daysstay]" required value="{$data.daysstay}" /></td>
             <td><b>Remarks:</b></td>
             <td><input type="text" name="t[remarks]" value="{$data.remarks}"/></td>
-        </tr>
         {if $data.id_reservation}
         <tr>
             <td colspan="6">
@@ -83,11 +79,8 @@
             </td>
         </tr>
         {else}
-        {* if !$data.id_reservation || $smarty.session.is_admin==1 *}
-        <tr>
             <td><b>Rooms:</b></td>
             <td><input type="text" id="rooms" value="{$data.roomnumber}" name="t[roomnumber]" onblur="getdetails();"/></td>
-        </tr>
         <tr><td colspan="20"><div id="details"></div></td></tr>
         <tr>
                 <td><b>Total Discount:</b></td>
