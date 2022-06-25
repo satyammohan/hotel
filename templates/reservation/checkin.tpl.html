@@ -1,7 +1,7 @@
 <h3>
     {if $data.id_reservation}Edit{else}Add{/if} Registration<hr>
 </h3>
-<form method="post" onsubmit="return checkform();" action="index.php?module=reservation&func={if $data.id_reservation}checkinupdate{else}checkinupdateinsert{/if}">
+<form method="post" enctype="multipart/form-data" onsubmit="return checkform();" action="index.php?module=reservation&func={if $data.id_reservation}checkinupdate{else}checkinupdateinsert{/if}">
     <table class="table">
         <tr>
             <td><b>Ref No: *</b><br><b>GRC No:</b></td>
@@ -23,7 +23,10 @@
         </tr>
         <tr>
             <td><b>Mobile: *</b></td>
-            <td><input type="tel" pattern="[1-9]{1}[0-9]{9}" required id="mobile" name="t[mobile]" value="{$data.mobile}" onblur="checkmobile()" title="Please enter valid Mobile number" maxlength="10" minlength="10"> 
+
+            <td>
+                <!--  pattern="[1-9]{1}[0-9]{9}" -->
+                <input type="tel" required id="mobile" name="t[mobile]" value="{$data.mobile}" onblur="checkmobile()" title="Please enter valid Mobile number" maxlength="10" minlength="10"> 
             </td>
             <td><b>Customer Name: *</b></td>
             <td><input type="text" id="name" name="t[name]" required size="30" value="{$data.name}"/></td>
@@ -123,9 +126,9 @@ function checkno() {
 function getdetails() {
     let days = retvalue("days");
     if (days==0) {
-	alert("Please fill up Days Stay:");
-	$("#days").focus();
-	return;
+        alert("Please fill up Days Stay:");
+        $("#days").focus();
+        return;
     }
     let rooms = $("#rooms").val();
     $.post("index.php?module=reservation&func=getroomprice", { rooms:rooms }, function(data1, status) {
@@ -133,7 +136,7 @@ function getdetails() {
         totalrooms = data.length;
         availrooms = "";
         console.log(data);
-        text = "<table class='room' width='100%'><tr><th>Room</th><th>Tax %</th><th>GST %</th><th>Price</th><th>Discount in Rs.</th><th>GST</th><th>Total</th>";
+        text = "<table class='room' width='100%'><tr><th>Room</th><th>Tax %</th><th>GST %</th><th>Base Price</th><th>Price in Rs.</th><th>GST</th><th>Total</th>";
         for (x in data) {
             console.log(x);
             text += "<tr>";

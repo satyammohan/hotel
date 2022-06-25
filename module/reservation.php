@@ -248,10 +248,19 @@ class reservation extends common {
         $data['id_create'] = $_SESSION['id_user'];
         $data['create_date'] = date("Y-m-d");
         $data['json'] = json_encode($room);
+        //$this->pr($_REQUEST);
+        if ($_FILES) {
+            $tmpname = $_FILES['t']['tmp_name']['id_proof_upload'];
+            $name = addslashes($_FILES['t']['name']['id_proof_upload']);
+            $name = "uploads/".date("dmY_Hi")."_".str_replace(" ", "", $name);
+            $this->pr($name);
+            move_uploaded_file($tmpname, $name);
+            $data['id_proof_upload'] = $name;
+        }
         foreach ($room as $v) {
             $rid = $v['name'];
-            $sql = "UPDATE {$this->prefix}rooms SET status=3 WHERE name='$rid'";
-            $this->m->query($sql);
+            //$sql = "UPDATE {$this->prefix}rooms SET status=3 WHERE name='$rid'";
+            //$this->m->query($sql);
         }
         $sql = $this->create_insert("{$this->prefix}reservation", $data);
         $this->m->query($sql);
@@ -394,7 +403,7 @@ class reservation extends common {
         $data['roomnumber'] = trim($_REQUEST['newid'], ",");
         $room = explode(',', $data['roomnumber']);
         foreach ($room as $rname) {
-            $sql = "UPDATE {$this->prefix}rooms SET status=3 WHERE name='$rname'";
+            //$sql = "UPDATE {$this->prefix}rooms SET status=3 WHERE name='$rname'";
             //$this->m->query($sql);
         }
         $data['id_modify'] = $_SESSION['id_user'];

@@ -23,10 +23,16 @@ class database {
         $this->password = $ini['password'];
         $this->dbName = $ini['dbName'];
         $this->conn = mysqli_connect($this->hostName, $this->userName, $this->password, $this->dbName) or die("Connection to the server failed");
+        $sql = "SET SESSION sql_mode = ''";
+        $this->query($sql);
     }
 
     function query($sql) {
         $this->rs = $rs = mysqli_query($this->conn, $sql);
+        if (!$rs) {
+            echo("Error in query: " . mysqli_error($this->conn)."---".$sql."<br><br>");
+            exit;
+        }
         return $rs;
     }
     function num_rows($rs) {
