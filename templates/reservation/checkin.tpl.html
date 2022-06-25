@@ -22,11 +22,11 @@
             </td>                
         </tr>
         <tr>
-            <td><b>Mobile:</b></td>
-            <td><input type="text" id="mobile" name="t[mobile]" value="{$data.mobile}" onblur="checkmobile()"/></td>
-            <td><b>Customer Name: *</b></td>
-            <td><input type="text" id="name" name="t[name]" required size="30" value="{$data.name}"/>
+            <td><b>Mobile: *</b></td>
+            <td><input type="tel" pattern="[1-9]{1}[0-9]{9}" required id="mobile" name="t[mobile]" value="{$data.mobile}" onblur="checkmobile()" title="Please enter valid Mobile number" maxlength="10" minlength="10"> 
             </td>
+            <td><b>Customer Name: *</b></td>
+            <td><input type="text" id="name" name="t[name]" required size="30" value="{$data.name}"/></td>
             <td><b>No. of Persons: *</b></td>
             <td><input type="text" name="t[person]" required value="{$data.person}"/><br></td>
         </tr>
@@ -52,17 +52,21 @@
             <td><input type="text" id="company" name="t[company]" value="{$data.company}"/></td>
             <td><b>Gstin:</b></td>
             <td><input type="text" id="gstin" name="t[gstin]" value="{$data.gstin}"/></td></td>
-        <tr>
-            <td><b>ID proof:</b></td>
-            <td><input type="text" id="id_proof" name="t[id_proof]" value="{$data.id_proof}"/></td>
-            <td><b>Upload ID proof:</b></td>
-            <td><input type="file" name="t[id_proof_upload]" value="{$data.id_proof_upload}"/></td>
+            <td><b>ID :</b><br><b>Upload ID proof:</b></td>
+            <td><input type="text" id="id_proof" name="t[id_proof]" value="{$data.id_proof}"/><br>
+            <input type="file" name="t[id_proof_upload]" value="{$data.id_proof_upload}" accept="application/pdf, image/*"/></td>
         </tr>
         <tr>
             <td><b>Purpose of Booking:</b></td>
             <td><input type="text" name="t[purpose]" value="{$data.purpose}"/></td>
             <td><b>Booking Type:</b></td>
             <td><select name="t[type]">{html_options options=$ini.res_type selected=$data.type}</select></td>
+        </tr>
+        <tr>
+            <td><b>Actual Amount :</b></td>
+            <td><input type="text" name="t[actual_amount]" value="{$data.actual_amount}"/></td>
+            <td><b>Advance Amount :</b></td>
+            <td><input type="text" name="t[advance_amount]" value="{$data.advance_amount}"/></td>
         </tr>
         <tr>
             <td><b>No. of Days: *</b></td>
