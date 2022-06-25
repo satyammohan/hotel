@@ -395,7 +395,7 @@ class reservation extends common {
         $room = explode(',', $data['roomnumber']);
         foreach ($room as $rname) {
             $sql = "UPDATE {$this->prefix}rooms SET status=3 WHERE name='$rname'";
-            $this->m->query($sql);
+            //$this->m->query($sql);
         }
         $data['id_modify'] = $_SESSION['id_user'];
         $data['modify_date'] = date("Y-m-d");
