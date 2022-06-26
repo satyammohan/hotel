@@ -23,20 +23,17 @@
         </tr>
         <tr>
             <td><b>Mobile: *</b></td>
-
             <td>
-                <!--  pattern="[1-9]{1}[0-9]{9}" -->
-                <input type="tel" required id="mobile" name="t[mobile]" value="{$data.mobile}" onblur="checkmobile()" title="Please enter valid Mobile number" maxlength="10" minlength="10"> 
+                <input type="number" max="9999999999" min="1000000000" minlength="10" required id="mobile" name="t[mobile]" value="{$data.mobile}" onblur="checkmobile()" title="Please enter valid Mobile number"> 
             </td>
             <td><b>Customer Name: *</b></td>
             <td><input type="text" id="name" name="t[name]" required size="30" value="{$data.name}"/></td>
             <td><b>No. of Persons: *</b></td>
             <td><input type="text" name="t[person]" required value="{$data.person}"/><br></td>
         </tr>
-        </tr>
         <tr>
             <td><b>Address:</b></td>
-            <td><input type="text" id="address" name="t[address]" value="{$data.address}"/></td>
+            <td><input type="text" id="address" name="t[address]" size="30" value="{$data.address}"/></td>
             <td><b>City:</b></td>
             <td><input type="text" id="city" name="t[city]" value="{$data.city}"/></td>
             <td><b>Email:</b></td>
@@ -76,30 +73,30 @@
             <td><input type="text" id="days" name="t[daysstay]" required value="{$data.daysstay}" /></td>
             <td><b>Remarks:</b></td>
             <td><input type="text" name="t[remarks]" value="{$data.remarks}"/></td>
-        {if $data.id_reservation}
-        <tr>
-            <td colspan="6">
-                <b>Rooms:</b>{$data.roomnumber}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>Total Discount:</b>{$data.discount}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>Total GST:</b>{$data.gstamt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>Total Amount:</b>{$data.total}
-            </td>
-        </tr>
-        {else}
-            <td><b>Rooms:</b></td>
-            <td><input type="text" id="rooms" value="{$data.roomnumber}" name="t[roomnumber]" onblur="getdetails();"/></td>
-        <tr><td colspan="20"><div id="details"></div></td></tr>
-        <tr>
-                <td><b>Total Discount:</b></td>
-                <td><input type="text" name="t[discount]" id="discount" readonly="readonly"/></td>
-
-                <td><b>Total GST:</b></td>
-                <td><input type="text" name="t[gstamt]" id="gstamt" readonly="readonly"/></td>
-
-                <td><b>Total Amount: *</b></td>
-                <td><input type="text" name="t[total]" id="total" required readonly="readonly"/></td>
+            {if $data.id_reservation}
+            <tr>
+                <td colspan="6">
+                    <b>Rooms:</b>{$data.roomnumber}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <b>Total Discount:</b>{$data.discount}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <b>Total GST:</b>{$data.gstamt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <b>Total Amount:</b>{$data.total}
+                </td>
             </tr>
-        {/if}
+            {else}
+                <td><b>Rooms:</b></td>
+                <td><input type="text" id="rooms" value="{$data.roomnumber}" name="t[roomnumber]" onblur="getdetails();"/></td>
+                <tr><td colspan="20"><div id="details"></div></td></tr>
+                <tr>
+                    <td><b>Total Discount:</b></td>
+                    <td><input type="text" name="t[discount]" id="discount" readonly="readonly"/></td>
+
+                    <td><b>Total GST:</b></td>
+                    <td><input type="text" name="t[gstamt]" id="gstamt" readonly="readonly"/></td>
+
+                    <td><b>Total Amount: *</b></td>
+                    <td><input type="text" name="t[total]" id="total" required readonly="readonly"/></td>
+                </tr>
+            {/if}
         <tr>
         <td colspan="2">
             <input type="hidden" id="hide" name="id" value="{$data.id_reservation}">
