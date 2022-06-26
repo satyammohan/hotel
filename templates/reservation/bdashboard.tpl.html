@@ -1,8 +1,8 @@
 <div class="col-7 card">
 
     <div class="d-inline p-2">
-        <div title="Previous" class="btn btn-primary" style="font-size:16px;float:left;"><<</div>
-        <div title="Next" class="btn btn-primary" style="font-size:16px;float:right;">>></div>
+        <div onclick="prev();" title="Previous" class="btn btn-primary" style="font-size:16px;float:left;"><<</div>
+        <div onclick="next();" title="Next" class="btn btn-primary" style="font-size:16px;float:right;">>></div>
     </div>
     <div class="remark">Banquet Status as on :: {$smarty.now|date_format:"%d-%m-%Y %H:%M %p"}</div>
     <div class="d-inline p-2">
@@ -15,8 +15,35 @@
             <span id="cal2"></span>
         </span>
     </div>
+    <div class="remark"><span class="vacant">&nbsp;&nbsp;&nbsp;&nbsp;</span> : Vacant, <span class="occupy">&nbsp;&nbsp;&nbsp;&nbsp;</span> : Full Occupied, <span class="first">&nbsp;&nbsp;&nbsp;&nbsp;</span> : First Half, <span class="second">&nbsp;&nbsp;&nbsp;&nbsp;</span> : Second Half</div>
 </div>
 <script>
+    function prev() {
+        month = month - 3;
+        if (month < 1) {
+            month = month + 12;
+            year = year - 1;
+        }
+        var cal1 = new Calendar(month, year);
+        cal1.generateHTML();
+        document.getElementById("cal1").innerHTML = cal1.getHTML()
+        var cal2 = new Calendar(month, year);
+        cal2.generateHTML();
+        document.getElementById("cal2").innerHTML = cal2.getHTML()
+    }
+    function next() {
+        month = month + 3;
+        if (month > 12) {
+            month = month - 12;
+            year = year + 1;
+        }
+        var cal1 = new Calendar(month, year);
+        cal1.generateHTML();
+        document.getElementById("cal1").innerHTML = cal1.getHTML()
+        var cal2 = new Calendar(month, year);
+        cal2.generateHTML();
+        document.getElementById("cal2").innerHTML = cal2.getHTML()
+    }
     function showdetails(room, date) {
         $.post("index.php?module=reservation&func=showguest", { room: room, date: date }, function (resp) {
             if (resp == "null") {
@@ -37,6 +64,8 @@
     cal_months_labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     cal_days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
     cal_current_date = new Date();
+    var month = cal_current_date.getMonth();
+    var year = cal_current_date.getFullYear();
     function Calendar(month, year) {
         this.month = (isNaN(month) || month == null) ? cal_current_date.getMonth() : month;
         this.year = (isNaN(year) || year == null) ? cal_current_date.getFullYear() : year;
@@ -53,13 +82,19 @@
         }
         var html = "";
         for (var cal = 0; cal < 3; cal++) {
-            var curr = new Date(this.year, (this.month + cal), 1);
+            thismonth = this.month + cal;
+            thisyear = this.year;
+            if (thismonth>11) {
+                thismonth = thismonth - 12;
+                thisyear = thisyear + 1;
+            }
+            var curr = new Date(this.year, thismonth, 1);
             var startingDay = curr.getDay();
-            var monthName = cal_months_labels[this.month + cal];
-            var monthLength = cal_days_in_month[this.month + cal];
+            var monthName = cal_months_labels[thismonth];
+            var monthLength = cal_days_in_month[thismonth];
             html += '<table class="calendar-table">';
             html += '<tr><th colspan="7" class="calender-month">';
-            html += monthName + "&nbsp;" + this.year;
+            html += monthName + "&nbsp;" + thisyear;
             html += '</th></tr>';
             html += '<tr class="calendar-header">';
             for (var i = 0; i <= 6; i++) {
@@ -97,7 +132,6 @@
     var cal2 = new Calendar();
     cal2.generateHTML();
     document.getElementById("cal2").innerHTML = cal2.getHTML()
-
 </script>
 <style>
     .calender-month {
@@ -109,39 +143,29 @@
         background-color: lightpink;
     }
     .calendar-day, .calendar-header-day {
-        width:30px;
+        width:35px;
+        height:20px;
         text-align: right;
     }
-    .dirty {
-        background-color: yellow;
-        color: black;
+    .vacant, .occupy, .first, .second {
         font-weight: bolder;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        border: 2px solid black;
     }
-
+    .vacant {
+        background-color: white;
+    }
     .occupy {
         background-color: red;
-        color: white;
-        font-weight: bolder;
     }
-
-    .vacant {
+    .first {
         background-color: green;
-        color: white;
-        font-weight: bolder;
     }
-
-    .block {
-        background-color: grey;
-        color: white;
-        font-weight: bolder;
-    }
-
-    .reserve {
+    .second {
         background-color: blue;
-        color: white;
-        font-weight: bolder;
     }
-
     .remark {
         background-color: lightgrey;
         vertical-align: middle;
