@@ -1,5 +1,5 @@
 <fieldset>
-    <legend>Profit & Loss Statement</legend>
+    <legend>Balance Sheet</legend>
     <form method="post">
         <table>
             <tr>
@@ -18,10 +18,10 @@
 <br />
 <div class="print_content">
     {$smarty.session.cname}<br>
-    Profit & Loss Statement Period {$smarty.request.start_date|date_format:"%d/%m/%Y"} - {$smarty.request.end_date|date_format:"%d/%m/%Y"}
+    Balance Sheet Period {$smarty.request.start_date|date_format:"%d/%m/%Y"} - {$smarty.request.end_date|date_format:"%d/%m/%Y"}
     <br /><br />
     {if $data}
-    {include file="accounts/profit1.tpl.html"}
+    {include file="accounts/balance1.tpl.html"}
     {else}
     <b>No Record Found!</b>
     {/if}

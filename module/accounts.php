@@ -13,122 +13,25 @@ class accounts extends common {
         $this->sm->assign( 'page', 'common/comming.tpl.html' );
     }
 
-    function fundflowd() {
-        $gid = $_REQUEST[ 'id' ];
-        $pid = $_REQUEST[ 'pid' ];
-        $s = $_REQUEST[ 'sdate' ];
-        $e = $_REQUEST[ 'edate' ];
-        $d = $_REQUEST[ 'debit' ];
-        if ( $d ) {
-            $sql = "SELECT h.name, SUM(total) AS total FROM {$this->prefix}ledger l, {$this->prefix}head h
-            WHERE l.chead=h.id_head AND l.dhead IN ({$pid}) AND h.id_group='$gid' AND (date >= '$s' AND date <= '$e') GROUP BY chead ORDER BY h.name";
-        } else {
-            $sql = "SELECT h.name, SUM(total) AS total FROM {$this->prefix}ledger l, {$this->prefix}head h
-            WHERE l.dhead=h.id_head AND l.chead IN ({$pid}) AND h.id_group='$gid' AND (date >= '$s' AND date <= '$e') GROUP BY dhead ORDER BY h.name";
-        }
-        $fundflowd = $this->m->sql_getall( $sql );
-        $this->sm->assign( 'fundflowd', @$fundflowd );
-    }
-
-    function fundflow() {
-        $_REQUEST[ 'option' ] = isset( $_REQUEST[ 'option' ] ) ? $_REQUEST[ 'option' ] : '1';
-        $_REQUEST[ 'all' ] = isset( $_REQUEST[ 'all' ] ) ? $_REQUEST[ 'all' ] : '2';
-        $_REQUEST[ 'start_date' ] = $sdate = $this->format_date( isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( '01/m/Y' ) );
-        $_REQUEST[ 'end_date' ] = $edate = $this->format_date( isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'd/m/Y' ) );
-        $sql = "SELECT h.id_head AS id, h.name FROM {$this->prefix}head h, {$this->prefix}group g
-            WHERE h.id_group=g.id_group AND (h.name LIKE 'cash%' OR g.name LIKE 'BANK ACCOUNTS%') AND !h.status ORDER BY h.name";
-        $party = $this->m->sql_getall( $sql, 2, 'name', 'id' );
-        $this->sm->assign( 'party', $party );
-        if ( $_REQUEST[ 'all' ] == 1 ) {
-            $party = $_REQUEST[ 'party2' ] = implode( array_keys( $party ), ',' );
-        } else {
-            $party = @$_REQUEST[ 'party2' ];
-        }
-        if ( @$party ) {
-            $sql = "SELECT SUM(IF(dhead IN ($party), 1, -1)*total) AS total FROM {$this->prefix}ledger WHERE (chead IN ($party) or dhead IN ($party)) AND `date`<'$sdate'";
-            $opening = $this->m->sql_getall( $sql );
-            if ( $opening[ 0 ][ 'total' ] > 0 ) {
-                $op = array( 'dhead' => 0, 'dname' => 'Opening Balance', 'dtotal' => $opening[ 0 ][ 'total' ] );
-            } else {
-                $op = array( 'chead' => 0, 'cname' => 'Opening Balance', 'ctotal' => -$opening[ 0 ][ 'total' ] );
-            }
-            switch ( $_REQUEST[ 'option' ] ) {
-                case 1:
-                $sql1 = "SELECT g.id_group AS chead, g.name AS cname, SUM(total) AS ctotal FROM {$this->prefix}ledger l, {$this->prefix}head h, {$this->prefix}group g
-                        WHERE l.dhead=h.id_head AND l.chead IN ($party) AND (date >= '$sdate' AND date <= '$edate') AND type!='H' AND h.id_group=g.id_group GROUP BY 1 ORDER BY h.name";
-                $sql2 = "SELECT g.id_group AS dhead, g.name AS dname, SUM(total) AS dtotal FROM {$this->prefix}ledger l, {$this->prefix}head h, {$this->prefix}group g
-                        WHERE l.chead=h.id_head AND l.dhead IN ($party) AND (date >= '$sdate' AND date <= '$edate') AND type!='H' AND h.id_group=g.id_group GROUP BY 1 ORDER BY h.name";
-                break;
-                case 2:
-                $sql1 = "SELECT dhead AS chead, h.name AS cname, SUM(total) AS ctotal FROM {$this->prefix}ledger l, {$this->prefix}head h
-                    WHERE l.dhead=h.id_head AND l.chead IN ($party) AND (date >= '$sdate' AND date <= '$edate') AND type!='H' GROUP BY dhead ORDER BY h.name";
-                $sql2 = "SELECT chead AS dhead, h.name AS dname, SUM(total) AS dtotal FROM {$this->prefix}ledger l, {$this->prefix}head h
-                    WHERE l.chead=h.id_head AND l.dhead IN ($party) AND (date >= '$sdate' AND date <= '$edate') AND type!='H' GROUP BY chead ORDER BY h.name";
-                break;
-            }
-            $data = $this->m->sql_getall( $sql1 );
-            array_unshift( $data, $op );
-            $credit = $this->m->sql_getall( $sql2 );
-            foreach ( $credit as $k => $v ) {
-                $data[ $k + 1 ][ 'dhead' ] = $v[ 'dhead' ];
-                $data[ $k + 1 ][ 'dname' ] = $v[ 'dname' ];
-                $data[ $k + 1 ][ 'dtotal' ] = $v[ 'dtotal' ];
-            }
-            unset( $credit );
-        }
-        $this->sm->assign( 'data', @$data );
-    }
-
-    function bankrecon() {
-        $this->addfield( 'reconcile', $this->prefix . 'voucher', 'ADD `reconcile` int(1)' );
-        $this->addfield( 'reconciledate', $this->prefix . 'voucher', 'ADD `reconciledate` DATETIME' );
-        $sql = "SELECT id_head, name, id_group, opening_balance, otype FROM {$this->prefix}head WHERE id_group IN
-            (SELECT id_group FROM {$this->prefix}group WHERE name LIKE '%bank%') ORDER BY name";
-        $heads = $this->m->sql_getall( $sql );
-        foreach ( $heads as $k => $v ) {
-            $ac = $v[ 'id_head' ];
-            $s = "SELECT SUM(IF(id_head_debit='$ac', 1, -1)*total) AS total,
-                    SUM(If(reconcile=1, IF(id_head_debit='$ac', -1, 1), 0)*total) AS rtotal, MAX(reconciledate) AS date
-                FROM {$this->prefix}voucher WHERE id_head_debit='$ac' OR id_head_credit='$ac'";
-            $r = $this->m->sql_getall( $s );
-            $amt = ( $v[ 'otype' ] == 'C'?1:1 )*$v[ 'opening_balance' ];
-            $heads[ $k ][ 'total' ] = $r[ 0 ][ 'total' ] - $amt;
-            $heads[ $k ][ 'rtotal' ] = $r[ 0 ][ 'rtotal' ] - $amt;
-            $heads[ $k ][ 'date' ] = $r[ 0 ][ 'date' ];
-        }
-        $this->sm->assign( 'heads', $heads );
-    }
-
-    function bankrecondetail() {
-        $ac = $_REQUEST[ 'id' ];
-        $all = $_REQUEST[ 'all' ];
-        $wcond = ( $all == 1 ) ? '' : ' AND reconcile!=1 ';
-        $s = "SELECT date, id_head_debit, id_head_credit, SUM(total) AS total, ref1, memo, reconcile, group_concat(id_voucher) AS id_voucher
-            FROM {$this->prefix}voucher WHERE (id_head_debit='$ac' OR id_head_credit='$ac') $wcond
-            GROUP BY date, id_head_debit, id_head_credit, ref1, memo, no ORDER BY reconciledate DESC, date, id_head_debit, id_head_credit";
-        $r = $this->m->sql_getall( $s );
-        $this->sm->assign( 'vouchers', $r );
-        $sql = "SELECT id_head AS id, concat(name,' ',address1) AS name FROM {$this->prefix}head ORDER BY name";
-        $this->sm->assign( 'head', $this->m->sql_getall( $sql, 2, 'name', 'id' ) );
-    }
-
-    function bankreconsave() {
-        $id = $_REQUEST[ 'id' ];
-        if ( $id ) {
-            $r = $_REQUEST[ 'reconcile' ];
-            $ids = explode( ',', $id );
-            $id = "('".implode( "','", $ids )."')";
-            $sql = "UPDATE {$this->prefix}voucher SET reconcile='$r', reconciledate=NOW() WHERE id_voucher IN $id";
-            $this->m->query( $sql );
-        }
-        echo 'success';
-        exit;
-    }
-
     function profit() {
         $startdate = $_SESSION[ 'start_date' ];
-        $sdate = $this->format_date( isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( '01/m/Y' ) );
-        $edate = $this->format_date( isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'd/m/Y' ) );
+        $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
+        $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
+        $sql = "SELECT g.name AS gname,h.id_head, h.name, h.address1, SUM(l.opening) AS opening, SUM(l.debit) AS debit, SUM(l.credit) AS credit, SUM(l.cbal) AS closing
+          FROM `{$this->prefix}group` g, `{$this->prefix}head` h, (
+          SELECT dhead AS id_head, SUM(IF(date<'$startdate', -1, 0)*total) AS opening, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS debit, 
+            0.00 AS credit, SUM(IF(date<='$sdate', -1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$sdate' GROUP BY 1
+          UNION ALL 
+          SELECT chead AS id_head, SUM(IF(date<'$startdate', 1, 0)*total) AS opening, 0.00 AS debit, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS credit, 
+            SUM(IF(date<='$sdate', 1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$sdate' GROUP BY 1) l
+          WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY h.name";
+        $res = $this->m->sql_getall( $sql );
+        $this->sm->assign( 'data', $res );
+    }
+    function balance() {
+        $startdate = $_SESSION[ 'start_date' ];
+        $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
+        $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
         $sql = "SELECT g.name AS gname,h.id_head, h.name, h.address1, SUM(l.opening) AS opening, SUM(l.debit) AS debit, SUM(l.credit) AS credit, SUM(l.cbal) AS closing
           FROM `{$this->prefix}group` g, `{$this->prefix}head` h, (
           SELECT dhead AS id_head, SUM(IF(date<'$startdate', -1, 0)*total) AS opening, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS debit, 

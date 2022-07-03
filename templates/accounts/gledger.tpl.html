@@ -9,8 +9,7 @@
         <td><input type="date" name="end_date" value='{$smarty.request.end_date}' /></td>
         <td>Group</td>
         <td><select name="id"><option value="0">All</option>{html_options options=$group selected=$smarty.request.id} </select></td>
-        <td><input type="checkbox" name="option" value="1" {if $smarty.request.option}checked="checked"{/if}><label for="confirm">Transaction</label>
-        </td>
+        <td><input type="checkbox" name="option" value="1" {if $smarty.request.option}checked="checked"{/if}><label for="confirm">Transaction</label></td>
         <td align="center">
           <input type="submit" value="Go" />&nbsp;
           <input type="button" class="print" value="Print" />
@@ -61,22 +60,14 @@
       {/section}
       <tr>
         <th colspan="3">Total</th>
-        <th align="right">
-          {if $opening<0}
-            {abs($opening)|string_format:"%.2f"} DB
-          {else}
-            {$opening|string_format:"%.2f"} CR
-          {/if}        
-        </th>
-        <th align="right">{$debit|string_format:"%.2f"}</th>
-        <th align="right">{$credit|string_format:"%.2f"}</th>
-        <th align="right">
-          {if $closing<0}
-            {abs($closing)|string_format:"%.2f"} DB
-          {else}
-            {$closing|string_format:"%.2f"} CR
-          {/if}
-        </th>
+        <td align="right">
+          <b>{if $opening<0}{abs($opening)|string_format:"%.2f"} DB{else}{$opening|string_format:"%.2f"} CR{/if}</b>
+        </td>
+        <td align="right"><b>{$debit|string_format:"%.2f"}</b></td>
+        <td align="right"><b>{$credit|string_format:"%.2f"}</b></td>
+        <td align="right">
+          <b>{if $closing<0}{abs($closing)|string_format:"%.2f"} DB{else}{$closing|string_format:"%.2f"} CR{/if}</b>
+        </td>
       </tr>
     </table>
   {else}
@@ -107,25 +98,21 @@
       {/section}
       <tr>
         <th colspan="3">Total</th>
-        <th align="right">
-          {if $debit<0}
-          {abs($debit)|string_format:"%.2f"}
-          {/if}
-        </th>
-        <th align="right">
-          {if $credit>0}
-          {$credit|string_format:"%.2f"}
-          {/if}
-        </th>
+        <td align="right">
+          <b>{if $debit<0}{abs($debit)|string_format:"%.2f"}{/if}</b>
+        </td>
+        <td align="right">
+          <b>{if $credit>0}{$credit|string_format:"%.2f"}{/if}</b>
+        </td>
       </tr>
       <tr>
         <th colspan="3">Net Total</th>
-        <th align="right">
-          {if $closing<0}{abs($closing)|string_format:"%.2f"}{/if}
-        </th>
-        <th align="right">
-          {if $closing>0}{$closing|string_format:"%.2f"}{/if}
-        </th>
+        <td align="right">
+          <b>{if $closing<0}{abs($closing)|string_format:"%.2f"}{/if}</b>
+        </td>
+        <td align="right">
+          <b>{if $closing>0}{$closing|string_format:"%.2f"}{/if}</b>
+        </td>
       </tr>
     </table>    
   {/if}
