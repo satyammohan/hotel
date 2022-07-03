@@ -36,12 +36,19 @@ class group extends common {
     }
     function delete() {
         $this->get_permission("group", "DELETE");
-        $res1 = $this->m->query($this->create_select("{$this->prefix}head", "id_group='{$_REQUEST['id']}'"));
+        $id = $_REQUEST['id'];
+        $res1 = $this->m->query($this->create_select("{$this->prefix}head", "id_group='$id'"));
         if ($this->m->num_rows($res1) > 0) {
-            $_SESSION['msg'] = "Group Can't be Deleted!";
+            $_SESSION['msg'] = "Head exists. Group Can't be Deleted!";
         } else {
-            $res = $this->m->query($this->create_delete("{$this->prefix}group", "id_group='{$_REQUEST['id']}'"));
-            $_SESSION['msg'] = "Record Successfully Deleted";
+            $sql = "SELECT * FROM {$this->prefix}group WHERE id_parent='$id'";
+            $res1 = $this->m->query($sql);
+            if ($this->m->num_rows($res1) > 0) {
+                $_SESSION['msg'] = "Group exists. Group Can't be Deleted!";
+            } else {
+                $res = $this->m->query($this->create_delete("{$this->prefix}group", "id_group='$id'"));
+                $_SESSION['msg'] = "Record Successfully Deleted";
+            }
         }
         $this->redirect("index.php?module=group&func=listing");
     }

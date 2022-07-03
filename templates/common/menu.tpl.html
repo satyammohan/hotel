@@ -13,17 +13,14 @@
     <a class="user" href="index.php?module=agreement&func=listing"><i class="fa fa-user"></i> Agreement</a>
     <!-- <a class="partner" href="index.php?module=partner&func=listing"><i class="fa fa-handshake-o"></i> Partner</a> -->
   </div>
-   
-  {if $smarty.session.is_admin}
-    <button class="dropdown-btn management"><i class="fa fa-tasks"></i> Management
-      <i class="fa fa-caret-down"></i>
-    </button>
-    <div class="dropdown-container">
-      <a class="" href="index.php?module=management&func=import"><i class="fa fa-object-group"></i> Import</a>
-      <a class="" href="index.php?module=management&func=reconcile"><i class="fa fa-check"></i> Reconcile</a>
-      <a class="" href="index.php?module=management&func=report"><i class="fa fa-bar-chart-o"></i> Report</a>
-    </div>
-  {/if}
+  <!-- <button class="dropdown-btn management"><i class="fa fa-tasks"></i> Management
+    <i class="fa fa-caret-down"></i>
+  </button>
+  <div class="dropdown-container">
+    <a class="" href="index.php?module=management&func=import"><i class="fa fa-object-group"></i> Import</a>
+    <a class="" href="index.php?module=management&func=reconcile"><i class="fa fa-check"></i> Reconcile</a>
+    <a class="" href="index.php?module=management&func=report"><i class="fa fa-bar-chart-o"></i> Report</a>
+  </div> -->
   <button class="dropdown-btn group head voucher"><i class="fa fa-book"></i> Accounts
     <i class="fa fa-caret-down"></i>
   </button>
@@ -35,8 +32,8 @@
 
   <br>
   <a class="reservation" href="index.php?module=reservation&func=bdashboard"><i class="fa fa-calendar"></i> Banquet Calender</a>
-  <a class="reservation" href="index.php?module=reservation&func=checkin"><i class="fa fa-users fa-spin"></i> Guest Check-In</a>
-  <a class="reservation" href="index.php?module=reservation&func=checkout"><i class="fa fa-users fa-spin"></i> Guest Check-out</a>
+  <a class="reservation" href="index.php?module=reservation&func=checkin"><i class="fa fa-users fa-spin"></i> Booking</a>
+  <!-- <a class="reservation" href="index.php?module=reservation&func=checkout"><i class="fa fa-users fa-spin"></i> Guest Check-out</a> -->
   <!-- <a class="reservation" href="index.php?module=reservation&func=listing"><i class="fa fa-users fa-spin"></i> Guest Booking Listing</a>
   <a class="reservation" href="index.php?module=reservation&func=foodlist"><i class="fa fa fa-file-text-o"></i> Food Listing</a>
   <a class="reservation" href="index.php?module=reservation&func=otherlist"><i class="fa fa fa-file-text-o"></i> Other Listing</a> -->

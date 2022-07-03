@@ -21,10 +21,6 @@ class head extends common {
         $data['create_date'] = date("Y-m-d h:i:s");
         $data['ip'] = $_SERVER['REMOTE_ADDR'];
         $data['name'] = addslashes($data['name']);
-        $data['doa'] = $this->format_date($data['doa']);
-        $data['doa'] = $data['doa'] ? $data['doa'] : "0000-00-00";
-        $data['dob'] = $this->format_date($data['dob']);
-        $data['dob'] = $data['dob'] ? $data['dob'] : "0000-00-00";
         $sql = $this->create_insert("{$this->prefix}head", $data);
         $res = $this->m->query($sql);
         $_SESSION['msg'] = "Record Successfully Inserted";
@@ -50,10 +46,6 @@ class head extends common {
         $this->get_permission("head", "UPDATE");
         $data = $_REQUEST['head'];
         $data['name'] =  addslashes($data['name']);
-        $data['doa'] = $this->format_date($data['doa']);
-        $data['doa'] = $data['doa'] ? $data['doa'] : "0000-00-00";
-        $data['dob'] = $this->format_date($data['dob']);
-        $data['dob'] = $data['dob'] ? $data['dob'] : "0000-00-00";
         $sql = $this->create_update("{$this->prefix}head", $data, "id_head='{$_REQUEST['id']}'");
         $res = $this->m->query($sql);
         $_SESSION['msg'] = "Record Successfully Updated";
