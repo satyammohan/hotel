@@ -45,22 +45,40 @@
   </button>
   <div class="dropdown-container">
     <!-- <a class="" href="index.php?module=report&func=gst"><i class="fa fa-bar-chart-o"></i> GST Report</a> -->
-    {if $smarty.session.is_admin}
     <a class="" href="index.php?module=report&func=mgm_roomdetail"><i class="fa fa-bar-chart-o"></i> (*) Room Detail</a>
     <a class="" href="index.php?module=report&func=mgm_mrdetail"><i class="fa fa-bar-chart-o"></i> (*) MR Detail</a>
     <a class="" href="index.php?module=report&func=inout"><i class="fa fa-bar-chart-o"></i> Check in-out Report</a>
     <a class="" href="index.php?module=report&func=error"><i class="fa fa-bar-chart-o"></i> Error Report</a>
-    {/if}
     <a class="" href="index.php?module=report&func=gstnew"><i class="fa fa-bar-chart-o"></i> GST Report</a>
     <a class="" href="index.php?module=report&func=collection"><i class="fa fa-bar-chart-o"></i> Collection Report</a>
     <a class="" href="index.php?module=report&func=room"><i class="fa fa-bar-chart-o"></i> Room Booking</a>
     <a class="" href="index.php?module=report&func=user"><i class="fa fa-bar-chart-o"></i> Commission</a>
     <a class="" href="index.php?module=report&func=pay"><i class="fa fa-bar-chart-o"></i> Pay In/Out</a>
     <a class="" href="index.php?module=report&func=due"><i class="fa fa-bar-chart-o"></i> Due Report</a>
-
     <a class="gst" href="index.php?module=report&func=roomdet"><i class="fa fa-bar-chart-o"></i> Room Detail</a>
     <a class="gst" href="index.php?module=report&func=discount"><i class="fa fa-bar-chart-o"></i> Discount Report</a>
     <a class="gst" href="index.php?module=report&func=entry"><i class="fa fa-bar-chart-o"></i> Daily Entry</a>
+  </div>
+  
+  <button class="dropdown-btn accounts"><i class="fa fa-bar-chart-o"></i> Accounts Reports
+    <i class="fa fa-caret-down"></i>
+  </button>
+  <div class="dropdown-container">
+    <a class="accounts_cashbook" href="index.php?module=accounts&func=cashbook"><i class="fa fa-bar-chart-o"></i> Cashbook</a>
+    <a class="accounts_ledger" href="index.php?module=accounts&func=ledger"><i class="fa fa-bar-chart-o"></i> Ledger</a>
+    <a class="accounts_gledger" href="index.php?module=accounts&func=gledger"><i class="fa fa-bar-chart-o"></i> Group Ledger</a>
+    <a class="accounts_confirmation" href="index.php?module=accounts&func=confirmation"><i class="fa fa-bar-chart-o"></i> Ledger Confirmation</a>
+    <a class="accounts_trial" href="index.php?module=accounts&func=trial"><i class="fa fa-bar-chart-o"></i> Trial Balance</a>
+    <a class="accounts_profit" href="index.php?module=accounts&func=profit"><i class="fa fa-bar-chart-o"> Profit & Loss</i> </a>
+    <a class="accounts_balance" href="index.php?module=accounts&func=balance"><i class="fa fa-bar-chart-o"> Balance Sheet</i> </a>
+  </div>
+  
+  <button class="dropdown-btn util"><i class="fa fa-gear"></i> Util
+    <i class="fa fa-caret-down"></i>
+  </button>
+  <div class="dropdown-container">
+    <a class="util_checkindex" href="index.php?module=util&func=checkindex"><i class="fa fa-gear"></i> Check all</a>
+    <a class="util_autoincrement" href="index.php?module=util&func=autoincrement"><i class="fa fa-gear"></i> Check Autoincrement</a>    
   </div>
   <a href="index.php?module=user&func=selectfy"><i class="fa fa-sign-out"></i> Exit</a>
   <a href="#" class="fa fa-sign-out">
@@ -86,12 +104,17 @@ for (i = 0; i < dropdown.length; i++) {
   });
 }
 var showactive = "{if $smarty.request.module}{$smarty.request.module}{else}home{/if}";
+var showactivesubmenu = "{if $smarty.request.module}{$smarty.request.module}_{$smarty.request.func}{else}home{/if}";
 $(document).ready(function() {
     $("."+showactive).trigger('click').addClass("active");
+    $("."+showactivesubmenu).addClass("showme");
 });
 </script>
 
-<style>  
+<style>
+.showme {
+  color:white !important;
+} 
 .navbar {
   background-color: #09192A !important;
 }

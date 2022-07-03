@@ -368,4 +368,9 @@ class common {
 		return $response;
 	}
 }
+function pr($data) {
+    print "<pre>";
+    print_r($data);
+    print "</pre>";
+}
 ?>
