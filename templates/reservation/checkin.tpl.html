@@ -133,14 +133,15 @@ function getdetails() {
         totalrooms = data.length;
         availrooms = "";
         console.log(data);
-        text = "<table class='room' width='100%'><tr><th>Room</th><th>Tax %</th><th>GST %</th><th>Base Price</th><th>Price in Rs.</th><th>GST</th><th>Total</th>";
+        // text = "<table class='room' width='100%'><tr><th>Room</th><th>Tax %</th><th>GST %</th><th>Base Price</th><th>Price in Rs.</th><th>GST</th><th>Total</th>";
+        text = "<table class='room' width='100%'><tr><th>Room</th><th>GST %</th><th>Base Price</th><th>Price in Rs.</th><th>GST</th><th>Total</th>";
         for (x in data) {
             console.log(x);
             text += "<tr>";
             text += "<td><input name='room["+x+"][name]'     tabindex='-1' size='5' id='name"+x+"' type='text' readonly='readonly'  value='"+data[x].name+"' ></td>";
-            text += "<td><input name='room["+x+"][tax_per]'  tabindex='-1' size='5' id='tax_per"+x+"' type='text' readonly='readonly'  value='"+data[x].tax_per+"' ></td>";
-            text += "<td><input name='room["+x+"][gst_per]'  tabindex='-1' size='5' id='gst_per"+x+"' type='text' readonly='readonly'  value='"+data[x].tax_per+"' ></td>";
-            text += "<td><input name='room["+x+"][price]'    tabindex='-1' size='5' id='price"+x+"' type='text' readonly='readonly'  value='"+data[x].price+"' ></td>";
+            text += "<td><input name='room["+x+"][tax_per]'  tabindex='-1' size='5' id='tax_per"+x+"' type='text'   value='"+data[x].tax_per+"' ></td>";
+            //text += "<td><input name='room["+x+"][gst_per]'  tabindex='-1' size='5' id='gst_per"+x+"' type='text'   value='"+data[x].tax_per+"' ></td>";
+            text += "<td><input name='room["+x+"][price]'    tabindex='-1' size='5' id='price"+x+"' type='text'   value='"+data[x].price+"' ></td>";
             text += "<td><input name='room["+x+"][discount]' size='5' id='discount"+x+"' onblur='gettotal("+x+");' type='text' ></td>";
             text += "<td><input name='room["+x+"][gstamt]'   tabindex='-1' size='5' id='gstamt"+x+"' readonly='readonly' type='text' value='' ></td>";
             text += "<td><input name='room["+x+"][total]'    tabindex='-1' size='5' id='total"+x+"' readonly='readonly' type='text' value='' ></td>";
