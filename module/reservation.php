@@ -248,7 +248,7 @@ class reservation extends common {
         $data['id_create'] = $_SESSION['id_user'];
         $data['create_date'] = date("Y-m-d");
         $data['json'] = json_encode($room);
-        //$this->pr($_REQUEST);
+        $this->pr($_REQUEST);exit;
         if ($_FILES) {
             $tmpname = $_FILES['t']['tmp_name']['id_proof_upload'];
             $name = addslashes($_FILES['t']['name']['id_proof_upload']);
@@ -271,6 +271,8 @@ class reservation extends common {
         $data = $_REQUEST['t'];
         $data['id_modify'] = $_SESSION['id_user'];
         $data['modify_date'] = date("Y-m-d");
+        $room = $_REQUEST['room'];
+        $data['json'] = json_encode($room);
         $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='{$_REQUEST['id']}'");
         $this->m->query($sql);
         $_SESSION['msg'] = "Guest Registration Updated Successfully.";

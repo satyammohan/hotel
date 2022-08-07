@@ -1,8 +1,8 @@
 <h3>
-    {if $data.id_reservation}Edit{else}Add{/if} Registration<hr>
+    {if $data.id_reservation}Edit{else}Add{/if} Registration
 </h3>
-<form method="post" enctype="multipart/form-data" onsubmit="return checkform();" action="index.php?module=reservation&func={if $data.id_reservation}checkinupdate{else}checkinupdateinsert{/if}">
-    <table class="table">
+<form method="post" enctype="multipart/form-data" onsubmit="return formvalidation();" action="index.php?module=reservation&func={if $data.id_reservation}checkinupdate{else}checkinupdateinsert{/if}">
+    <table>
         <tr>
             <td><b>Ref No: *</b><br><b>GRC No:</b></td>
             {if $data.id_reservation}
@@ -69,34 +69,15 @@
             <td><input type="text" name="t[advance_amount]" value="{$data.advance_amount}"/></td>
         </tr>
         <tr>
-            <td><b>No. of Days: *</b></td>
-            <td><input type="text" id="days" name="t[daysstay]" required value="{$data.daysstay}" /></td>
-            <td><b>Remarks:</b></td>
-            <td><input type="text" name="t[remarks]" value="{$data.remarks}"/></td>
-            {if $data.id_reservation}
+            <td><b>No. of Days: *</b></td><td><input type="text" id="days" name="t[daysstay]" required value="{$data.daysstay}" /></td>
+            <td><b>Remarks:</b></td><td><input type="text" name="t[remarks]" value="{$data.remarks}"/></td>
+            <td><b>Rooms:</b></td><td><input type="text" id="rooms" {if !$data.id_reservation}onblur="getdetails();"{/if} value="{$data.roomnumber}" name="t[roomnumber]"/></td>
+            <tr><td colspan="20"><div id="details"></div></td></tr>
             <tr>
-                <td colspan="6">
-                    <b>Rooms:</b>{$data.roomnumber}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <b>Total Discount:</b>{$data.discount}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <b>Total GST:</b>{$data.gstamt}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    <b>Total Amount:</b>{$data.total}
-                </td>
+                <td><b>Total Discount:</b></td><td><input type="text" name="t[discount]" id="discount" readonly="readonly"/></td>
+                <td><b>Total GST:</b></td><td><input type="text" name="t[gstamt]" id="gstamt" readonly="readonly"/></td>
+                <td><b>Total Amount: *</b></td><td><input type="text" name="t[total]" id="total" required readonly="readonly"/></td>
             </tr>
-            {else}
-                <td><b>Rooms:</b></td>
-                <td><input type="text" id="rooms" value="{$data.roomnumber}" name="t[roomnumber]" onblur="getdetails();"/></td>
-                <tr><td colspan="20"><div id="details"></div></td></tr>
-                <tr>
-                    <td><b>Total Discount:</b></td>
-                    <td><input type="text" name="t[discount]" id="discount" readonly="readonly"/></td>
-
-                    <td><b>Total GST:</b></td>
-                    <td><input type="text" name="t[gstamt]" id="gstamt" readonly="readonly"/></td>
-
-                    <td><b>Total Amount: *</b></td>
-                    <td><input type="text" name="t[total]" id="total" required readonly="readonly"/></td>
-                </tr>
-            {/if}
         <tr>
         <td colspan="2">
             <input type="hidden" id="hide" name="id" value="{$data.id_reservation}">
@@ -131,32 +112,31 @@ function getdetails() {
     $.post("index.php?module=reservation&func=getroomprice", { rooms:rooms }, function(data1, status) {
         data = JSON.parse(data1);
         totalrooms = data.length;
-        availrooms = "";
-        console.log(data);
-        // text = "<table class='room' width='100%'><tr><th>Room</th><th>Tax %</th><th>GST %</th><th>Base Price</th><th>Price in Rs.</th><th>GST</th><th>Total</th>";
-        text = "<table class='room' width='100%'><tr><th>Room</th><th>GST %</th><th>Base Price</th><th>Price in Rs.</th><th>GST</th><th>Total</th>";
-        for (x in data) {
-            console.log(x);
-            text += "<tr>";
-            text += "<td><input name='room["+x+"][name]'     tabindex='-1' size='5' id='name"+x+"' type='text' readonly='readonly'  value='"+data[x].name+"' ></td>";
-            text += "<td><input name='room["+x+"][tax_per]'  tabindex='-1' size='5' id='tax_per"+x+"' type='text'   value='"+data[x].tax_per+"' ></td>";
-            //text += "<td><input name='room["+x+"][gst_per]'  tabindex='-1' size='5' id='gst_per"+x+"' type='text'   value='"+data[x].tax_per+"' ></td>";
-            text += "<td><input name='room["+x+"][price]'    tabindex='-1' size='5' id='price"+x+"' type='text'   value='"+data[x].price+"' ></td>";
-            text += "<td><input name='room["+x+"][discount]' size='5' id='discount"+x+"' onblur='gettotal("+x+");' type='text' ></td>";
-            text += "<td><input name='room["+x+"][gstamt]'   tabindex='-1' size='5' id='gstamt"+x+"' readonly='readonly' type='text' value='' ></td>";
-            text += "<td><input name='room["+x+"][total]'    tabindex='-1' size='5' id='total"+x+"' readonly='readonly' type='text' value='' ></td>";
-            text += "<tr>";
-            availrooms = availrooms+data[x].name+",";
-        }
-        availrooms = availrooms.replace(/,\s*$/, "");
-        console.log(availrooms);
-        $("#rooms").val(availrooms);
-        text += "</table>";
-        $("#details").html(text);
-        for (iloop=0; iloop<totalrooms; iloop++) {
-            gettotal(iloop);
-        }
+        getroomdetails(data);
     });        
+}
+function getroomdetails(data) {
+    availrooms = "";
+    text = "<table class='room' width='100%'><tr><th>Room</th><th>GST %</th><th>Base Price</th><th>Discount in Rs.</th><th>GST</th><th>Total</th>";
+    for (x in data) {
+        console.log(x);
+        text += "<tr>";
+        text += "<td><input name='room["+x+"][name]'     tabindex='-1' size='5' id='name"+x+"' type='text' readonly='readonly'  value='"+data[x].name+"' ></td>";
+        text += "<td><input name='room["+x+"][tax_per]'  size='5' id='tax_per"+x+"' type='text'   value='"+data[x].tax_per+"' ></td>";
+        text += "<td><input name='room["+x+"][price]'    size='5' id='price"+x+"' type='text'   value='"+data[x].price+"' ></td>";
+        text += "<td><input name='room["+x+"][discount]' size='5' id='discount"+x+"' onblur='gettotal("+x+");' type='text' ></td>";
+        text += "<td><input name='room["+x+"][gstamt]'   tabindex='-1' size='5' id='gstamt"+x+"' readonly='readonly' type='text' value='' ></td>";
+        text += "<td><input name='room["+x+"][total]'    tabindex='-1' size='5' id='total"+x+"' readonly='readonly' type='text' value='' ></td>";
+        text += "<tr>";
+        availrooms = availrooms+data[x].name+",";
+    }
+    availrooms = availrooms.replace(/,\s*$/, "");
+    $("#rooms").val(availrooms);
+    text += "</table>";
+    $("#details").html(text);
+    for (iloop=0; iloop<totalrooms; iloop++) {
+        gettotal(iloop);
+    }
 }
 function gettotal(id) {
     let days = retvalue("days");
@@ -179,13 +159,8 @@ function gettotal(id) {
     let totalprice = parseFloat((netprice*days) + (gstamt*1)).toFixed(2);
     $("#gstamt"+id).val(gstamt);
     $("#total"+id).val(totalprice);
-    completethis();
-}
-function completethis() {
-    let days = retvalue("days");
-    let mygstamt = 0;
-    let mydiscount = 0;
-    let mytotal = 0;
+    let mygstamt = 0; let mydiscount = 0; let mytotal = 0;
+    console.log("rooms :", totalrooms);
     for (i=0; i<totalrooms; i++) {
         let gstamt = retvalue("gstamt"+i);
         let disc = retvalue("discount"+i);
@@ -194,6 +169,7 @@ function completethis() {
         mydiscount = mydiscount+ disc*days;
         mytotal = mytotal + totalprice*1;
     }
+    console.log(mygstamt, mydiscount, mytotal);
     $("#discount").val(mydiscount);
     $("#gstamt").val(mygstamt);
     $("#total").val(mytotal);
@@ -226,7 +202,7 @@ function checkmobile() {
         }
     });
 }
-function checkform() {
+function formvalidation() {
     let total = retvalue("total");
     if (total==0) {
         alert("Total amount can't be zero");
@@ -235,6 +211,14 @@ function checkform() {
     return true;
 }
 </script>
+{if $data.id_reservation}
+    <script>
+        var jdata = JSON.parse('{$data.json}');
+        totalrooms = jdata.length;
+        getroomdetails(jdata);
+        console.log(jdata);
+    </script>
+{/if}
 <style>
     .room {
         background-color: lightgrey ;
