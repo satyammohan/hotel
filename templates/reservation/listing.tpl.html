@@ -1,6 +1,18 @@
-<h3>
-Guest Booking Listing<hr>
-</h3>
+<table>
+    <tr>
+        <form method="post">
+            <fieldset><legend><h3>Guest Booking Listing</h3></legend>
+                <span>Start Date :<input id="start_date" type="date" name="start_date" value='{$smarty.request.start_date}' /></span>
+                <span>End Date :<input id="end_date" type="date" name="end_date" value='{$smarty.request.end_date}' /></span>
+                <span>
+                    <input type="submit" value="Go" />
+                    <input type="button" value="Reset" onclick="resetall();" />
+                </span>
+            </fieldset>
+        </form>
+    </tr>
+</table>
+<br>
 <table id="dataTable" class="table" width="100%">
     <thead>    
         <tr>

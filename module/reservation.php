@@ -48,7 +48,13 @@ class reservation extends common {
         $this->sm->assign("data", $data);
     }
     function listing() {
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE cancel_by=0 ORDER BY no DESC, name";
+        $limit = $wcond = " ";
+        if (@$_REQUEST['start_date'] && @$_REQUEST['end_date']) {
+            $wcond .= " AND date BETWEEN '{$_REQUEST['start_date']}' AND '{$_REQUEST['end_date']}' ";
+        } else {
+            $limit = " LIMIT 20 ";
+        }
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE cancel_by=0 $wcond ORDER BY date DESC, no $limit";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("rooms", $data);
     }
@@ -219,7 +225,7 @@ class reservation extends common {
             $sql = $this->create_select("{$this->prefix}reservation", "id_reservation='{$id}'");
             $data = $this->m->fetch_assoc($sql);
         } else {
-            $sql = "SELECT max(no) AS no, max(grcno) AS grcno FROM {$this->prefix}reservation";
+            $sql = "SELECT max(no*1) AS no, max(grcno*1) AS grcno FROM {$this->prefix}reservation";
             $data = $this->m->fetch_assoc($sql);
             $data['no'] = $data['no'] + 1;
             $data['grcno'] = $data['grcno'] + 1;
