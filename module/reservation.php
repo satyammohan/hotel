@@ -65,12 +65,17 @@ class reservation extends common {
         $this->sm->assign("rooms", $data);
     }
     function mrlist() {
-        $sql = "SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r 
-                WHERE m.id_reservation=r.id_reservation ORDER BY m.date DESC";
-        $sql = "SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B'
+        
+        $limit = $wcond = " ";
+        if (@$_REQUEST['start_date'] && @$_REQUEST['end_date']) {
+            $wcond .= " AND date BETWEEN '{$_REQUEST['start_date']}' AND '{$_REQUEST['end_date']}' ";
+        } else {
+            $limit = " LIMIT 20 ";
+        }
+        $sql = "SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' $wcond
                 UNION ALL
-                SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}mr m, {$this->prefix}banquet r WHERE m.id_reservation=r.id_banquet AND m.mrtype='B'
-                ORDER BY date DESC";
+                SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}mr m, {$this->prefix}banquet r WHERE m.id_reservation=r.id_banquet AND m.mrtype='B' $wcond
+                ORDER BY date DESC $limit";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("mr", $data);
     }
