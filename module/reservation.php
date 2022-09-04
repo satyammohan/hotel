@@ -254,7 +254,6 @@ class reservation extends common {
         $data['id_create'] = $_SESSION['id_user'];
         $data['create_date'] = date("Y-m-d");
         $data['json'] = json_encode($room);
-        $this->pr($_REQUEST);exit;
         if ($_FILES) {
             $tmpname = $_FILES['t']['tmp_name']['id_proof_upload'];
             $name = addslashes($_FILES['t']['name']['id_proof_upload']);
