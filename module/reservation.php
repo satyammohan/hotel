@@ -65,10 +65,9 @@ class reservation extends common {
         $this->sm->assign("rooms", $data);
     }
     function mrlist() {
-        
         $limit = $wcond = " ";
         if (@$_REQUEST['start_date'] && @$_REQUEST['end_date']) {
-            $wcond .= " AND date BETWEEN '{$_REQUEST['start_date']}' AND '{$_REQUEST['end_date']}' ";
+            $wcond .= " AND m.date BETWEEN '{$_REQUEST['start_date']}' AND '{$_REQUEST['end_date']}' ";
         } else {
             $limit = " LIMIT 20 ";
         }
