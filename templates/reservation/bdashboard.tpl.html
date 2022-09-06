@@ -24,12 +24,7 @@
             month = month + 12;
             year = year - 1;
         }
-        var cal1 = new Calendar(month, year);
-        cal1.generateHTML();
-        document.getElementById("cal1").innerHTML = cal1.getHTML()
-        var cal2 = new Calendar(month, year);
-        cal2.generateHTML();
-        document.getElementById("cal2").innerHTML = cal2.getHTML()
+        draw();
     }
     function next() {
         month = month + 3;
@@ -37,12 +32,29 @@
             month = month - 12;
             year = year + 1;
         }
-        var cal1 = new Calendar(month, year);
-        cal1.generateHTML();
-        document.getElementById("cal1").innerHTML = cal1.getHTML()
-        var cal2 = new Calendar(month, year);
-        cal2.generateHTML();
-        document.getElementById("cal2").innerHTML = cal2.getHTML()
+        draw();
+    }
+    var type = 1;
+    function draw() {
+        getbooking(month, year);
+    }
+    var datedata;
+    function getbooking(month, year) {
+        $.post("index.php?module=reservation&func=getbooking", { month: month, year : year }, function (resp) {
+            if (resp == "null") {
+                json_data = "Some issue, while getting data from Server.";
+            } else {
+                datedata = JSON.parse(resp);
+                var cal1 = new Calendar(month, year);
+                type = 1;
+                cal1.generateHTML();
+                document.getElementById("cal1").innerHTML = cal1.getHTML()
+                var cal2 = new Calendar(month, year);
+                type = 2;
+                cal2.generateHTML();
+                document.getElementById("cal2").innerHTML = cal2.getHTML()
+            }
+        });
     }
     function showdetails(room, date) {
         $.post("index.php?module=reservation&func=showguest", { room: room, date: date }, function (resp) {
@@ -108,7 +120,12 @@
                 for (var j = 0; j <= 6; j++) {
                     html += '<td class="calendar-day">';
                     if (day <= monthLength && (i > 0 || j >= startingDay)) {
-                        html += day;
+                        curdate = day+"-"+thismonth+"-"+type;
+                        if (datedata[curdate]) {
+                            html += "<span class='occupy'>"+day+"</span>";
+                        } else {
+                            html += day;
+                        }
                         day++;
                     }
                     html += '</td>';
@@ -126,12 +143,7 @@
     Calendar.prototype.getHTML = function () {
         return this.html;
     }
-    var cal1 = new Calendar();
-    cal1.generateHTML();
-    document.getElementById("cal1").innerHTML = cal1.getHTML()
-    var cal2 = new Calendar();
-    cal2.generateHTML();
-    document.getElementById("cal2").innerHTML = cal2.getHTML()
+    getbooking(month, year);
 </script>
 <style>
     .calender-month {

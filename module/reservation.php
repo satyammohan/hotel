@@ -447,6 +447,34 @@ class reservation extends common {
         }
         exit;
     }
+    function getbooking() {
+        ob_clean();
+        $month = $_REQUEST['month'];
+        $year = $_REQUEST['year'];
+        $sdate = "$year-$month-01";
+
+        $month = $month+3;
+        $year = $month>12 ? $year+1 : $year;
+        $month = $month>12 ? $month-12 : $month;
+        $edate = "$year-$month-01";
+        $sql = "SELECT date, group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
+                WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
+        $data1 = $this->m->getall($this->m->query($sql));
+        foreach($data1 as $k => $v) {
+            $dt = $v['date'];
+            $dt = date("j-n", strtotime($dt));
+            $r = ",".$v['roomnumber'].",";
+            $rx = "";
+            if (strpos($r, ",1,") !== false) {
+                $data["$dt-1"] = '1';
+            }
+            if (strpos($r, ",2,") !== false) {
+                $data["$dt-2"] = '1';
+            }
+        }
+        echo json_encode($data);
+        exit;
+    }
     function showguest() {
         ob_clean();
         $room = $_REQUEST['room'];
