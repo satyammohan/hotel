@@ -121,10 +121,11 @@
                     html += '<td class="calendar-day">';
                     if (day <= monthLength && (i > 0 || j >= startingDay)) {
                         curdate = day+"-"+thismonth+"-"+type;
+                        dday = day < 10 ? "0"+day : day;
                         if (datedata[curdate]) {
-                            html += "<span class='occupy'>"+day+"</span>";
+                            html += "<span class='occupy'>"+dday+"</span>";
                         } else {
-                            html += day;
+                            html += dday;
                         }
                         day++;
                     }
