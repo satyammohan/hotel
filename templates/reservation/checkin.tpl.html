@@ -71,7 +71,7 @@
         <tr>
             <td><b>No. of Days: *</b></td><td><input type="text" id="days" name="t[daysstay]" required value="{$data.daysstay}" /></td>
             <td><b>Remarks:</b></td><td><input type="text" name="t[remarks]" value="{$data.remarks}"/></td>
-            <td><b>Rooms:</b></td><td><input type="text" id="rooms" {if $data.json=='null'}onblur="getdetails();"{/if} value="{$data.roomnumber}" name="t[roomnumber]"/></td>
+            <td><b>Rooms:</b></td><td><input type="text" id="rooms" {if $data.json=='null' || $data.json==''}onblur="getdetails();"{/if} value="{$data.roomnumber}" name="t[roomnumber]"/></td>
             <tr><td colspan="20"><div id="details"></div></td></tr>
             <tr>
                 <td><b>Total Discount:</b></td><td><input type="text" name="t[discount]" id="discount" readonly="readonly"/></td>
