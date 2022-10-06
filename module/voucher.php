@@ -17,9 +17,9 @@ class voucher extends common {
             $head = $this->m->sql_getall( $sql, 2, 'name', 'id' );
             $this->sm->assign( 'head', $head );
         } else {
-                $sql = "SELECT MAX(date) AS date, MAX(CAST(no as decimal(11))) AS no FROM {$this->prefix}voucher";
-                $last = $this->m->fetch_assoc( $sql );
-                $this->sm->assign( 'data', $last );
+            $sql = "SELECT MAX(date) AS date, MAX(CAST(no as decimal(11)))+1 AS no FROM {$this->prefix}voucher";
+            $last = $this->m->fetch_assoc( $sql );
+            $this->sm->assign( 'data', $last );
         }
     }
 
