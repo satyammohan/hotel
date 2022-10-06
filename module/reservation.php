@@ -79,6 +79,10 @@ class reservation extends common {
         $this->sm->assign("mr", $data);
     }
     function addmr() {
+        $sql = "SELECT MAX(no*1) AS no FROM {$this->prefix}mr m";
+        $data = $this->m->getall($this->m->query($sql));
+        $data[0]['no']=($data[0]['no']*1)+1;
+        $this->sm->assign("data", $data[0]);
     }
     function savemr() {
         $data = $_REQUEST['mr'];
