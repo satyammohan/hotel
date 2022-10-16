@@ -13,13 +13,13 @@
                     <input type="text" id="grcno" name="t[grcno]" required value="{$data.grcno}"/>
                 </td>
             {/if}
-            <td><b>Booking Date: *</b></td>
-            <td><input type="date" name="t[date]" required value="{if $data.date}{$data.date}{else}{$smarty.now|date_format:'%Y-%m-%d'}{/if}"/><br>
             <td><b>Function Date: *</b></td>
-            <td><input type="date" name="t[est_depature_date]" required value="{$data.est_depature_date}"/><br>
+            <td><input type="date" name="t[date]" required value="{if $data.date}{$data.date}{else}{$smarty.now|date_format:'%Y-%m-%d'}{/if}"/><br>
                 <input type="time" name="t[time]" value="{$data.time}"/>
                 <input type="time" name="t[est_depature_time]" value="{$data.est_depature_time}"/>
             </td>                
+            <td><b>Booking Date: *</b></td>
+            <td><input type="date" name="t[est_depature_date]" required value="{if $data.est_depature_date}{$data.est_depature_date}{else}{$smarty.now|date_format:'%Y-%m-%d'}{/if}"/><br>
         </tr>
         <tr>
             <td><b>Mobile: *</b></td>
