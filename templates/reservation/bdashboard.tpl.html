@@ -40,11 +40,13 @@
     }
     var datedata;
     function getbooking(month, year) {
+        console.clear();
         $.post("index.php?module=reservation&func=getbooking", { month: month, year : year }, function (resp) {
             if (resp == "null") {
                 json_data = "Some issue, while getting data from Server.";
             } else {
                 datedata = JSON.parse(resp);
+                console.log(datedata)
                 var cal1 = new Calendar(month, year);
                 type = 1;
                 cal1.generateHTML();
@@ -120,7 +122,7 @@
                 for (var j = 0; j <= 6; j++) {
                     html += '<td class="calendar-day">';
                     if (day <= monthLength && (i > 0 || j >= startingDay)) {
-                        curdate = day+"-"+thismonth+"-"+type;
+                        curdate = day+"-"+(thismonth+1)+"-"+type;
                         dday = day < 10 ? "0"+day : day;
                         if (datedata[curdate]) {
                             html += "<span class='occupy'>"+dday+"</span>";

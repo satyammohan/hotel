@@ -81,9 +81,8 @@ class report extends common {
         $other = $this->m->sql_getall($sql, 2, "total", "id_reservation");
         $sql = "SELECT id_reservation, SUM(amount) AS total FROM {$this->prefix}mr WHERE cancel_date IS NULL GROUP BY 1";
         $mr = $this->m->sql_getall($sql, 2, "total", "id_reservation");
-        $start = "2021-09-01";
         $sql = "SELECT id_reservation, no, type, grcno, billno, date, name, roomnumber, daysstay, total, 0 AS foodtotal, 0 AS othertotal, 0 AS mrtotal
-                FROM {$this->prefix}reservation WHERE (date>='$start' AND date<='$sdate') AND billno IS NOT NULL ORDER BY date";
+                FROM {$this->prefix}reservation ORDER BY date";
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $id = $v['id_reservation'];
@@ -108,7 +107,7 @@ class report extends common {
         $sql = "SELECT id_reservation, id_taxmaster, SUM(goodsvalue) AS goodsvalue, SUM(gstamount) AS gstamount, SUM(amount) AS total FROM {$this->prefix}other GROUP BY 1,2";
         $other = $this->m->sql_getall($sql, 1, "", "id_reservation", "id_taxmaster");
 
-        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (depature_date >= '$sdate' AND depature_date <= '$edate') AND cancel_date IS NULL  ORDER BY depature_date, billno";
+        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') AND cancel_date IS NULL  ORDER BY depature_date, billno";
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $stay = $v['daysstay'] ? $v['daysstay'] : 1;
@@ -116,9 +115,9 @@ class report extends common {
             if ($v['json']) {
                 $json = json_decode($v['json']) ;
                 foreach ($json as $value) {
-                    $gst = intval($value->gst_per);
+                    $gst = intval($value->tax_per);
                     $discount = $value->discount ? $value->discount : 0;
-		    $p = round((($value->price - $discount)*$stay) * $gst / 100,2);
+		            $p = round((($value->price - $discount)*$stay) * $gst / 100,2);
                     @$data[$k]["goodsamount_".$gst] += (($value->price - $discount)*$stay) ;
                     //@$data[$k]["sgst_".$gst] += ($value->gstamt*$stay/2);
                     //@$data[$k]["cgst_".$gst] += ($value->gstamt*$stay/2);
@@ -143,6 +142,7 @@ class report extends common {
             @$v['discount'] += $v['discamt'];
             $data[] = $v;
         }
+        
         $this->sm->assign("data", $data);
     }
     function error() {
