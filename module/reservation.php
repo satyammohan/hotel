@@ -388,19 +388,16 @@ class reservation extends common {
         $json = json_decode($data['json']);
         $t = array();
         foreach ($json as $value) {
-            $gst = intval($value->gst_per);
-            @$t[$gst]['gst_per'] += $value->gst_per;
+            $gst = intval($value->tax_per);
+            @$t[$gst]['gst_per'] += $value->tax_per;
             @$t[$gst]['withtax'] += ($value->price - $value->discount) * $data['daysstay'];
-	    $pr = round((($value->price - $value->discount)*$data['daysstay']));
-	    $p = round((($value->price - $value->discount)*$data['daysstay']) * $gst / 100,2);
+            $pr = round((($value->price - $value->discount)*$data['daysstay']));
+            $p = round((($value->price - $value->discount)*$data['daysstay']) * $gst / 100,2);
 
-            //@$t[$gst]['gstamt'] += $value->gstamt;
             @$t[$gst]['gstamt'] += $p;
-            //@$t[$gst]['total'] += $value->total;
             @$t[$gst]['total'] += $pr + $p;
         }
         $data['json'] = $t;
-//$this->pr($data);exit;
         $data['w'] = $this->convert_number($data['total']);
         $this->sm->assign("data", $data);
     }

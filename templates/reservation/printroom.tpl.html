@@ -11,7 +11,7 @@
     </style>
     <table align="center" class="btable">
         <tr>
-            <th colspan="6"><h3>Guest Booking Bill</h3></th>
+            <th colspan="6"><h3>Tax Invoice</h3></th>
         </tr>
         <tr>
             <td colspan="3"><b>{$smarty.session.cname}</b>
@@ -21,10 +21,8 @@
                 <br>Phone:<b>{$smarty.session.phone}</b>
             </td>
             <td colspan="3">
-                <b>Bill No. : </b>{$data.billno}<br>
-                <b>Date : </b>{$data.depature_date|date_format:"%d-%m-%Y"}<br>
-                <b>GRC No. : </b>{$data.grcno}<br>
-                <b>Ref.No. : </b>{$data.no}
+                <b>Bill No. : </b>{$data.no}<br>
+                <b>Date : </b>{$data.date|date_format:"%d-%m-%Y"}<br>
             </td>
         </tr>
         <tr><td class="tdborder" colspan="6"></td></tr>
@@ -63,7 +61,7 @@
         <tr>
             <td valign="top" colspan="6" >
                 Rooms alloted : {$data.roomnumber}   Rent Per day : {$data.rentday} for {$data.daysstay} days.<br>
-                Check-in Date : {$data.date|date_format:"%d-%m-%Y"} {$data.time} Check-out Date : {$data.depature_date|date_format:"%d-%m-%Y"} {$data.depature_time}
+                Check-in Date : {$data.date|date_format:"%d-%m-%Y"} {$data.time}
                 <br><br>
             </td>
         </tr>
@@ -202,21 +200,16 @@
             <td colspan="6" class="tdborder"><b>Rupees : </b>{$data.w}</td>
         </tr>-->
         <tr>
-            <td class="tdborder" colspan="6">
-                {if $mr.total}
-                    Total Amount Paid (<b>MR No. : {$mr.nos}</b>) : <b>{$mr.total|string_format:"%.2f"}</b>
-                {else}
-                    No Payment received.
-                {/if}
+            <td class="tdborder" colspan="4">
+                {$smarty.session.config.SALEBILLFOOTER}
+            </td>
+            <td colspan="2" align="right"><br><br><b>Signature : </b>____________________________<br><br>
+                <b>{$smarty.session.name}</b>
+
             </td>
         </tr>
         <tr>
-            <td colspan="2"><h5><b>Total Due Amount : {($data.total+$other.oamount+$food.famount-$mr.total)|string_format:"%.2f"}</b></h5></td>
-            <td colspan="4" align="right"><b>Signature : </b>____________________________</td>
-        </tr>
-        <tr>
-            <td colspan="2"><font size="-2"><b>Created by : </b>{$data.username} <b></b>Generated on : </b>{$data.date_added|date_format:"%d-%m-%Y %H:%M"} <b>Printed on :</b> {$smarty.now|date_format:"%d-%m-%Y %H:%M"}</font></td>
-            <td colspan="4" align="right"><b>{$smarty.session.name}</b></td>
+            <td colspan="2"><font size="-2"><b>Created by : </b>{$data.username} <b></b>Generated on : </b>{$data.date|date_format:"%d-%m-%Y"}</td>
         </tr>
     </table>
 </div>
