@@ -44,7 +44,7 @@
             <td colspan="2">
                 <b>Purpose : </b>{$data.purpose}<br>
                 <b>Others : </b>{$data.oname}<br>
-                <b>Destination : </b>{$data.destination}<br>
+                <!-- <b>Destination : </b>{$data.destination}<br> -->
                 <b>Persons : </b>{$data.person}<br>
                 <b>Adult : </b>{$data.adult}<br>
                 <b>Childen : </b>{$data.child}
@@ -113,7 +113,7 @@
         {else}
             <tr><td colspan=6>&nbsp;</td></tr>
         {/if}
-	{if $data.json.18.total!=0}
+	    {if $data.json.18.total!=0}
         <tr>
             <td valign="top">
                 Room rent 18% GST
