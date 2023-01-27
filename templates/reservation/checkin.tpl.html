@@ -59,8 +59,22 @@
         <tr>
             <td><b>Purpose of Booking:</b></td>
             <td><input type="text" name="t[purpose]" value="{$data.purpose}"/></td>
-            <td><b>Booking Type:</b></td>
-            <td><select name="t[type]">{html_options options=$ini.res_type selected=$data.type}</select></td>
+            <td><b>Booking Type:</b><br><b>Booking No:</b></td>
+            <td>
+                <select name="t[type]">{html_options options=$ini.res_type selected=$data.type}</select>
+                <br>
+                <input type="text" name="t[booking_no]" value="{$data.booking_no}"/>
+            </td>
+            <td><b>Refer:</b></td>
+            <td><input type="text" name="t[refer]" value="{$data.refer}"/></td>
+        </tr>
+        <tr>
+            <td><b>Others:</b></td>
+            <td><input type="text" name="t[oname]" value="{$data.oname}"/></td>
+            <td><b>Adult:</b></td>
+            <td><input type="text" name="t[adult]" value="{$data.adult}"/></td>
+            <td><b>Childen:</b></td>
+            <td><input type="text" name="t[child]" value="{$data.child}"/></td>
         </tr>
         <tr>
             <td><b>Actual Amount :</b></td>

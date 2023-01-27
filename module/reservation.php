@@ -386,19 +386,27 @@ class reservation extends common {
         $sql = "SELECT r.*, u.name AS username FROM {$this->prefix}reservation r LEFT JOIN user u ON r.id_create=u.id_user  WHERE r.id_reservation='{$id}'";
         $data = $this->m->fetch_assoc($sql);
         $json = json_decode($data['json']);
+        //pr($json);
         $t = array();
         foreach ($json as $value) {
-            $gst = intval($value->tax_per);
-            @$t[$gst]['gst_per'] += $value->tax_per;
+            if ($value->name==1 || $value->name==2) {
+                $gst = 'ban';
+            } else {
+                $gst = intval($value->tax_per);
+            }
+            @$t[$gst]['rooms'] .= $value->name." ";
+            @$t[$gst]['gst_per'] = $value->tax_per;
             @$t[$gst]['withtax'] += ($value->price - $value->discount) * $data['daysstay'];
             $pr = round((($value->price - $value->discount)*$data['daysstay']));
-            $p = round((($value->price - $value->discount)*$data['daysstay']) * $gst / 100,2);
+            $p = round((($value->price - $value->discount)*$data['daysstay']) * $value->tax_per / 100,2);
 
             @$t[$gst]['gstamt'] += $p;
-            @$t[$gst]['total'] += $pr + $p;
+            //@$t[$gst]['total'] += $pr + $p;
+            @$t[$gst]['total'] += $value->total;
         }
         $data['json'] = $t;
         $data['w'] = $this->convert_number($data['total']);
+        //pr($data);exit;
         $this->sm->assign("data", $data);
     }
     function savechangedroom() {
@@ -461,6 +469,7 @@ class reservation extends common {
                 WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
                 //pr($sql);
         $data1 = $this->m->getall($this->m->query($sql));
+        $data = array();
         foreach($data1 as $k => $v) {
             $dt = $v['date'];
             $dt = date("j-n", strtotime($dt));

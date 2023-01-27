@@ -44,7 +44,6 @@
             <td colspan="2">
                 <b>Purpose : </b>{$data.purpose}<br>
                 <b>Others : </b>{$data.oname}<br>
-                <!-- <b>Destination : </b>{$data.destination}<br> -->
                 <b>Persons : </b>{$data.person}<br>
                 <b>Adult : </b>{$data.adult}<br>
                 <b>Childen : </b>{$data.child}
@@ -113,25 +112,51 @@
         {else}
             <tr><td colspan=6>&nbsp;</td></tr>
         {/if}
-	    {if $data.json.18.total!=0}
+        {$cur = $data.json['ban']}
+	    {if $cur.total!=0}
         <tr>
             <td valign="top">
-                Room rent 18% GST
+                Banquate Hall ({$cur.rooms|trim}) rent 18% GST
             </td>
             <td valign="top" align="right" style=" padding-right: 20px;">
                 18.00
             </td>
             <td valign="top" align="right" style=" padding-right: 20px;">
-                {$data.json.18.withtax|string_format:"%.2f"}
+                {$cur.withtax|string_format:"%.2f"}
             </td>
             <td valign="top" align="right" style=" padding-right: 20px;">
-                {($data.json.18.gstamt/2)|string_format:"%.2f"}
+                {($cur.gstamt/2)|string_format:"%.2f"}
             </td>
             <td valign="top" align="right" style=" padding-right: 20px;">
-                {($data.json.18.gstamt/2)|string_format:"%.2f"}
+                {($cur.gstamt/2)|string_format:"%.2f"}
             </td>
             <td valign="top" align="right" style=" padding-right: 20px;">
-                {$data.json.18.total|string_format:"%.2f"}
+                {$cur.total|string_format:"%.2f"}
+            </td>
+        </tr>
+        {else}
+            <tr><td colspan=6>&nbsp;</td></tr>
+        {/if}
+        {$cur = $data.json.18}
+	    {if $data.json.18.total!=0}
+        <tr>
+            <td valign="top">
+                Room ({$cur.rooms|trim}) rent 18% GST
+            </td>
+            <td valign="top" align="right" style=" padding-right: 20px;">
+                18.00
+            </td>
+            <td valign="top" align="right" style=" padding-right: 20px;">
+                {$cur.withtax|string_format:"%.2f"}
+            </td>
+            <td valign="top" align="right" style=" padding-right: 20px;">
+                {($cur.gstamt/2)|string_format:"%.2f"}
+            </td>
+            <td valign="top" align="right" style=" padding-right: 20px;">
+                {($cur.gstamt/2)|string_format:"%.2f"}
+            </td>
+            <td valign="top" align="right" style=" padding-right: 20px;">
+                {$cur.total|string_format:"%.2f"}
             </td>
         </tr>
         {else}
@@ -190,9 +215,9 @@
         <tr class="tdborder">
             <th>Total</th>
             <th>&nbsp;</th>
-            <th>{($data.json.0.withtax+$data.json.12.withtax+$data.json.18.withtax+$other.ogoodsvalue+$food.fgoodsvalue)|string_format:"%.2f"}</th>
-            <th>{(($data.json.12.gstamt/2)+($data.json.18.gstamt/2)+($food.fgstamount/2)+($other.ogstamount/2))|string_format:"%.2f"}</th>
-            <th>{(($data.json.12.gstamt/2)+($data.json.18.gstamt/2)+($food.fgstamount/2)+($other.ogstamount/2))|string_format:"%.2f"}</th>
+            <th>{($data.json['ban'].withtax+$data.json.0.withtax+$data.json.12.withtax+$data.json.18.withtax+$other.ogoodsvalue+$food.fgoodsvalue)|string_format:"%.2f"}</th>
+            <th>{(($data.json.12.gstamt/2)+($data.json['ban'].gstamt/2)+($data.json.18.gstamt/2)+($food.fgstamount/2)+($other.ogstamount/2))|string_format:"%.2f"}</th>
+            <th>{(($data.json.12.gstamt/2)+($data.json['ban'].gstamt/2)+($data.json.18.gstamt/2)+($food.fgstamount/2)+($other.ogstamount/2))|string_format:"%.2f"}</th>
             <th>{($data.total+$other.oamount+$food.famount)|string_format:"%.2f"}</th>
         </tr>
 <!---

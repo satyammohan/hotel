@@ -22,7 +22,7 @@ class report extends common {
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
         $sql = "SELECT r.*, SUM(m.amount) AS recv, GROUP_CONCAT(m.no) AS mrs FROM {$this->prefix}reservation r 
                     LEFT JOIN {$this->prefix}mr m ON r.id_reservation=m.id_reservation AND m.cancel_date IS NULL
-                WHERE (r.date >= '$sdate' AND r.date <= '$edate') GROUP BY r.id_reservation ORDER BY r.date";
+                WHERE (r.date >= '$sdate' AND r.date <= '$edate') AND r.cancel_date IS NULL GROUP BY r.id_reservation ORDER BY r.date";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("data", $data);
     }
@@ -69,7 +69,7 @@ class report extends common {
     function roomdet() {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE (date(est_depature_date) >= '$sdate' AND date(est_depature_date) <= '$edate') AND m.cancel_date IS NULL ORDER BY date";
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE (date(est_depature_date) >= '$sdate' AND date(est_depature_date) <= '$edate') AND cancel_date IS NULL ORDER BY date";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("data", $data);
     }
@@ -82,7 +82,7 @@ class report extends common {
         $sql = "SELECT id_reservation, SUM(amount) AS total FROM {$this->prefix}mr WHERE cancel_date IS NULL GROUP BY 1";
         $mr = $this->m->sql_getall($sql, 2, "total", "id_reservation");
         $sql = "SELECT id_reservation, no, type, grcno, billno, date, name, roomnumber, daysstay, total, 0 AS foodtotal, 0 AS othertotal, 0 AS mrtotal
-                FROM {$this->prefix}reservation ORDER BY date";
+                FROM {$this->prefix}reservation WHERE date <= '$sdate' ORDER BY date";
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $id = $v['id_reservation'];
