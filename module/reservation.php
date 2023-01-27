@@ -456,9 +456,10 @@ class reservation extends common {
         $month = $month+3;
         $year = $month>12 ? $year+1 : $year;
         $month = $month>12 ? $month-12 : $month;
-        $edate = "$year-$month-01";
+        $edate = date("Y-m-t", strtotime("$year-$month-01"));
         $sql = "SELECT date, group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
                 WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
+                //pr($sql);
         $data1 = $this->m->getall($this->m->query($sql));
         foreach($data1 as $k => $v) {
             $dt = $v['date'];
