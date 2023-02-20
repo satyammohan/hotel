@@ -71,7 +71,6 @@ class voucher extends common {
         $this->m->query( $this->create_delete( "{$this->prefix}voucher", "id_voucher='{$_REQUEST['id']}'" ) );
         $this->redirect( 'index.php?module=voucher&func=listing' );
     }
-
     function listing() {
         $this->get_permission( 'voucher', 'REPORT' );
         $sdate = $this->format_date( isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'd/m/Y' ) );

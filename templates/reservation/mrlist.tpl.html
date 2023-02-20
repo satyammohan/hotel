@@ -37,8 +37,18 @@
                 {if $mod.cancel_date}
                     {$mod.cancel_date|date_format:"%d-%m-%Y"}
                 {else}
+                    {$my = "approve"|array_key_exists:$mod}
+                    {if $smarty.session.is_approve==1 && $my}
+                        {if $mod.approve!=1}
+                            <a title="Approve MR" href="index.php?module=reservation&func=approve&table=mr&fld=id&id={$mod.id}"><i class="fa fa-check fa-2x"></i></a>
+                        {else}
+                            <a title="Un-Approve MR" href="index.php?module=reservation&func=unapprove&table=mr&fld=id&id={$mod.id}"><i class="fa text-danger fa-close fa-2x"></i></a>
+                        {/if}
+                    {/if}
                     <a class="btn btn-primary" href="index.php?module={if $mod.mrtype=='B'}banquet{else}reservation{/if}&func=printmr&id={$mod.id}" title="Print Money Receipt"><i class="fa fa-print"></i></a>
-                    <a class="btn btn-danger" href="#" onclick="cancelthis('Do you want to Cancel this Money Receipt?', 'index.php?module=reservation&func=cancelmr', '{$mod.id}')" title="Cancel MR"><i class="fa fa-times"></i></a>
+                    {if $mod.approve!=1}
+                        <a class="btn btn-danger" href="#" onclick="cancelthis('Do you want to Cancel this Money Receipt?', 'index.php?module=reservation&func=cancelmr', '{$mod.id}')" title="Cancel MR"><i class="fa fa-times"></i></a>
+                    {/if}
                 {/if}
             </td>
         </tr>

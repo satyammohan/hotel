@@ -37,7 +37,7 @@ class user extends common {
     }
 
     function login() {
-        $sql = "SELECT id_user, user, name, email, is_admin FROM user WHERE user='" . $this->data['uname'] . "' AND pass='" . md5($this->data['pass']) . "' AND status!=1";
+        $sql = "SELECT * FROM user WHERE user='" . $this->data['uname'] . "' AND pass='" . md5($this->data['pass']) . "' AND status!=1";
         $this->data1 = $this->m->fetch_assoc($sql);
         if ($this->data1) {
             $sql1 = "UPDATE `user` SET login_status='1' WHERE id_user='" . $this->data1["id_user"] . "';";

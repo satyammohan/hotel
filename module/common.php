@@ -367,6 +367,36 @@ class common {
 		// Process your response here
 		return $response;
 	}
+    function approve() {
+        if ($_SESSION['is_approve']==1) {
+            $tbl = $_REQUEST['table'];
+            $this->get_permission( $tbl, 'UPDATE' );
+            $id = $_REQUEST['id'];
+            $fld = isset($_REQUEST['fld']) ? $_REQUEST['fld'] : "id_{$tbl}";
+            $sql = "UPDATE {$this->prefix}{$tbl} SET approve=1 WHERE $fld='$id'";
+            $this->m->query( $sql );
+            $_SESSION[ 'msg' ] = 'This entry is Approved.';
+        } else {
+            $_SESSION[ 'msg' ] = 'You do not have Permission to perform this operation.';
+        }
+        $url = $_SERVER['HTTP_REFERER'];
+        $this->redirect( $url );
+    }
+    function unapprove() {
+        if ($_SESSION['is_approve']==1) {
+            $tbl = $_REQUEST['table']; 
+            $this->get_permission( $tbl, 'UPDATE' );
+            $id = $_REQUEST['id'];
+            $fld = isset($_REQUEST['fld']) ? $_REQUEST['fld'] : "id_{$tbl}";
+            $sql = "UPDATE {$this->prefix}{$tbl} SET approve=NULL WHERE $fld='$id'";
+            $this->m->query( $sql );
+            $_SESSION[ 'msg' ] = 'This entry is Un-approved.';
+        } else {
+            $_SESSION[ 'msg' ] = 'You do not have Permission to perform this operation.';
+        }
+        $url = $_SERVER['HTTP_REFERER'];
+        $this->redirect( $url );
+    }
 }
 function pr($data) {
     print "<pre>";

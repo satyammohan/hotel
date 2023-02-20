@@ -35,21 +35,31 @@
             <td>{$mod.name}<br>{$mod.mobile}<br>{$mod.city}</td>
             <td>{$mod.total}</td>
             <td>
-                <a class="btn btn-primary" href="index.php?module=reservation&func=checkin&id={$mod.id_reservation}" title="Edit Reservation"><i class="fa fa-edit"></i></a>
+                {$my = "approve"|array_key_exists:$mod}
+                {if $smarty.session.is_approve==1 && $my}
+                    {if $mod.approve!=1}
+                        <a title="Approve MR" href="index.php?module=reservation&func=approve&table=reservation&id={$mod.id_reservation}"><i class="fa fa-check fa-2x"></i></a>
+                    {else}
+                        <a title="Un-Approve MR" href="index.php?module=reservation&func=unapprove&table=reservation&id={$mod.id_reservation}"><i class="fa text-danger fa-close fa-2x"></i></a>
+                    {/if}
+                {/if}
                 <a class="btn btn-success" href="index.php?module=reservation&func=printroom&id={$mod.id_reservation}" title="Print"><i class="fa fa-print"></i></a>
+                {if $mod.approve!=1}
+                <a class="btn btn-primary" href="index.php?module=reservation&func=checkin&id={$mod.id_reservation}" title="Edit Reservation"><i class="fa fa-edit"></i></a>
                 <a class="btn btn-primary" href="index.php?module=reservation&func=addmr&id={$mod.id_reservation}" title="Add Money Receipt"><i class="fa fa-id-card"></i></a>
-                <a class="btn btn-primary" href="index.php?module=reservation&func=addfood&id={$mod.id_reservation}" title="Add Food Bill"><i class="fa fa-cutlery"></i></a>
+                <a class="btn btn-danger" href="#" onclick="cancelthis('Do you want to Cancel this Booking?', 'index.php?module=reservation&func=cancel', '{$mod.id_reservation}')" title="Cancel Booking"><i class="fa fa-times"></i></a>
+                {/if}
+                <!-- <a class="btn btn-primary" href="index.php?module=reservation&func=addfood&id={$mod.id_reservation}" title="Add Food Bill"><i class="fa fa-cutlery"></i></a>
                 <br>
                 <a class="btn btn-primary" href="index.php?module=reservation&func=addother&id={$mod.id_reservation}" title="Add Laundry and other Bills"><i class="fa fa-shopping-bag"></i></a>
                 {if $mod.billno}
                     <a class="btn btn-secondary" href="index.php?module=reservation&func=printroom&noother=1&id={$mod.id_reservation}" title="Only Room Bill Print"><i class="fa fa-print"></i></a>
                 {else}
                     <a class="btn btn-primary" href="index.php?module=reservation&func=changeroom&id={$mod.id_reservation}" title="Change Room"><i class="fa fa-exchange"></i></a>
-                    <a class="btn btn-danger" href="#" onclick="cancelthis('Do you want to Cancel this Booking?', 'index.php?module=reservation&func=cancel', '{$mod.id_reservation}')" title="Cancel Booking"><i class="fa fa-times"></i></a>
                 {/if}
                 {if $smarty.session.is_admin}
                     <a class="btn btn-success" href="index.php?module=reservation&func=editinfo&id={$mod.id_reservation}" title="Edit Other Info"><i class="fa fa-edit"></i></a>
-                {/if}
+                {/if} -->
             </td>
         </tr>
         {/foreach}

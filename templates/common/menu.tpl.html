@@ -73,11 +73,24 @@
     <a class="accounts_profit" href="index.php?module=accounts&func=profit"><i class="fa fa-bar-chart-o"> Profit & Loss</i> </a>
     <a class="accounts_balance" href="index.php?module=accounts&func=balance"><i class="fa fa-bar-chart-o"> Balance Sheet</i> </a>
   </div>
+
+  {if $smarty.session.config.AUTOBACKUP==1}
+    <button class="dropdown-btn log"><i class="fa fa-history"></i> Logs
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-container">
+      <a class="log_master" href="index.php?module=log&func=master"><i class="fa fa-circle"></i> Master</a>
+      <a class="log_booking" href="index.php?module=log&func=booking"><i class="fa fa-circle"></i> Booking</a>
+      <a class="log_voucher" href="index.php?module=log&func=voucher"><i class="fa fa-circle"></i> Voucher</a>    
+    </div>
+  {/if}
+
   
   <button class="dropdown-btn util"><i class="fa fa-gear"></i> Util
     <i class="fa fa-caret-down"></i>
   </button>
   <div class="dropdown-container">
+    <a class="util_listing" href="index.php?module=util&func=listing"><i class="fa fa-hdd-o"></i> Backup</a>
     <a class="util_checkindex" href="index.php?module=util&func=checkindex"><i class="fa fa-gear"></i> Check all</a>
     <a class="util_autoincrement" href="index.php?module=util&func=autoincrement"><i class="fa fa-gear"></i> Check Autoincrement</a>    
   </div>

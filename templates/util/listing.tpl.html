@@ -1,49 +1,24 @@
-<legend>Manage Backup/Restore</legend><br>
-<table id="dataTable" border="1">
+<h4>Manage Backup & Download</h4>
+{if $smarty.session.config.AUTOBACKUP==1}
+    <h2 class="w-100 d-flex justify-content-center bg-danger text-white">Auto Backup is enabled for your software.</h2>
+{/if}
+<table class="table table-striped table-bordered" width="100%">
      <thead>
         <tr> 
-            <th colspan="5"></th>
-            <th><a title="Create Backup" href='index.php?module=util&func=backup'><div class="backup_bg"></div></a></th>
+            <th colspan="4"></th>
+            <th><a title="Create Backup" href='index.php?module=util&func=backup'><i class="fa fa-hdd-o fa-2x"></i></a></th>
         </tr>
-        <tr><th>Name</th><th>Date & Time</th><th>Restore</th><th>Download SQL</th><th>Download Zip</th><th>Delete</th></tr>
+        <tr><th>Name</th><th>Date & Time</th><th>Size</th><th>Download</th><th>Delete</th></tr>
     </thead>
     {section name=x loop=$file}
     <tr>
         <td>{$file[x].filename}</td>
         <td>{$file[x].date}</td>
-        <td><a href="javascript:void(0);" id='index.php?module=util&func=restore&id={$file[x].filename}' onclick="jrestore(this.id);">Restore</a></td>
-        <td><a href='index.php?module=util&func=downsql&id={$file[x].filename}.sql'>Download SQL</a></td>
-        <td><a href='index.php?module=util&func=downzip&id={$file[x].filename}.sql'>Download ZIP</a></td>
-        <td><a href="javascript:void(0);" id='index.php?module=util&func=delete&id={$file[x].filename}' onclick="jdelete(this.id);" class="delete_bg" title="Delete" ></a></td>
+        <td>{$file[x].size}</td>
+        <td><a title="Download Backup" href='index.php?module=util&func=download&id={$file[x].filename}'><i class="fa fa-download fa-2x"></i></a></td>
+        <td>
+            <a title="Delete Backup" href="index.php?module=util&func=delete&id={$file[x].filename}" onclick="return confirm('Do you want to delete?');"><i class="fa fa-trash fa-2x"></i></a>
+        </td>
     </tr>
     {/section}
 </table>
-<script type="text/javascript">
-    $(document).ready(function() {
-        tbl_handler();
-    });
-    function jrestore(id){
-        jConfirm('Do u want To Restore the Selected Backup?', 'Confirmation Restore of Backup', function(r) {
-            if (r==false) {
-                return false;
-            } else {
-                jConfirm('Do u  Really want To Restore the Selected Backup?', 'Confirmation Restore of Backup', function(r) {
-                    if (r==false) {
-                        return false;
-                    } else {
-                        window.location.href = id;
-                    }
-                });
-            }
-        });
-    }
-    function jdelete(id){
-        jConfirm('Do u want to Delete the Selected Backup?', 'Confirmation Delete of Backup', function(r) {
-            if (r==false) {
-                return false;
-            } else {
-                window.location.href = id;
-            }
-        });
-    }
-</script>

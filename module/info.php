@@ -42,6 +42,13 @@ class info extends common {
         $_SESSION['sdate'] = $res['start_date'];
         $_SESSION['edate'] = $res['end_date'];
         $_SESSION['fyear'] = $this->date_format($res['start_date']) . "........... " . $this->date_format($res['end_date']);
+
+        $auto = isset($_SESSION['config']['AUTOBACKUP']) ? $_SESSION['config']['AUTOBACKUP'] : 0;
+        if ($auto==1) {
+            include "util.php";
+            $util = new util();
+            $_SESSION['msg'] = $util->auto_backup();
+        }
         $this->redirect("index.php");
     }
 

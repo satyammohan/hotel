@@ -20,8 +20,18 @@
         <td>{$mod.phone}</br>{$mod.mobile}</br>{$mod.email}</td>
         <td align="right">{$mod.opening_balance}&nbsp;{if $mod.otype==0}Db{else}Cr{/if}</td>
         <td>
-            <a title="Edit Head" href="index.php?module=head&func=edit&id={$mod.id_head}"><i class="fa fa-edit fa-2x"></i></a>
-            <a title="Delete Head" href="index.php?module=head&func=delete&id={$mod.id_head}&ce=0" onclick="return confirm('Do you want to delete?');"><i class="fa fa-trash fa-2x"></i></a>
+            {$my = "approve"|array_key_exists:$mod}
+            {if $smarty.session.is_approve==1 && $my}
+                {if $mod.approve!=1}
+                    <a title="Approve Head" href="index.php?module=head&func=approve&table=head&id={$mod.id_head}"><i class="fa fa-check fa-2x"></i></a>
+                {else}
+                    <a title="Un-Approve Head" href="index.php?module=head&func=unapprove&table=head&id={$mod.id_head}"><i class="fa text-danger fa-close fa-2x"></i></a>
+                {/if}
+            {/if}
+            {if $mod.approve!=1}
+                <a title="Edit Head" href="index.php?module=head&func=edit&id={$mod.id_head}"><i class="fa fa-edit fa-2x"></i></a>
+                <a title="Delete Head" href="index.php?module=head&func=delete&id={$mod.id_head}&ce=0" onclick="return confirm('Do you want to delete?');"><i class="fa fa-trash fa-2x"></i></a>
+            {/if}
         </td>
     </tr>
     {/foreach}
