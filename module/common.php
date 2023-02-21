@@ -397,6 +397,28 @@ class common {
         $url = $_SERVER['HTTP_REFERER'];
         $this->redirect( $url );
     }
+    function register_log($p, $c, $type) {
+        if ($type=="V") {
+            $flds = "date,id_head_debit,id_head_credit,total,ref1,memo,id_create,no";
+        }
+        if ($type=="H") {
+            $flds = "";
+        }
+        if ($type=="B") {
+            $flds = "";
+        }
+        $flds = explode(",", $flds);
+        foreach ($flds as $v) {
+            $pv[$v] = $p[$v];
+        }
+        $p = $pv;
+        $d = array_diff($p, $c);
+        $p = addslashes(json_encode($p));
+        $c = addslashes(json_encode($c));
+        $d = addslashes(implode(",", array_keys($d)));
+        $sql = "INSERT INTO {$this->prefix}log (date, type, `previous`, `current`, `change`) VALUES (NOW(), '$type', '$p', '$c', '$d') ";
+        $this->m->query( $sql );
+    }
 }
 function pr($data) {
     print "<pre>";

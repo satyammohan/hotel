@@ -22,12 +22,12 @@
         <thead><tr><th>#</th><th>Date</th><th>Previous</th><th>Now</th><th>Change</th></tr></thead>
         <tbody>
             {$s=1}
-            {foreach from=$mr item=mod}
+            {foreach from=$log item=mod}
             <tr>
                 <td>{$s}{$s=$s+1}</td>	
-                <td>{$mod.date|date_format:"%d-%m-%Y"}</td>
+                <td>{$mod.date|date_format:"%d-%m-%Y %H:%I:%S"}</td>
                 <td>{$mod.previous}</td>
-                <td>{$mod.now}</td>
+                <td>{$mod.current}</td>
                 <td>{$mod.change}</td>
             </tr>
             {/foreach}

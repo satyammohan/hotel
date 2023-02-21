@@ -62,12 +62,19 @@ class voucher extends common {
         $data[ 'id_create' ] = $_SESSION[ 'id_user' ];
         $data[ 'memo' ] = str_replace( "'", '', $data[ 'memo' ] );
         $data[ 'no' ] = $_REQUEST[ 'vno' ];
-        $this->m->query( $this->create_update( "{$this->prefix}voucher", $data, "id_voucher='{$_REQUEST['id']}'" ) );
+
+        $id = $_REQUEST['id'];
+        $prev = $this->m->fetch_assoc( "SELECT * FROM {$this->prefix}voucher WHERE id_voucher='$id'" );
+        $this->register_log($prev, $data, "V");
+
+        $this->m->query( $this->create_update( "{$this->prefix}voucher", $data, "id_voucher='$id'" ) );
         $this->redirect( 'index.php?module=voucher&func=listing' );
     }
 
     function delete() {
         $this->get_permission( 'voucher', 'DELETE' );
+        $prev = $this->m->fetch_assoc( "SELECT * FROM {$this->prefix}voucher WHERE id_voucher='$id'" );
+        $this->register_log($prev, array(), "V");
         $this->m->query( $this->create_delete( "{$this->prefix}voucher", "id_voucher='{$_REQUEST['id']}'" ) );
         $this->redirect( 'index.php?module=voucher&func=listing' );
     }
