@@ -413,9 +413,10 @@ class common {
         }
         $p = $pv;
         $d = array_diff($p, $c);
+        $d = addslashes(implode(",", array_keys($d)));
+
         $p = addslashes(json_encode($p));
         $c = addslashes(json_encode($c));
-        $d = addslashes(implode(",", array_keys($d)));
         $sql = "INSERT INTO {$this->prefix}log (date, type, `previous`, `current`, `change`) VALUES (NOW(), '$type', '$p', '$c', '$d') ";
         $this->m->query( $sql );
     }
