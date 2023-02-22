@@ -19,16 +19,36 @@
     {$smarty.session.cname} {$smarty.session.fyear}<br>
     Voucher Log Report Period {$smarty.request.start_date|date_format:"%d-%m-%Y"} - {$smarty.request.end_date|date_format:"%d-%m-%Y"}<br />
     <table id='report' border="1">
-        <thead><tr><th>#</th><th>Date</th><th>Previous</th><th>Now</th><th>Change</th></tr></thead>
+        <thead><tr><th>#</th><th>Date</th><th>Original</th><th>Changed to</th></tr></thead>
         <tbody>
             {$s=1}
             {foreach from=$log item=mod}
-            <tr>
+            {$mod.change = "dummy,`$mod.change`"}
+            {$chg=","|explode:$mod.change|array_flip}
+
+            <tr {if $mod.current=="[]"}style='background-color:#ffb3b3'{/if}>
                 <td>{$s}{$s=$s+1}</td>	
                 <td>{$mod.date|date_format:"%d-%m-%Y %H:%I:%S"}</td>
-                <td>{$mod.previous}</td>
-                <td>{$mod.current}</td>
-                <td>{$mod.change}</td>
+                <td>{$m=$mod.previous|json_decode:1}
+                    Date : {$m.date|date_format:"%d-%m-%Y"}<br>
+                    No : {$m.no}<br>
+                    Debit : {$head[$m.id_head_debit]}<br>
+                    Credit : {$head[$m.id_head_credit]}<br>
+                    Amount : {$m.total}<br>
+                    CHQ/DD/MR :	{$m.ref1}<br>
+                    Remark : {$m.memo}
+                </td>
+                <td>{if $mod.current!="[]"}
+                        {$m=$mod.current|json_decode:1}
+                        {if $chg.date}<b>{/if}Date : {$m.date|date_format:"%d-%m-%Y"}{if $chg.date}</td>b>{/if}<br>
+                        {if $chg.no}<b>{/if}No : {$m.no}{if $chg.no}</tr>b>{/if}<br>
+                        {if $chg.id_head_debit}<b>{/if}Debit : {$head[$m.id_head_debit]}{if $chg.id_head_debit}</b>{/if}<br>
+                        {if $chg.id_head_credit}<b>{/if}Credit : {$head[$m.id_head_credit]}{if $chg.id_head_credit}</tbody>b>{/if}<br>
+                        {if $chg.total}<b>{/if}Amount : {$m.total}{if $chg.total}</b>{/if}<br>
+                        {if $chg.ref1}<b>{/if}CHQ/DD/MR : {$m.ref1}{if $chg.ref1}</b>{/if}<br>
+                        {if $chg.memo}<b>{/if}Remark : {$m.memo}{if $chg.memo}</b>{/if}
+                    {/if}
+                </td>
             </tr>
             {/foreach}
         </tbody>

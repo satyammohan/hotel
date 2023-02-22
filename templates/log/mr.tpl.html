@@ -1,0 +1,48 @@
+<fieldset>
+    <legend><h3>Cancelled Money Receipts<hr></h3></legend>
+    <form method="post">
+        <table>
+            <tr>
+                <td>Start</td><td><input type="date" name="start_date" size="9" placeholder="dd-mm-yyyy" value='{$smarty.request.start_date}' /></td>
+                <td>End</td><td><input type="date" name="end_date" size="9"  placeholder="dd-mm-yyyy" value='{$smarty.request.end_date}' /></td>
+                <td><input type="submit" value="Go" />
+                    <input type="button" class="print" value="Print" />
+                    <input type="hidden" id="excelfile" value="mr_log" />
+                    <input type="button" class="excel" value="Download" title="Download as Excel" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</fieldset>
+<br />
+<div class="print_content">
+    {$smarty.session.cname} {$smarty.session.fyear}<br>
+    Cancelled Money Receipts Period {$smarty.request.start_date|date_format:"%d-%m-%Y"} - {$smarty.request.end_date|date_format:"%d-%m-%Y"}<br />
+    
+<table id="dataTable" class="table" width="100%">
+    <thead>    
+        <tr>
+            <th>#</th><th>Date</th><th>No.</th><th>Type</th><th>Room</th><th>Name</th>
+            <th>Type</th><th>Amount</th><th>Remarks</th><th width="120px">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {$s=1}
+        {foreach from=$mr item=mod}
+        <tr>
+            <td>{$s}{$s=$s+1}</td>
+            <td>{$mod.date|date_format:"%d-%m-%Y"}</td>
+            <td>{if $mod.mrtype=="B"}Banquet{else}Room{/if}</td>
+            <td>{$mod.no}</td>
+            <td>{$mod.roomnumber}</td>
+            <td>{$mod.name}<br>{$mod.email}<br>{$mod.phone}</td>
+            <td>{$ini.mr_type[$mod.type]}</td>
+            <td>{$mod.amount}</td>
+            <td>{$mod.remark}{if $mod.cancel_date}<font color='red'><br>{$mod.cancel_reason}{/if}</font></td>
+            <td><font color='red'>{$mod.cancel_date|date_format:"%d-%m-%Y %H:%I:%S"}</font></td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+
+</div>
