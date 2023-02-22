@@ -340,8 +340,10 @@ class reservation extends common {
             $data['cancel_date'] = date("Y-m-d");
             $data['cancel_reason'] = $_REQUEST['reason'];
             $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='$id'");
-            //$this->pr($sql);exit;
             $this->m->query($sql);
+
+            $prev = $this->m->fetch_assoc("SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id'");
+            $this->register_log($prev, $data, "B");
             $_SESSION['msg'] = "Booking Cancellation Successfully.";
         } else {
             $_SESSION['msg'] = "Booking not found for Cancellation.";

@@ -407,14 +407,17 @@ class common {
         if ($type=="B") {
             $flds = "";
         }
-        $flds = explode(",", $flds);
-        foreach ($flds as $v) {
-            $pv[$v] = $p[$v];
+        if ($flds) {
+            $flds = explode(",", $flds);
+            foreach ($flds as $v) {
+                $pv[$v] = $p[$v];
+            }
+            $p = $pv;
+            $d = array_diff($p, $c);
+            $d = addslashes(implode(",", array_keys($d)));
+        } else {
+            $d = addslashes(implode(",", array_keys($c)));
         }
-        $p = $pv;
-        $d = array_diff($p, $c);
-        $d = addslashes(implode(",", array_keys($d)));
-
         $p = addslashes(json_encode($p));
         $c = addslashes(json_encode($c));
         $sql = "INSERT INTO {$this->prefix}log (date, type, `previous`, `current`, `change`) VALUES (NOW(), '$type', '$p', '$c', '$d') ";

@@ -21,7 +21,7 @@ class log extends common {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
 
-        $sql = "SELECT * FROM {$this->prefix}log WHERE (date >= '$sdate' AND date <= '$edate') AND type='B' ORDER BY date, id_log";
+        $sql = "SELECT * FROM {$this->prefix}log WHERE (date(date) >= '$sdate' AND date(date) <= '$edate') AND type='B' ORDER BY date, id_log";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("log", $data);
     }

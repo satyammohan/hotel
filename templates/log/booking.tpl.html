@@ -19,16 +19,24 @@
     {$smarty.session.cname} {$smarty.session.fyear}<br>
     Booking Log Report Period {$smarty.request.start_date|date_format:"%d-%m-%Y"} - {$smarty.request.end_date|date_format:"%d-%m-%Y"}<br />
     <table id='report' border="1">
-        <thead><tr><th>#</th><th>Date</th><th>Previous</th><th>Now</th><th>Change</th></tr></thead>
+        <thead><tr><th>#</th><th>Date</th><th>Original</th><th>Changed to</th></tr></thead>
         <tbody>
             {$s=1}
             {foreach from=$log item=mod}
             <tr>
                 <td>{$s}{$s=$s+1}</td>	
                 <td>{$mod.date|date_format:"%d-%m-%Y %H:%I:%S"}</td>
-                <td>{$mod.previous}</td>
-                <td>{$mod.current}</td>
-                <td>{$mod.change}</td>
+                <td>{$m=$mod.previous|json_decode:1}
+                    No. : {$m.no}<br>
+                    Rooms : {$m.roomnumber}<br>
+                    Details : {$m.name}<br>{$m.mobile}<br>{$m.city}<br>
+                    Total : {$m.total}
+                </td>
+                {$m=$mod.current|json_decode:1}
+                <td {if $m.cancel_date!=""}style='background-color:#ffb3b3'{/if}>
+                    Cancel Date : {$m.cancel_date|date_format:"%d-%m-%Y %H:%I:%S"}<br>
+                    Reason : {$m.cancel_reason}<br>
+                </td>
             </tr>
             {/foreach}
         </tbody>
