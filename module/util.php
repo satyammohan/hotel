@@ -73,7 +73,14 @@ class util extends common {
         $dt = $res['value'];
         $curdate = date('Y-m-d');
         if ($dt < $curdate || $dt=="") {
-            $msg = $this->create_backup();
+            date_default_timezone_set('Asia/Kolkata');
+            $fname = str_replace(" ", "_", trim(trim($_SESSION['companyname']), "."));
+            $fname = str_replace("&", "_", $fname);
+            $sdate = substr($_SESSION['sdate'], 0, 4);
+            $edate = substr($_SESSION['edate'], 0, 4);
+            $file = 'backup/' . $fname . "_" . $sdate . "_" . $edate . "_" . date("d-m-Y_H_i_s") . '.sql';
+    
+            $msg = $this->create_autobackup($file);
             if ($dt=="") {
                 $sql = "INSERT INTO configuration (name, value) VALUES ('last_backup_date', '$curdate')";
             } else {
@@ -85,14 +92,59 @@ class util extends common {
         }
         return $msg;
     }
-    function create_backup() {
-        date_default_timezone_set('Asia/Kolkata');
-        $fname = str_replace(" ", "_", trim(trim($_SESSION['companyname']), "."));
-        $fname = str_replace("&", "_", $fname);
-        $sdate = substr($_SESSION['sdate'], 0, 4);
-        $edate = substr($_SESSION['edate'], 0, 4);
-        $file = 'backup/' . $fname . "_" . $sdate . "_" . $edate . "_" . date("d-m-Y_H_i_s") . '.sql';
+    function create_autobackup($file) {
+        $ini = parse_ini_file("config/db.ini");
+        $hostName = $ini['hostName'];
+        $userName = $ini['userName'];
+        $password = $ini['password'];
+        $dbName = $ini['dbName'];
+        
+        $conn = mysqli_connect($hostName, $userName, $password, $dbName) or die("Connection to the server failed");
 
+        $result = mysqli_query($conn, "SHOW TABLES");
+        $tables = array();
+
+        while ($row = mysqli_fetch_row($result)) {
+            $tables[] = $row[0];
+        }
+
+        # Get tables data 
+        $sqlScript = "";
+        foreach ($tables as $table) {
+            $query = "SHOW CREATE TABLE $table";
+            $result = mysqli_query($conn, $query);
+            $row = mysqli_fetch_row($result);
+            
+            $sqlScript .= "\n\n" . $row[1] . ";\n\n";
+            
+            
+            $query = "SELECT * FROM $table";
+            $result = mysqli_query($conn, $query);
+            
+            $columnCount = mysqli_num_fields($result);
+            
+            for ($i = 0; $i < $columnCount; $i ++) {
+                while ($row = mysqli_fetch_row($result)) {
+                    $sqlScript .= "INSERT INTO $table VALUES(";
+                    for ($j = 0; $j < $columnCount; $j ++) {
+                        $row[$j] = $row[$j];
+                        
+                        $sqlScript .= (isset($row[$j])) ? '"' . $row[$j] . '"' : '""';
+
+                        if ($j < ($columnCount - 1)) {
+                            $sqlScript .= ',';
+                        }
+                    }
+                    $sqlScript .= ");\n";
+                }
+            }
+            $sqlScript .= "\n"; 
+        }
+        $mysql_file = fopen($file, 'w+');
+        fwrite($mysql_file ,$sqlScript );
+        fclose($mysql_file );
+    }
+    function create_backup($file) {
         $ini = parse_ini_file("config/db.ini");
         $dbhost = $ini['hostName'];
         $dbuser = $ini['userName'];
