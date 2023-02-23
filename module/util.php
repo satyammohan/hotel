@@ -73,14 +73,7 @@ class util extends common {
         $dt = $res['value'];
         $curdate = date('Y-m-d');
         if ($dt < $curdate || $dt=="") {
-            date_default_timezone_set('Asia/Kolkata');
-            $fname = str_replace(" ", "_", trim(trim($_SESSION['companyname']), "."));
-            $fname = str_replace("&", "_", $fname);
-            $sdate = substr($_SESSION['sdate'], 0, 4);
-            $edate = substr($_SESSION['edate'], 0, 4);
-            $file = 'backup/' . $fname . "_" . $sdate . "_" . $edate . "_" . date("d-m-Y_H_i_s") . '.sql';
-    
-            $msg = $this->create_autobackup($file);
+            $msg = $this->create_autobackup();
             if ($dt=="") {
                 $sql = "INSERT INTO configuration (name, value) VALUES ('last_backup_date', '$curdate')";
             } else {
@@ -92,7 +85,8 @@ class util extends common {
         }
         return $msg;
     }
-    function create_autobackup($file) {
+    function create_autobackup() {
+        $file = $this->get_filename();
         $ini = parse_ini_file("config/db.ini");
         $hostName = $ini['hostName'];
         $userName = $ini['userName'];
@@ -144,7 +138,17 @@ class util extends common {
         fwrite($mysql_file ,$sqlScript );
         fclose($mysql_file );
     }
-    function create_backup($file) {
+    function get_filename() {
+        date_default_timezone_set('Asia/Kolkata');
+        $fname = str_replace(" ", "_", trim(trim($_SESSION['companyname']), "."));
+        $fname = str_replace("&", "_", $fname);
+        $sdate = substr($_SESSION['sdate'], 0, 4);
+        $edate = substr($_SESSION['edate'], 0, 4);
+        $file = 'backup/' . $fname . "_" . $sdate . "_" . $edate . "_" . date("d-m-Y_H_i_s") . '.sql';
+        return $file;
+    }
+    function create_backup() {
+        $file = $this->get_filename();
         $ini = parse_ini_file("config/db.ini");
         $dbhost = $ini['hostName'];
         $dbuser = $ini['userName'];
