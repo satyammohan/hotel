@@ -74,7 +74,7 @@
     <a class="accounts_balance" href="index.php?module=accounts&func=balance"><i class="fa fa-bar-chart-o"> Balance Sheet</i> </a>
   </div>
 
-  {if $smarty.session.config.AUTOBACKUP==1}
+  {if $smarty.session.is_approve==1}
     <button class="dropdown-btn log"><i class="fa fa-history"></i> Logs
       <i class="fa fa-caret-down"></i>
     </button>
