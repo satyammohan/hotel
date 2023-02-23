@@ -4,9 +4,8 @@ class log extends common {
         $this->checklogin();
         $this->table_prefix();
         parent:: __construct();
-        $this->checklog();
     }
-    function checklog() {
+    function create_log() {
         $sql = "SET sql_notes = 0;";
         $this->m->query($sql);
         //$sql = "DROP TABLE {$this->prefix}log;";
@@ -14,8 +13,21 @@ class log extends common {
         $sql = "CREATE TABLE IF NOT EXISTS {$this->prefix}log (id_log INT NOT NULL AUTO_INCREMENT, type VARCHAR(1), date DATETIME DEFAULT NULL, 
                 `previous` text DEFAULT NULL, `current` text DEFAULT NULL, `change` text DEFAULT NULL, PRIMARY KEY (id_log));";
         $this->m->query($sql);
+        $sql = "ALTER TABLE `user` ADD `is_approve` TINYINT(1) NULL DEFAULT '0' AFTER `email`";
+        $this->m->query($sql);
+        $sql = "ALTER TABLE {$this->prefix}head ADD `approve` TINYINT(1) NULL DEFAULT '0'";
+        $this->m->query($sql);
+        $sql = "ALTER TABLE {$this->prefix}voucher ADD `approve` TINYINT(1) NULL DEFAULT '0'";
+        $this->m->query($sql);
+        $sql = "ALTER TABLE {$this->prefix}reservation ADD `approve` TINYINT(1) NULL DEFAULT '0'";
+        $this->m->query($sql);
+        $sql = "ALTER TABLE {$this->prefix}mr ADD `approve` TINYINT(1) NULL DEFAULT '0'";
+        $this->m->query($sql);        
+
         $sql = "SET sql_notes = 1;";
         $this->m->query($sql);
+        $_SESSION['msg'] = "Logs Created.";
+        $this->redirect("index.php");
     }
     function booking() {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");

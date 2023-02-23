@@ -47,6 +47,8 @@
                         {if $chg.total}<b>{/if}Amount : {$m.total}{if $chg.total}</b>{/if}<br>
                         {if $chg.ref1}<b>{/if}CHQ/DD/MR : {$m.ref1}{if $chg.ref1}</b>{/if}<br>
                         {if $chg.memo}<b>{/if}Remark : {$m.memo}{if $chg.memo}</b>{/if}
+                    {else}
+                        Deleted
                     {/if}
                 </td>
             </tr>
