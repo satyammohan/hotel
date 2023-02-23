@@ -36,6 +36,7 @@ class log extends common {
         $sql = "SELECT * FROM {$this->prefix}log WHERE (date(date) >= '$sdate' AND date(date) <= '$edate') AND type='B' ORDER BY date, id_log";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("log", $data);
+        
     }
     function voucher() {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
