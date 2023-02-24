@@ -157,7 +157,7 @@ class info extends common {
             if (strpos($row[0], $newpf) === 0)
                 $tables[] = $row[0];
         }
-        $master = array("area", "batch", "bonus", "book", "category", "company", "discount", "employee", "form", "group", "head", "param", "product", "represent", "salary", "staff", "series", "taxmaster", "transport", "zone");
+        $master = array("agreement", "area", "book", "corporate", "group", "head", "partner", "rooms", "roomtype", "taxmaster");
         foreach ($tables as $v) {
             $m = explode("__", $v);
             $nv = $data['newprefix'] . "__" . $m[1];

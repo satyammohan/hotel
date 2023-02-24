@@ -38,17 +38,24 @@
                 <td>{$x.roomnumber}</td>
                 <td>{$x.daysstay}</td>
                 <td>{$x.roomcategory}</td>
-                <td align="right">{$x.rentday}</td>
-                <td align="right">{$x.discount}</td>
-                <td align="right">{$x.gstamt}</td>
+                {$json = $x.json|@json_decode:true}
+                {$rent=0}
+                {foreach item=j from=$json}
+                    {$rent=$rent+$j.price}
+                {/foreach}
+                <td align="right">{$rent|string_format:"%.2f"}</td>
+                <td align="right">{$x.discount|string_format:"%.2f"}</td>
+                <td align="right">{$x.gstamt|string_format:"%.2f"}</td>
                 <td align="right">{$x.total|string_format:"%.2f"}</td>
+                {$rentamt=$rentamt+$rent}
                 {$gstamt=$gstamt+$x.gstamt}
                 {$discount=$discount+$x.discount}
                 {$total=$total+$x.total}
             </tr>
         {/foreach}
         <tr>
-            <th colspan="9">Total :</th>
+            <th colspan="8">Total :</th>
+            <td align="right"><b>{$rentamt|string_format:"%.2f"}</b></td>
             <td align="right"><b>{$discount|string_format:"%.2f"}</b></td>
             <td align="right"><b>{$gstamt|string_format:"%.2f"}</b></td>
             <td align="right"><b>{$total|string_format:"%.2f"}</b></td>

@@ -107,7 +107,7 @@ class report extends common {
         $sql = "SELECT id_reservation, id_taxmaster, SUM(goodsvalue) AS goodsvalue, SUM(gstamount) AS gstamount, SUM(amount) AS total FROM {$this->prefix}other GROUP BY 1,2";
         $other = $this->m->sql_getall($sql, 1, "", "id_reservation", "id_taxmaster");
 
-        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') AND cancel_date IS NULL  ORDER BY depature_date, billno";
+        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') AND cancel_date IS NULL  ORDER BY date, billno";
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $stay = $v['daysstay'] ? $v['daysstay'] : 1;
@@ -232,10 +232,10 @@ class report extends common {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
         $sql = "SELECT r.roomnumber, r.name, r.mobile, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r 
-                    WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' AND  (date(r.date) >= '$sdate' AND date(r.date) <= '$edate')
+                    WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' AND  (date(m.date) >= '$sdate' AND date(m.date) <= '$edate')
                 UNION ALL
                 SELECT r.roomnumber, r.name, '' AS mobile, m.* FROM {$this->prefix}mr m, {$this->prefix}banquet r 
-                    WHERE m.id_reservation=r.id_banquet AND m.mrtype='B' AND  (date(r.date) >= '$sdate' AND date(r.date) <= '$edate')
+                    WHERE m.id_reservation=r.id_banquet AND m.mrtype='B' AND  (date(m.date) >= '$sdate' AND date(m.date) <= '$edate')
                 ORDER BY date ASC";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("mr", $data);

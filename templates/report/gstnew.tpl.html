@@ -23,16 +23,16 @@
     <table id='report' border="1">
         <thead>
         <tr>
-            <td colspan="13"></td><th>GST 0%</th><th colspan="3">GST 5%</th><th colspan="3">GST 12%</th><th colspan="3">GST 18%</th><th colspan="5">&nbsp;</th>
+            <td colspan="8"></td><th>GST 0%</th><th colspan="3">GST 5%</th><th colspan="3">GST 12%</th><th colspan="3">GST 18%</th><th colspan="3">&nbsp;</th>
         </tr>
         <tr>
-            <th>Sl</th><th>Type</th><th>Bill No</th><th>Bill Date</th><th>In Date</th><th>In Time</th><th>Out Time</th><th>Ref No</th><th>GRC</th><th>Name</th><th>GSTIN</th>
+            <th>Sl</th><th>Type</th><th>Bill No</th><th>Bill Date</th><th>Name</th><th>GSTIN</th>
             <th>Rent</th><th>Days Stay</th>
             <th>0% GST Taxable Value</th>
             <th>5% GST Taxable Value</th><th>SGST</th><th>CGST</th>
             <th>12% GST Taxable Value</th><th>SGST</th><th>CGST</th>
             <th>18% GST Taxable Value</th><th>SGST</th><th>CGST</th>
-            <th>Net Amount</th><th>Total GST Amount</th><th>Total</th><th>Discount</th><th>Add Date</th><th>Modify Date</th>
+            <th>Net Amount</th><th>Total GST Amount</th><th>Total</th><th>Discount</th>
         </tr>
         </thead>
         {$total=0}{$goods=0}{$gst=0}
@@ -45,11 +45,9 @@
             <tr>
                 <td>{$s}{$s=$s+1}</td>
                 <td>{$x.rtype}</td>
-                <td>{$x.billno}</td>
-                <td>{$x.depature_date|date_format:"%d-%m-%Y"}</td>
+                <td>{$x.no}</td>
                 <td>{$x.date|date_format:"%d-%m-%Y"}</td>
-<td>{$x.time}</td><td>{$x.depature_time}</td>
-                <td>{$x.no}</td><td>{$x.grcno}</td><td>{$x.name}</td><td>{$x.gstin}</td>
+                <td>{$x.name}</td><td>{$x.gstin}</td>
                 <td align="right">{$x.rent|string_format:"%.2f"}</td><td>{$x.daysstay}</td>
                 <td align="right">{$x.goodsamount_0|string_format:"%.2f"}</td>
                 <td align="right">{$x.goodsamount_5|string_format:"%.2f"}</td><td align="right">{$x.sgst_5|string_format:"%.2f"}</td><td align="right">{$x.cgst_5|string_format:"%.2f"}</td>
@@ -59,8 +57,6 @@
                 <td align="right">{($x.sgst_5+$x.sgst_12+$x.sgst_18+$x.cgst_5+$x.cgst_12+$x.cgst_18)|string_format:"%.2f"}</td>
                 <td align="right">{$x.total|string_format:"%.2f"}</td>
                 <td align="right">{$x.discount|string_format:"%.2f"}</td>
-                <td>{$x.create_date|date_format:"%d-%m"}</td>
-                <td>{$x.modify_date|date_format:"%d-%m"}</td>
 
                 {$goodsamount_0=$goodsamount_0+$x.goodsamount_0}
                 {$goodsamount_5=$goodsamount_5+$x.goodsamount_5}
@@ -80,7 +76,7 @@
             </tr>
         {/foreach}
 <tr>
-    <td colspan="13">Total :</td>
+    <td colspan="8">Total :</td>
     <td align="right">{$goodsamount_0|string_format:"%.2f"}</td>
     <td align="right">{$goodsamount_5|string_format:"%.2f"}</td><td align="right">{$sgst_5|string_format:"%.2f"}</td><td align="right">{$cgst_5|string_format:"%.2f"}</td>
     <td align="right">{$goodsamount_12|string_format:"%.2f"}</td><td align="right">{$sgst_12|string_format:"%.2f"}</td><td align="right">{$cgst_12|string_format:"%.2f"}</td>
@@ -89,8 +85,6 @@
     <td align="right">{$gst|string_format:"%.2f"}</td>
     <td align="right">{$total|string_format:"%.2f"}</td>
     <td align="right">{$discount|string_format:"%.2f"}</td>
-    <td>&nbsp;</td>
-    <td>&nbsp;</td>
 </tr>
 
     </table>

@@ -1,5 +1,5 @@
 <fieldset>
-    <legend><h3>Pay In/Out Reportt<hr></h3></legend>
+    <legend><h3>Pay In/Out Report<hr></h3></legend>
     <form method="post">
         <table>
             <tr>
@@ -22,34 +22,39 @@
     Pay In/Out Report Period {$smarty.request.start_date|date_format:"%d-%m-%Y"} - {$smarty.request.end_date|date_format:"%d-%m-%Y"}<br />
     <table id='report' border="1">
         <tr>
-            <th>Sl</th><th>Reference No.</th><th>Guest Name</th><th>Bill No.</th>
-            <th>Booking Date</th><th>Check out Date</th><th>Room Rent</th>
-            <th>gst on room</th>
-            <th>total bill amount</th>
-            <th>paid to go ibo</th>
-            <th>commission</th>
-            <th>gst charged by go ibo</th>
-            <th>tds by go ibo</th>
-            <th>amount to be received from go ibo</th>
+            <th>Sl</th><th>Bill No.</th><th>Date</th><th>Guest Name</th>
+            <th>Room Rent</th>
+            <th>Gst</th>
+            <th>Total Bill Amount</th>
         </tr>
-        {$total=0}{$comm=0}{$s=1}
+        {$total=0}{$rentamt=0}{$gstamt=0}{$s=1}
         {foreach item=x name=it from=$data}
             <tr>
                 <td>{$s}{$s=$s+1}</td>
                 <td>{$x.no}</td>
-                <td>{$x.name}</td>
                 <td>{$x.date|date_format:"%d-%m-%Y"}</td>
-                <td>{$x.depature_date|date_format:"%d-%m-%Y"}</td>
+                <td>{$x.name}</td>
+                
+                {$json = $x.json|@json_decode:true}
+                {$rent=0}
+                {foreach item=j from=$json}
+                    {$rent=$rent+$j.price}
+                {/foreach}
+                <td align="right">{$rent|string_format:"%.2f"}</td>
+                <td align="right">{$x.gstamt|string_format:"%.2f"}</td>
+
                 <td align="right">{$x.total|string_format:"%.2f"}</td>
-                <td align="right">{0|string_format:"%.2f"}</td>
+                {$rentamt=$rentamt+$rent}
+                {$gstamt=$gstamt+$x.gstamt}
                 {$total=$total+$x.total}
                 {$comm=$comm+0}
             </tr>
         {/foreach}
         <tr>
-            <th colspan="5">Total :</th>
+            <th colspan="4">Total :</th>
+            <td align="right"><b>{$rentamt|string_format:"%.2f"}</b></td>
+            <td align="right"><b>{$gstamt|string_format:"%.2f"}</b></td>
             <td align="right"><b>{$total|string_format:"%.2f"}</b></td>
-            <td align="right"><b>{$comm|string_format:"%.2f"}</b></td>
         </tr>
     </table>
 </div>
