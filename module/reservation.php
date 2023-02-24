@@ -286,7 +286,12 @@ class reservation extends common {
         $data['modify_date'] = date("Y-m-d");
         $room = $_REQUEST['room'];
         $data['json'] = json_encode($room);
-        $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='{$_REQUEST['id']}'");
+        
+        $id = $_REQUEST['id'];
+        $prev = $this->m->fetch_assoc( "SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id'" );
+        $this->register_log($prev, $data, "B");
+        
+        $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='$id'");
         $this->m->query($sql);
         $_SESSION['msg'] = "Guest Registration Updated Successfully.";
         $this->redirect("index.php?module=reservation&func=listing");

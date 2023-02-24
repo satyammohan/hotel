@@ -34,8 +34,15 @@
                 </td>
                 {$m=$mod.current|json_decode:1}
                 <td {if $m.cancel_date!=""}style='background-color:#ffb3b3'{/if}>
-                    Cancel Date : {$m.cancel_date|date_format:"%d-%m-%Y %H:%I:%S"}<br>
-                    Reason : {$m.cancel_reason}<br>
+                    {if $m.cancel_date!=""}
+                        Cancel Date : {$m.cancel_date|date_format:"%d-%m-%Y %H:%I:%S"}<br>
+                        Reason : {$m.cancel_reason}<br>
+                    {else}
+                        No. : {$m.no}<br>
+                        Rooms : {$m.roomnumber}<br>
+                        Details : {$m.name}<br>{$m.mobile}<br>{$m.city}<br>
+                        Total : {$m.total}
+                    {/if}
                 </td>
             </tr>
             {/foreach}

@@ -92,17 +92,13 @@ class util extends common {
         $userName = $ini['userName'];
         $password = $ini['password'];
         $dbName = $ini['dbName'];
-        
         $conn = mysqli_connect($hostName, $userName, $password, $dbName) or die("Connection to the server failed");
 
-        $result = mysqli_query($conn, "SHOW TABLES");
+        $result = mysqli_query($conn, "SHOW FULL TABLES WHERE Table_Type = 'BASE TABLE'");
         $tables = array();
-
         while ($row = mysqli_fetch_row($result)) {
             $tables[] = $row[0];
         }
-
-        # Get tables data 
         $sqlScript = "";
         foreach ($tables as $table) {
             $query = "SHOW CREATE TABLE $table";
@@ -136,7 +132,13 @@ class util extends common {
         }
         $mysql_file = fopen($file, 'w+');
         fwrite($mysql_file ,$sqlScript );
-        fclose($mysql_file );
+        fclose($mysql_file);
+
+        $zip = new ZipArchive();
+        $zip->open("$file.zip",  ZipArchive::CREATE);
+        $zip->addFile("{$file}");
+        $zip->close();
+        unlink("$file");
     }
     function get_filename() {
         date_default_timezone_set('Asia/Kolkata');
