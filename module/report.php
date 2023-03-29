@@ -69,7 +69,7 @@ class report extends common {
     function roomdet() {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE (date(est_depature_date) >= '$sdate' AND date(est_depature_date) <= '$edate') AND cancel_date IS NULL ORDER BY date";
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE (date(create_date) >= '$sdate' AND date(create_date) <= '$edate') AND cancel_date IS NULL ORDER BY date";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("data", $data);
     }
