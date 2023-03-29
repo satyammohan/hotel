@@ -6,18 +6,6 @@ class gst extends common {
         $this->checklogin();
         $this->table_prefix();
         parent:: __construct();
-        $sql = "SHOW COLUMNS FROM `{$this->prefix}creditnote` LIKE 'totalcess'";;
-        $found = $this->m->num_rows($this->m->query($sql)) == 0 ? 0 : 1;
-        if (!$found) {
-            $sql = "ALTER TABLE `{$this->prefix}creditnote` ADD totalcess DECIMAL( 16, 2 ) ";
-            $this->m->query($sql);
-            $sql = "ALTER TABLE `{$this->prefix}debitnote` ADD totalcess DECIMAL( 16, 2 ) ";
-            //$this->m->query($sql);
-            $sql = "ALTER TABLE `{$this->prefix}creditnotedetail` ADD cessamt DECIMAL( 16, 2 ) ";
-            $this->m->query($sql);
-            $sql = "ALTER TABLE `{$this->prefix}debitnotedetail` ADD cessamt DECIMAL( 16, 2 ) ";
-            //$this->m->query($sql);
-        }
     }
 
     function _default() {
