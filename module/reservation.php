@@ -156,9 +156,9 @@ class reservation extends common {
             $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
             $data['roomnumber'] = str_replace(";", ",", $data['roomnumber']);
             $data['roomnumber'] = str_replace(":", ",", $data['roomnumber']);
+            $rroom =  explode(',', $data['roomnumber']);
+            $this->sm->assign("reserve", array_flip($rroom));
         }
-        $rroom =  explode(',', $data['roomnumber']);
-        $this->sm->assign("reserve", array_flip($rroom));
 
         $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
                 WHERE (('{$date}' BETWEEN date AND depature_date) OR (date <= '{$date}' AND depature_date IS NULL)) AND !cancel_by";
@@ -167,9 +167,9 @@ class reservation extends common {
             $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
             $data['roomnumber'] = str_replace(";", ",", $data['roomnumber']);
             $data['roomnumber'] = str_replace(":", ",", $data['roomnumber']);
+            $aroom =  explode(',', $data['roomnumber']);
+            $this->sm->assign("data", array_flip($aroom));
         }
-        $aroom =  explode(',', $data['roomnumber']);
-        $this->sm->assign("data", array_flip($aroom));
     }
 
     function dashboard() {
