@@ -83,6 +83,7 @@ class report extends common {
         $mr = $this->m->sql_getall($sql, 2, "total", "id_reservation");
         $sql = "SELECT id_reservation, no, type, grcno, billno, date, name, roomnumber, daysstay, total, 0 AS foodtotal, 0 AS othertotal, 0 AS mrtotal
                 FROM {$this->prefix}reservation WHERE date <= '$sdate' AND cancel_by IS NULL ORDER BY date";
+        pr($sql);
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $id = $v['id_reservation'];
