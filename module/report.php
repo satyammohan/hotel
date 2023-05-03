@@ -240,6 +240,40 @@ class report extends common {
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("mr", $data);
     }
+    
+    function error_mr() {
+        $_REQUEST['start_date'] = $sdate = $_SESSION['sdate'];
+        $_REQUEST['end_date'] = $edate = $_SESSION['edate'];
+        $sql = "SELECT r.roomnumber, r.name, r.mobile, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r 
+                    WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' AND  (date(m.date) >= '$sdate' AND date(m.date) <= '$edate')
+                UNION ALL
+                SELECT r.roomnumber, r.name, '' AS mobile, m.* FROM {$this->prefix}mr m, {$this->prefix}banquet r 
+                    WHERE m.id_reservation=r.id_banquet AND m.mrtype='B' AND  (date(m.date) >= '$sdate' AND date(m.date) <= '$edate')
+                ORDER BY date ASC";
+        $data = $this->m->getall($this->m->query($sql));
+
+        $noorder = $sl = $missing = array();
+        $start = 1;
+        foreach ($data as $k => $v) {
+            $sl[$v['no']] = $v['date'];
+        }
+        $pno = 2;
+        foreach ($sl as $k => $v) {
+            if ($k!=$pno+1) {
+                $noorder[$k] = $v;
+            }
+            $pno = $k;
+        }
+
+        ksort($sl);
+        for ($i=1; $i<=count($sl); $i++) {
+            if (!isset($sl[$i])) {
+                $missing[] = $i;
+            }
+        }
+        $this->sm->assign("missing", $missing);
+        $this->sm->assign("noorder", $noorder);
+    }
 
     function mgm_roomdetail() {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
