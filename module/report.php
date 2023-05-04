@@ -284,5 +284,35 @@ class report extends common {
         $this->sm->assign("data", $data);
       
     }
+    function error_bill() {
+        $_REQUEST['start_date'] = $sdate = $_SESSION['sdate'];
+        $_REQUEST['end_date'] = $edate = $_SESSION['edate'];
+        $sql = "SELECT * FROM {$this->prefix}reservation
+                    WHERE (date(date) >= '$sdate' AND date(date) <= '$edate')
+                ORDER BY date ASC";
+        $data = $this->m->getall($this->m->query($sql));
+
+        $noorder = $sl = $missing = array();
+        $start = 1;
+        foreach ($data as $k => $v) {
+            $sl[$v['no']] = $v['date'];
+        }
+        $pno = 2;
+        foreach ($sl as $k => $v) {
+            if ($k!=$pno+1) {
+                $noorder[$k] = $v;
+            }
+            $pno = $k;
+        }
+
+        ksort($sl);
+        for ($i=1; $i<=count($sl); $i++) {
+            if (!isset($sl[$i])) {
+                $missing[] = $i;
+            }
+        }
+        $this->sm->assign("missing", $missing);
+        $this->sm->assign("noorder", $noorder);
+    }
 }
 ?>

@@ -32,7 +32,7 @@
                 <td>{$x.create_date|date_format:"%d-%m-%Y"}</td>
                 <td>{$x.no}</td>
                 <td>{$x.date|date_format:"%d-%m-%Y"}
-                    {if $x.cancel_date!="0000-00-00"}<br><span class="text-danger">Cancelled on {$x.cancel_date|date_format:"%d-%m-%Y"}</span></td>
+			{if $x.cancel_date!="0000-00-00"}<br><span class="text-danger">Cancelled on {$x.cancel_date|date_format:"%d-%m-%Y"}</span>{/if}</td>
                 <td>{$x.name}</td>
                 <td>{$x.roomnumber}</td>
                 <td>{$x.daysstay}</td>
