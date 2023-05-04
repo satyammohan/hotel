@@ -1,0 +1,43 @@
+<fieldset>
+    <legend><h3>Error/Missing Bill Details<hr></h3></legend>
+</fieldset>
+<br />
+<div class="print_content">
+    {$smarty.session.cname} {$smarty.session.fyear}<br>
+    Missing Bill
+    <table id='report' border="1">
+        <thead>
+            <tr>
+                <th>#</th><th>No.</th>
+            </tr>
+        </thead>
+        <tbody>
+            {$s=1}
+            {foreach from=$missing item=mod}
+            <tr>
+                <td>{$s}{$s=$s+1}</td>
+                <td>{$mod}</td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+    Error Bill
+    <table id='report' border="1">
+        <thead>
+            <tr>
+                <th>#</th><th>No.</th><th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {$s=1}
+            {foreach from=$noorder item=mod key=k}
+            <tr>
+                <td>{$s}{$s=$s+1}</td>
+                <td>{$k}</td>
+                <td>{$mod|date_format:"%d-%m-%Y"}</td>
+            </tr>
+            {/foreach}
+        </tbody>
+    </table>
+
+</div>
