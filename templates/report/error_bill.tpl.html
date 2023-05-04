@@ -6,11 +6,7 @@
     {$smarty.session.cname} {$smarty.session.fyear}<br>
     Missing Bill
     <table id='report' border="1">
-        <thead>    
-            <tr>
-                <th>#</th><th>No.</th>
-            </tr>
-        </thead>
+        <tr><th>#</th><th>No.</th></tr>
         <tbody>
             {$s=1}
             {foreach from=$missing item=mod}
@@ -23,7 +19,7 @@
     </table>
     Error Bill
     <table id='report' border="1">
-        <thead>    
+        <thead>
             <tr>
                 <th>#</th><th>No.</th><th>Date</th>
             </tr>
@@ -39,5 +35,4 @@
             {/foreach}
         </tbody>
     </table>
-
 </div>
