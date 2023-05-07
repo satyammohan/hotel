@@ -5,7 +5,7 @@
 <div class="print_content">
     {$smarty.session.cname} {$smarty.session.fyear}<br>
     Missing Money Receipt
-    <table id='report' border="1">
+    <table border="1">
         <tr><th>#</th><th>No.</th></tr>
         {$s=1}
         {foreach from=$missing item=mod}
@@ -16,7 +16,7 @@
         {/foreach}
     </table>
     Error Money Receipt
-    <table id='report' border="1">
+    <table border="1">
         <tr><th>#</th><th>No.</th><th>Date</th></tr>
         {$s=1}
         {foreach from=$noorder item=mod key=k}
