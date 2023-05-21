@@ -317,7 +317,7 @@ class report extends common {
     function advcustomer() {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
         $sql = "SELECT r.roomnumber, r.name, r.mobile, r.date AS rdate, r.total, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r 
-                    WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' AND date(r.date) > '$sdate' AND r.cancel_date IS NULL AND m.cancel_date IS NULL
+                    WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' AND date(m.date) <= '$sdate' AND date(r.date) > '$sdate' AND r.cancel_date IS NULL AND m.cancel_date IS NULL
                 ORDER BY m.date ASC";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("mr", $data);
