@@ -234,7 +234,7 @@ class report extends common {
         $sql = "SELECT r.roomnumber, r.name, r.mobile, r.cancel_date AS rcancel_date, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r 
                     WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' AND  (date(m.date) >= '$sdate' AND date(m.date) <= '$edate')
                 UNION ALL
-                SELECT r.roomnumber, r.name, '' AS mobile, m.* FROM {$this->prefix}mr m, {$this->prefix}banquet r 
+                SELECT r.roomnumber, r.name, '' AS mobile, r.cancel_date AS rcancel_date, m.* FROM {$this->prefix}mr m, {$this->prefix}banquet r 
                     WHERE m.id_reservation=r.id_banquet AND m.mrtype='B' AND  (date(m.date) >= '$sdate' AND date(m.date) <= '$edate')
                 ORDER BY date ASC";
         $data = $this->m->getall($this->m->query($sql));
