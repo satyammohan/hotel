@@ -45,7 +45,7 @@
                 <td>{$mod.remark}</td>
                 <td>{if $mod.cancel_date}{$mod.cancel_reason}{/if}<br>
                     ---{$mod.rcancel_date|date_format:"%d-%m-%Y"}---
-                    {if $mod.rcancel_date}Booking Cancelled{/if}
+                    {if $mod.rcancel_date!=''}Booking Cancelled{/if}
                 </td>
             </tr>
             {/foreach}
