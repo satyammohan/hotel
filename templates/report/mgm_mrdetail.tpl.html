@@ -43,7 +43,9 @@
                 <td>{$mod.paidto}</td>
                 <td>{$mod.amount}</td>
                 <td>{$mod.remark}</td>
-                <td>{if $mod.cancel_date}{$mod.cancel_reason}{/if}</td>
+                <td>{if $mod.cancel_date}{$mod.cancel_reason}{/if}<br>
+                    {if $mod.rcancel_date}Booking Cancelled{/if}
+                </td>
             </tr>
             {/foreach}
         </tbody>
