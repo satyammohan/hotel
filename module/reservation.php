@@ -410,6 +410,7 @@ class reservation extends common {
             pr("price:".$value->price);
             pr("discount:".$value->discount);
             pr("days:".$data['daysstay']);
+            $value->discount = $value->discount ? $value->discount : 0;
             @$t[$gst]['withtax'] += ($value->price - $value->discount) * @$data['daysstay'];
             $pr = round((($value->price - $value->discount)*$data['daysstay']));
             $p = round((($value->price - $value->discount)*$data['daysstay']) * $value->tax_per / 100,2);
