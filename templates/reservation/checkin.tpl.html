@@ -4,12 +4,11 @@
 <form method="post" enctype="multipart/form-data" onsubmit="return formvalidation();" action="index.php?module=reservation&func={if $data.id_reservation}checkinupdate{else}checkinupdateinsert{/if}">
     <table>
         <tr>
-            <td><b>Ref No: *</b><br><b>GRC No:</b></td>
+            <td><b>Ref No:</b></td>
             {if $data.id_reservation}
                 <td>{$data.no}</td>
             {else}
-                <td><input type="text" name="t[no]" id="no" readonly="readonly" required onblur="checkno();" value="{$data.no}"/>
-                    <div id="nomsg"></div>
+                <td>
                     <input type="text" id="grcno" name="t[grcno]" required value="{$data.grcno}"/>
                 </td>
             {/if}

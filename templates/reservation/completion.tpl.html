@@ -1,0 +1,25 @@
+<h3>Mark Completion of Function</h3>
+<br>
+<table id="dataTable" class="table" width="100%">
+    <thead>    
+        <tr>
+            <th>#</th><th>Function Date</th><th>Booking Date</th><th>Room</th><th>Name</th><th>Total</th><th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {$s=1}
+        {foreach from=$noncomplete item=mod}
+        <tr>
+            <td>{$s}{$s=$s+1}</td>			
+            <td>{$mod.date|date_format:"%d-%m-%y"}</td>
+            <td>{$mod.est_depature_date|date_format:"%d-%m-%y"}</td>
+            <td>{$mod.roomnumber}</td>
+            <td>{$mod.name}<br>{$mod.mobile}<br>{$mod.city}</td>
+            <td>{$mod.total}</td>
+            <td>
+                <a class="btn btn-success" onclick="return confirm('Do you want to Complete this Booking?');" href="index.php?module=reservation&func=completion_save&id={$mod.id_reservation}" title="Mark Complete">Mark Complete</a>
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>

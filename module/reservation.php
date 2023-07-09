@@ -515,5 +515,42 @@ class reservation extends common {
         echo json_encode($data);
         exit;
     }
+    function completion() {
+        $sql = "SHOW COLUMNS FROM {$this->prefix}reservation LIKE 'completion'";
+        $uid = $this->m->num_rows( $this->m->query( $sql ) ) == 0 ? 0 : 1;
+        if ( $uid != 1 ) {
+            $sql = "ALTER TABLE {$this->prefix}reservation ADD `completion` TINYINT NULL DEFAULT '0';";
+            $this->m->query($sql);
+            $sql = "UPDATE {$this->prefix}reservation SET completion='1' WHERE date<'2023-04-01'";
+            $this->m->query($sql);
+        }
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE completion=0 AND cancel_date IS NULL ORDER BY date, id_reservation";
+        $data = $this->m->getall($this->m->query($sql));
+        $this->sm->assign("noncomplete", $data);
+    }    
+    function completion_save() {
+        $id = $_REQUEST['id'];
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id' LIMIT 1";
+        $data = $this->m->getall($this->m->query($sql));
+        $date = $data[0]['date'];
+        $lastno = $this->getlastno($date, $id);
+        if (!$lastno) {
+            $lastno = "YG001/23-24";
+        } else {
+            $lastno = str_replace("YG","", $lastno);
+            $lastno = str_replace("/23-24","", $lastno);
+            $lastno = $lastno*1 + 1;
+            $lastno = "YG".sprintf('%03d', $lastno)."/23-24";
+        }
+        $sql = "UPDATE {$this->prefix}reservation SET no='$lastno', completion=1 WHERE id_reservation='$id'";
+        $this->m->query($sql);
+        $_SESSION['msg'] = "Bill No. $lastno updated for completed Booking.";
+        $this->redirect("index.php?module=reservation&func=completion");
+    }
+    function getlastno() {
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE no LIKE 'YG%' ORDER BY no DESC LIMIT 1";
+        $data = $this->m->getall($this->m->query($sql));
+        return @$data[0]['no'];
+    }
 }
 ?>
