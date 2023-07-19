@@ -334,10 +334,15 @@ class reservation extends common {
     }
     function cancel() {
         if (isset($_REQUEST['id'])) {
+            $id = $_REQUEST['id'];
             if (!isset($_REQUEST['save'])) {
+                $sql = "SELECT r.*, SUM(m.amount) AS amount_paid FROM {$this->prefix}reservation r LEFT JOIN {$this->prefix}mr m
+                        ON r.id_reservation=m.id_reservation
+                         WHERE r.id_reservation='$id'";
+                $data = $this->m->getall($this->m->query($sql));
+                $this->sm->assign("rooms", $data);
                 return;
             }
-            $id = $_REQUEST['id'];
             $sql = "SELECT roomnumber FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
             $roomnumbers = $this->m->fetch_assoc($sql);
             $room = explode(',', $roomnumbers['roomnumber']);
@@ -348,6 +353,7 @@ class reservation extends common {
             $data['cancel_by'] = $_SESSION['id_user'];
             $data['cancel_date'] = date("Y-m-d");
             $data['cancel_reason'] = $_REQUEST['reason'];
+            $data['refund_amount'] = $_REQUEST['refund_amount'];
             $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='$id'");
             $this->m->query($sql);
 

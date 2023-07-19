@@ -47,7 +47,7 @@
                 {if $mod.approve!=1}
                 <a class="btn btn-primary" href="index.php?module=reservation&func=checkin&id={$mod.id_reservation}" title="Edit Reservation"><i class="fa fa-edit"></i></a>
                 <a class="btn btn-primary" href="index.php?module=reservation&func=addmr&id={$mod.id_reservation}" title="Add Money Receipt"><i class="fa fa-id-card"></i></a>
-                <a class="btn btn-danger" href="#" onclick="cancelthis('Do you want to Cancel this Booking?', 'index.php?module=reservation&func=cancel', '{$mod.id_reservation}')" title="Cancel Booking"><i class="fa fa-times"></i></a>
+                <a class="btn btn-danger" onclick="return confirm('Do you want to Cancel this Booking?')" href='index.php?module=reservation&func=cancel&id={$mod.id_reservation}' title="Cancel Booking"><i class="fa fa-times"></i></a>
                 {/if}
                 <!-- <a class="btn btn-primary" href="index.php?module=reservation&func=addfood&id={$mod.id_reservation}" title="Add Food Bill"><i class="fa fa-cutlery"></i></a>
                 <br>

@@ -4,6 +4,15 @@
     <input type="hidden" name="save" value="1">
     <table>
         <tr>
+            <td>You are cancelling Booking of :</td><td><b>{$rooms.0.name}</b> Dated : <b>{$rooms.0.date|date_format:'%Y-%m-%d'}</b></td>
+        </tr>
+        <tr>
+            <td>Total Amount Paid :</td><td><b>{$rooms.0.amount_paid}</b></td>
+        </tr>
+        <tr>
+            <td>Refund Amount :</td><td><input type="text" required name="refund_amount"></td>
+        </tr>
+        <tr>
             <td>Reason :</td><td><textarea name="reason" required rows="6" cols="60"></textarea></td>
         </tr>
         <tr>
