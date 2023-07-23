@@ -4,10 +4,16 @@
     <input type="hidden" name="save" value="1">
     <table>
         <tr>
-            <td>You are cancelling Booking of :</td><td><b>{$rooms.0.name}</b> Dated : <b>{$rooms.0.date|date_format:'%Y-%m-%d'}</b></td>
+            <td colspan="2"><h4 class="text-danger">GST will be inclusive of 18% on the Refund amount.</h4></td>
+        </tr>
+        <tr>
+            <td>You are cancelling Booking of :</td><td><b>{$rooms.0.name}</b> Dated : <b>{$rooms.0.date|date_format:'%d-%m-%Y'}</b></td>
         </tr>
         <tr>
             <td>Total Amount Paid :</td><td><b>{$rooms.0.amount_paid}</b></td>
+        </tr>
+        <tr>
+            <td>Refund Date :</td><td><input type="date" required name="cancel_date"></td>
         </tr>
         <tr>
             <td>Refund Amount :</td><td><input type="text" required name="refund_amount"></td>

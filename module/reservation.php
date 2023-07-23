@@ -332,39 +332,6 @@ class reservation extends common {
         $_SESSION['msg'] = "Room Checkout Updated Successfully.";
         $this->redirect("index.php?module=reservation&func=checkout");
     }
-    function cancel() {
-        if (isset($_REQUEST['id'])) {
-            $id = $_REQUEST['id'];
-            if (!isset($_REQUEST['save'])) {
-                $sql = "SELECT r.*, SUM(m.amount) AS amount_paid FROM {$this->prefix}reservation r LEFT JOIN {$this->prefix}mr m
-                        ON r.id_reservation=m.id_reservation
-                         WHERE r.id_reservation='$id'";
-                $data = $this->m->getall($this->m->query($sql));
-                $this->sm->assign("rooms", $data);
-                return;
-            }
-            $sql = "SELECT roomnumber FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
-            $roomnumbers = $this->m->fetch_assoc($sql);
-            $room = explode(',', $roomnumbers['roomnumber']);
-            foreach ($room as $rname) {
-                $sql = "UPDATE {$this->prefix}rooms SET status=0 WHERE name='$rname'";
-                $this->m->query($sql);
-            }    
-            $data['cancel_by'] = $_SESSION['id_user'];
-            $data['cancel_date'] = date("Y-m-d");
-            $data['cancel_reason'] = $_REQUEST['reason'];
-            $data['refund_amount'] = $_REQUEST['refund_amount'];
-            $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='$id'");
-            $this->m->query($sql);
-
-            $prev = $this->m->fetch_assoc("SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id'");
-            $this->register_log($prev, $data, "B");
-            $_SESSION['msg'] = "Booking Cancellation Successfully.";
-        } else {
-            $_SESSION['msg'] = "Booking not found for Cancellation.";
-        }
-        $this->redirect("index.php?module=reservation&func=listing");
-    }
     function cancelmr() {
         if (isset($_REQUEST['id'])) {
             if (!isset($_REQUEST['save'])) {
@@ -521,6 +488,53 @@ class reservation extends common {
         echo json_encode($data);
         exit;
     }
+    
+    function cancel() {
+        if (isset($_REQUEST['id'])) {
+            $id = $_REQUEST['id'];
+            if (!isset($_REQUEST['save'])) {
+                $sql = "SELECT r.*, SUM(m.amount) AS amount_paid FROM {$this->prefix}reservation r LEFT JOIN {$this->prefix}mr m
+                        ON r.id_reservation=m.id_reservation
+                         WHERE r.id_reservation='$id'";
+                $data = $this->m->getall($this->m->query($sql));
+                $this->sm->assign("rooms", $data);
+                return;
+            }
+            $sql = "SELECT json, roomnumber FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
+            $roomnumbers = $this->m->fetch_assoc($sql);
+            $room = explode(',', $roomnumbers['roomnumber']);
+            $json = $roomnumbers['json'];
+            foreach ($room as $rname) {
+                $sql = "UPDATE {$this->prefix}rooms SET status=0 WHERE name='$rname'";
+                $this->m->query($sql);
+            }    
+            $data['date'] = $_REQUEST['cancel_date'];
+            $data['no'] = $this->getlastno($data['date'], $id);
+            $data['completion'] = 1;
+            $data['cancel_by'] = $_SESSION['id_user'];
+            $data['cancel_date'] = $_REQUEST['cancel_date'];
+            $data['cancel_reason'] = $_REQUEST['reason'];
+            $refund_amount = $_REQUEST['refund_amount'];
+            if ($refund_amount>0) {
+                $gstper = 18;
+                $data['total'] = $data['refund_amount'] = $refund_amount;
+                $data['gstamt'] = round($data['refund_amount']/(100+$gstper)*100,2);
+                $beforegst = $data['total'] - $data['gstamt'];
+                $data['bookingjson'] = $json;
+                $data['json'] = '[{"name":"1","tax_per":"'.$gstper.'","price":"'.$beforegst.'","discount":"0","gstamt":"'.$data['gstamt'].'","total":"'.$data['total'].'"}]';
+                //[{"name":"1","tax_per":"18","price":"28898.31","discount":"0","gstamt":"5201.70","total":"34100.01"}]
+            }
+            $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='$id'");
+            $this->m->query($sql);
+
+            $prev = $this->m->fetch_assoc("SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id'");
+            $this->register_log($prev, $data, "B");
+            $_SESSION['msg'] = "Booking Cancellation Successfully.";
+        } else {
+            $_SESSION['msg'] = "Booking not found for Cancellation.";
+        }
+        $this->redirect("index.php?module=reservation&func=listing");
+    }
     function completion() {
         $sql = "SHOW COLUMNS FROM {$this->prefix}reservation LIKE 'completion'";
         $uid = $this->m->num_rows( $this->m->query( $sql ) ) == 0 ? 0 : 1;
@@ -540,14 +554,6 @@ class reservation extends common {
         $data = $this->m->getall($this->m->query($sql));
         $date = $data[0]['date'];
         $lastno = $this->getlastno($date, $id);
-        if (!$lastno) {
-            $lastno = "YG001/23-24";
-        } else {
-            $lastno = str_replace("YG","", $lastno);
-            $lastno = str_replace("/23-24","", $lastno);
-            $lastno = $lastno*1 + 1;
-            $lastno = "YG".sprintf('%03d', $lastno)."/23-24";
-        }
         $sql = "UPDATE {$this->prefix}reservation SET no='$lastno', completion=1 WHERE id_reservation='$id'";
         $this->m->query($sql);
         $_SESSION['msg'] = "Bill No. $lastno updated for completed Booking.";
@@ -556,7 +562,16 @@ class reservation extends common {
     function getlastno() {
         $sql = "SELECT * FROM {$this->prefix}reservation WHERE no LIKE 'YG%' ORDER BY no DESC LIMIT 1";
         $data = $this->m->getall($this->m->query($sql));
-        return @$data[0]['no'];
+        $lastno = @$data[0]['no'];
+        if (!$lastno) {
+            $lastno = "YG001/23-24";
+        } else {
+            $lastno = str_replace("YG","", $lastno);
+            $lastno = str_replace("/23-24","", $lastno);
+            $lastno = $lastno*1 + 1;
+            $lastno = "YG".sprintf('%03d', $lastno)."/23-24";
+        }
+        return $lastno;
     }
 }
 ?>

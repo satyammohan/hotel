@@ -48,13 +48,11 @@
             {if $smarty.session.is_approve==1 && $my}
                 {if $mod.approve!=1}
                     <a title="Approve Voucher" href="index.php?module=voucher&func=approve&table=voucher&id={$mod.id_voucher}"><i class="fa fa-check fa-2x"></i></a>
+                    <a title="Edit Voucher" href="index.php?module=voucher&func=edit&id={$mod.id_voucher}"><i class="fa fa-edit fa-2x"></i></a>
+                    <a title="Delete Voucher" href="index.php?module=voucher&func=delete&id={$mod.id_voucher}&ce=1" onclick="return confirm('Do you want to delete?');"><i class="fa text-danger fa-trash fa-2x"></i></a>
                 {else}
                     <a title="Un-Approve Voucher" href="index.php?module=voucher&func=unapprove&table=voucher&id={$mod.id_voucher}"><i class="fa text-danger fa-close fa-2x"></i></a>
                 {/if}
-            {/if}
-            {if $mod.approve!=1}
-                <a title="Edit Voucher" href="index.php?module=voucher&func=edit&id={$mod.id_voucher}"><i class="fa fa-edit fa-2x"></i></a>
-                <a title="Delete Voucher" href="index.php?module=voucher&func=delete&id={$mod.id_voucher}&ce=1" onclick="return confirm('Do you want to delete?');"><i class="fa text-danger fa-trash fa-2x"></i></a>
             {/if}
             <a title="Print Voucher" target="new" href="index.php?module=voucher&func=printvou&id={$mod.id_voucher}&ce=0"><i class="fa fa-print fa-2x"></i></a>
         </td>

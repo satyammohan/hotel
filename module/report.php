@@ -107,7 +107,7 @@ class report extends common {
         $sql = "SELECT id_reservation, id_taxmaster, SUM(goodsvalue) AS goodsvalue, SUM(gstamount) AS gstamount, SUM(amount) AS total FROM {$this->prefix}other GROUP BY 1,2";
         $other = $this->m->sql_getall($sql, 1, "", "id_reservation", "id_taxmaster");
 
-        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') AND cancel_date IS NULL  ORDER BY date, billno";
+        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') AND (cancel_date IS NULL OR refund_amount!=0)  ORDER BY date, billno";
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $stay = $v['daysstay'] ? $v['daysstay'] : 1;
@@ -119,8 +119,6 @@ class report extends common {
                     $discount = $value->discount ? $value->discount : 0;
 		            $p = round((($value->price - $discount)*$stay) * $gst / 100,2);
                     @$data[$k]["goodsamount_".$gst] += (($value->price - $discount)*$stay) ;
-                    //@$data[$k]["sgst_".$gst] += ($value->gstamt*$stay/2);
-                    //@$data[$k]["cgst_".$gst] += ($value->gstamt*$stay/2);
                     @$data[$k]["sgst_".$gst] += ($p/2);
                     @$data[$k]["cgst_".$gst] += ($p/2);
                     $data[$k]['rent'] += $value->price*$stay;
