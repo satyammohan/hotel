@@ -518,8 +518,8 @@ class reservation extends common {
             if ($refund_amount>0) {
                 $gstper = 18;
                 $data['total'] = $data['refund_amount'] = $refund_amount;
-                $data['gstamt'] = round($data['refund_amount']/(100+$gstper)*100,2);
-                $beforegst = $data['total'] - $data['gstamt'];
+                $beforegst = round($refund_amount/(100+$gstper)*100,2);
+                $data['gstamt'] = $data['total'] - $beforegst;
                 $data['bookingjson'] = $json;
                 $data['json'] = '[{"name":"1","tax_per":"'.$gstper.'","price":"'.$beforegst.'","discount":"0","gstamt":"'.$data['gstamt'].'","total":"'.$data['total'].'"}]';
                 //[{"name":"1","tax_per":"18","price":"28898.31","discount":"0","gstamt":"5201.70","total":"34100.01"}]

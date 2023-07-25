@@ -40,12 +40,12 @@
                     {if $mod.approve!=1}
                         <a title="Approve MR" href="index.php?module=reservation&func=approve&table=reservation&id={$mod.id_reservation}"><i class="fa fa-check fa-2x"></i></a>
                         <a class="btn btn-primary" href="index.php?module=reservation&func=checkin&id={$mod.id_reservation}" title="Edit Reservation"><i class="fa fa-edit"></i></a>
-                        <a class="btn btn-danger" onclick="return confirm('Do you want to Cancel this Booking?')" href='index.php?module=reservation&func=cancel&id={$mod.id_reservation}' title="Cancel Booking"><i class="fa fa-times"></i></a>
                     {else}
                         <a title="Un-Approve MR" href="index.php?module=reservation&func=unapprove&table=reservation&id={$mod.id_reservation}"><i class="fa text-danger fa-close fa-2x"></i></a>
                     {/if}
                 {/if}
                 <a class="btn btn-success" href="index.php?module=reservation&func=printroom&id={$mod.id_reservation}" title="Print"><i class="fa fa-print"></i></a>
+                <a class="btn btn-danger" onclick="return confirm('Do you want to Cancel this Booking?')" href='index.php?module=reservation&func=cancel&id={$mod.id_reservation}' title="Cancel Booking"><i class="fa fa-times"></i></a>
                 {if $mod.approve!=1}
                     <a class="btn btn-primary" href="index.php?module=reservation&func=addmr&id={$mod.id_reservation}" title="Add Money Receipt"><i class="fa fa-id-card"></i></a>
                 {/if}

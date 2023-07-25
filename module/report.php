@@ -22,7 +22,7 @@ class report extends common {
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
         $sql = "SELECT r.*, SUM(m.amount) AS recv, GROUP_CONCAT(m.no) AS mrs FROM {$this->prefix}reservation r 
                     LEFT JOIN {$this->prefix}mr m ON r.id_reservation=m.id_reservation AND m.cancel_date IS NULL
-                WHERE (r.date >= '$sdate' AND r.date <= '$edate') AND r.cancel_date IS NULL GROUP BY r.id_reservation ORDER BY r.date";
+                WHERE (r.date >= '$sdate' AND r.date <= '$edate') AND (r.cancel_date IS NULL OR r.refund_amount!=0) GROUP BY r.id_reservation ORDER BY r.date";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("data", $data);
     }
@@ -69,7 +69,7 @@ class report extends common {
     function roomdet() {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE (date(create_date) >= '$sdate' AND date(create_date) <= '$edate') AND cancel_date IS NULL ORDER BY date";
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE (date(create_date) >= '$sdate' AND date(create_date) <= '$edate') AND (cancel_date IS NULL OR refund_amount!=0) ORDER BY date";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("data", $data);
     }
@@ -107,13 +107,14 @@ class report extends common {
         $sql = "SELECT id_reservation, id_taxmaster, SUM(goodsvalue) AS goodsvalue, SUM(gstamount) AS gstamount, SUM(amount) AS total FROM {$this->prefix}other GROUP BY 1,2";
         $other = $this->m->sql_getall($sql, 1, "", "id_reservation", "id_taxmaster");
 
-        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') AND (cancel_date IS NULL OR refund_amount!=0)  ORDER BY date, billno";
+        $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') 
+                AND (cancel_date IS NULL OR refund_amount!=0)  ORDER BY date, billno";
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $stay = $v['daysstay'] ? $v['daysstay'] : 1;
             $data[$k]['discount'] = 0;
             if ($v['json']) {
-                $json = json_decode($v['json']) ;
+                $json = json_decode($v['json']);
                 foreach ($json as $value) {
                     $gst = intval($value->tax_per);
                     $discount = $value->discount ? $value->discount : 0;
