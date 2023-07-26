@@ -40,7 +40,8 @@ class accounts extends common {
           SELECT chead AS id_head, SUM(IF(date<'$startdate', 1, 0)*total) AS opening, 0.00 AS debit, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS credit, 
             SUM(IF(date<='$sdate', 1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$sdate' GROUP BY 1) l
           WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY h.name";
-        $res = $this->m->sql_getall( $sql );
+pr($sql);exit;
+$res = $this->m->sql_getall( $sql );
         $this->sm->assign( 'data', $res );
     }
 

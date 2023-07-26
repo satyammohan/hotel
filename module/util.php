@@ -13,9 +13,9 @@ class util extends common {
         $sql = "CREATE view `{$this->prefix}ledger` AS
                 SELECT 'V' AS type, id_voucher AS id, no AS refno, date, id_head_credit AS chead, id_head_debit AS dhead, total, memo FROM `{$this->prefix}voucher`
                 UNION ALL
-                SELECT 'V' AS type, id, no AS refno, date, 3 AS chead, 7 AS dhead, amount AS total, 'Money Receipt' AS memo FROM `{$this->prefix}mr` WHERE type=1 AND cancel_date IS NULL
+                SELECT 'V' AS type, id, no AS refno, date, 7 AS chead, 3 AS dhead, amount AS total, 'Money Receipt' AS memo FROM `{$this->prefix}mr` WHERE type=1 AND cancel_date IS NULL
                 UNION ALL
-                SELECT 'H' AS type, id_head AS id, '' AS refno, '' AS date, IF(otype='D' OR otype='0', 0, id_head) AS chead, IF(otype='D' OR otype='0', id_head, 0) AS dhead, opening_balance AS total, '' AS memo FROM {$this->prefix}head";
+                SELECT 'H' AS type, id_head AS id, '' AS refno, date('0000-00-00') AS date, IF(otype='D' OR otype='0', 0, id_head) AS chead, IF(otype='D' OR otype='0', id_head, 0) AS dhead, opening_balance AS total, '' AS memo FROM {$this->prefix}head";
         $this->m->query( $sql );
         $sql = "CREATE view `{$this->prefix}tb` AS 
                   SELECT dhead AS id_head, ROUND(SUM(total),2) AS debit, 0 AS credit  FROM `{$this->prefix}ledger` GROUP BY 1
