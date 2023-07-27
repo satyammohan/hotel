@@ -8,7 +8,7 @@
     </tr>
     {$debit=0} {$total=0} {$credit=0}
     {section name=x loop=$data}
-        {$total=$data[x].debit-$data[x].credit} 
+        {$total=$data[x].closing} 
         {if $total<>0}
           <tr>
             <td>{$data[x].gname}</td>
@@ -33,7 +33,7 @@
     </tr>
     {if $debit+$credit!=0}
     <tr>
-        <th colspan="3">Trial Balance Difference</th>
+        <th colspan="3">Balance Difference</th>
         <th align="right">{($debit+$credit)|string_format:"%.2f"}</th>
         <td>&nbsp;</td>
     </tr>

@@ -34,14 +34,13 @@ class accounts extends common {
         $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
         $sql = "SELECT g.name AS gname,h.id_head, h.name, h.address1, SUM(l.opening) AS opening, SUM(l.debit) AS debit, SUM(l.credit) AS credit, SUM(l.cbal) AS closing
           FROM `{$this->prefix}group` g, `{$this->prefix}head` h, (
-          SELECT dhead AS id_head, SUM(IF(date<'$startdate', -1, 0)*total) AS opening, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS debit, 
-            0.00 AS credit, SUM(IF(date<='$sdate', -1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$sdate' GROUP BY 1
+          SELECT dhead AS id_head, SUM(IF(date<'$sdate', -1, 0)*total) AS opening, SUM(IF(date>='$sdate' AND date<='$edate', 1, 0)*total) AS debit, 
+            0.00 AS credit, SUM(IF(date<='$edate', -1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$edate' GROUP BY 1
           UNION ALL 
-          SELECT chead AS id_head, SUM(IF(date<'$startdate', 1, 0)*total) AS opening, 0.00 AS debit, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS credit, 
-            SUM(IF(date<='$sdate', 1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$sdate' GROUP BY 1) l
+          SELECT chead AS id_head, SUM(IF(date<'$sdate', 1, 0)*total) AS opening, 0.00 AS debit, SUM(IF(date>='$sdate' AND date<='$edate', 1, 0)*total) AS credit, 
+            SUM(IF(date<='$edate', 1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$edate' GROUP BY 1) l
           WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY h.name";
-pr($sql);exit;
-$res = $this->m->sql_getall( $sql );
+        $res = $this->m->sql_getall( $sql );
         $this->sm->assign( 'data', $res );
     }
 
