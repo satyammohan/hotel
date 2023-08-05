@@ -72,8 +72,10 @@ class accounts extends common {
     function ledger() {
         $_REQUEST[ 'option' ] = isset( $_REQUEST[ 'option' ] ) ? $_REQUEST[ 'option' ] : '1';
         $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
-        $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
-        $this->fetchdata( @$_REQUEST[ 'id' ], $sdate, $edate );
+	$edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
+	if (@$_REQUEST['id']) {
+	        $this->fetchdata( @$_REQUEST[ 'id' ], $sdate, $edate );
+	}
         $this->sm->assign( 'page', 'accounts/ledger.tpl.html' );
     }
 
