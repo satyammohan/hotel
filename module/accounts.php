@@ -76,7 +76,7 @@ class accounts extends common {
 	if (@$_REQUEST['id']) {
 	        $this->fetchdata( @$_REQUEST[ 'id' ], $sdate, $edate );
 	}
-        $this->sm->assign( 'page', 'accounts/ledger.tpl.html' );
+	$this->sm->assign( 'page', 'accounts/ledger.tpl.html' );
     }
 
     function fetchdata( $id="", $sdate, $edate ) {
