@@ -145,9 +145,10 @@ class user extends common {
     }
 
     function updatepass() {
-        $sql = "update `user` SET pass='" . md5($this->data['npass']) . "' where id_user='" . $_SESSION["id_user"] . "'and pass='" . md5($this->data['pass']) . "';";
+        $sql = "update `user` SET pass='" . md5($this->data['npass']) . "' where id_user='" . $_SESSION["id_user"] . "'and pass='" . md5($this->data['oldpass']) . "';";
         $this->m->query($sql);
-        $this->sm->assign("page", "user/welcome.tpl.html");
+        $_SESSION[ 'msg' ] = 'Password Changed Successfully..';
+        $this->redirect( 'index.php' );
     }
 
     function destroy_session() {
@@ -221,6 +222,7 @@ class user extends common {
     }
 
     function listing() {
+
         if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] != 1) {
             $_SESSION['msg'] = "Your are not Authorised to set Permissions.";
             $this->redirect("index.php");
