@@ -8,6 +8,7 @@ class util extends common {
         parent:: __construct();
     }
     function checkindex() {
+        $this->m->query("ALTER TABLE {$this->prefix}reservation ADD COLUMN refund_amount decimal(16,2) DEFAULT 0;");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}ledger`");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}tb`");
         $sql = "CREATE view `{$this->prefix}ledger` AS
