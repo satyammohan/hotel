@@ -1,0 +1,17 @@
+<h2>Modules</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th><th>Name</th><th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {foreach from=$module item=v key=k}
+        <tr>
+            <td>{$v['id_module']}</td>
+            <td>{$v['name']}</td>
+            <td>{$v['description']}</td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>

@@ -1,0 +1,17 @@
+<h2>Permission</h2>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th><th>Name</th><th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        {foreach from=$permission item=v key=k}
+        <tr>
+            <td>{$v['id_permission']}</td>
+            <td>{$v['name']}</td>
+            <td>{$v['description']}</td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>

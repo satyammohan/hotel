@@ -4,7 +4,6 @@ class accounts extends common {
 
     function __construct() {
         $this->checklogin();
-        //        $this->get_permission( 'accounts', 'REPORT' );
         $this->table_prefix();
         parent:: __construct();
     }

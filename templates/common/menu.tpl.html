@@ -1,12 +1,11 @@
 <div class="sidenav col-2">
   <a class="home active" href="index.php"><i class="fa fa-home"></i> Home</a>
-  <button class="dropdown-btn roomtype rooms user message taxmaster agreement"><i class="fa fa-bar-chart-o"></i> Master
+  <button class="dropdown-btn roomtype rooms message taxmaster agreement"><i class="fa fa-bar-chart-o"></i> Master
     <i class="fa fa-caret-down"></i>
   </button>
   <div class="dropdown-container">
     <a class="roomtype" href="index.php?module=roomtype&func=listing"><i class="fa fa-bed"></i> Room Type</a>
     <a class="rooms" href="index.php?module=rooms&func=listing"><i class="fa fa-bed"></i> Room</a>
-    <a class="user" href="index.php?module=user&func=listing"><i class="fa fa-user"></i> User</a>
     <!---<a class="message" href="index.php?module=message&func=listing"><i class="fa fa-desktop"></i> News Letters</a>--->
     <a class="taxmaster" href="index.php?module=taxmaster&func=listing"><i class="fa fa-percent"></i> GST Tax</a>
     <a class="corporate" href="index.php?module=corporate&func=listing"><i class="fa fa-industry"></i> Corporate</a>
@@ -89,13 +88,17 @@
   {/if}
 
   
-  <button class="dropdown-btn util"><i class="fa fa-gear"></i> Util
+  <button class="dropdown-btn util user permission"><i class="fa fa-gear"></i> Util
     <i class="fa fa-caret-down"></i>
   </button>
   <div class="dropdown-container">
     <a class="util_listing" href="index.php?module=util&func=listing"><i class="fa fa-hdd-o"></i> Backup</a>
     {if $smarty.session.is_admin==1}
-    <a class="user_listing" href="index.php?module=user&func=listing"><i class="fa fa-hdd-o"></i> User Management</a>
+    <a class="user_listing" href="index.php?module=user&func=listing"><i class="fa fa-user"></i> User Management</a>
+    <a class="permission_config" href="index.php?module=permission&func=config"><i class="fa fa-hdd-o"></i> Configuration</a>
+    <a class="permission_module" href="index.php?module=permission&func=module"><i class="fa fa-hdd-o"></i> Modules</a>
+    <a class="permission_permission" href="index.php?module=permission&func=permission"><i class="fa fa-hdd-o"></i> Permission</a>
+    <a class="permission_listing" href="index.php?module=permission&func=listing"><i class="fa fa-hdd-o"></i> User Permission</a>
     <a class="util_checkindex" href="index.php?module=util&func=checkindex"><i class="fa fa-gear"></i> Check all</a>
     <a class="util_autoincrement" href="index.php?module=util&func=autoincrement"><i class="fa fa-gear"></i> Check Autoincrement</a>    
     <a class="info_listing" href="index.php?module=info&func=listing"><i class="fa fa-window-restore"></i> Manage Company/FY Year</a>
