@@ -56,7 +56,7 @@ class permission extends common {
         $sql = "SELECT a.*, mp.permission FROM (SELECT u.id_user, u.name AS username, m.id_module, m.name AS modulename, 
             p.id_permission, p.name AS permissionname FROM user u, module m, permission p WHERE u.is_admin!=1) AS a 
             LEFT JOIN module_map mp ON a.id_user=mp.id_user AND a.id_module=mp.id_module AND a.id_permission=mp.id_permission
-            ORDER BY a.username, a.modulename";
+            ORDER BY a.username, a.modulename, a.permissionname, mp.permission";
         $data = array();
         $rs = $this->m->query($sql);
         while ($row = $this->m->movenexta($rs)) {
@@ -67,6 +67,11 @@ class permission extends common {
             if (!isset($data[$uname][$module]))
                 $data[$uname][$module] = $row;
             $data[$uname][$module][$permissionname] = $permission;
+        }
+        foreach ($data as $user => $u) {
+            foreach ($u as $module => $m) {
+                $data[$user][$module][0] = $m[1] && $m[2] && $m[3] && $m[4];
+            }
         }
         $this->sm->assign("value", $data);
     }

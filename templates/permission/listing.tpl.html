@@ -37,7 +37,7 @@
                 {$module = {$v1['id_module']}}
                 <td>{$v1['username']}</td>
                 <td>{$k1}</td>
-                <td><input onclick="dosave('{$id_user}', '{$module}', '0', this)" type="checkbox"  ></td>
+                <td><input onclick="dosave('{$id_user}', '{$module}', '0', this)" type="checkbox" {if $v1[0]}checked='checked'{/if} ></td>
                 {foreach from=$permission item=cur key=k}
                     <td>
                     <input onclick="dosave('{$id_user}', '{$module}', '{$k}', this)" type="checkbox" {if $v1[$k]}checked='checked'{/if} >
