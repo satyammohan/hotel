@@ -23,7 +23,11 @@
     <table id='report' border="1">
         <thead>
         <tr>
-            <td colspan="8"></td><th>GST 0%</th><th colspan="3">GST 5%</th><th colspan="3">GST 12%</th><th colspan="3">GST 18%</th><th colspan="3">&nbsp;</th>
+            <td colspan="8"></td><th>GST 0%</th>
+            <th style="text-align: center;" colspan="3">GST 5%</th>
+            <th style="text-align: center;" colspan="3">GST 12%</th>
+            <th style="text-align: center;" colspan="3">GST 18%</th>
+            <th colspan="3">&nbsp;</th>
         </tr>
         <tr>
             <th>Sl</th><th>Type</th><th>Bill No</th><th>Bill Date</th><th>Name</th><th>GSTIN</th>
@@ -75,7 +79,7 @@
                 {$goods=$goods+$x.goodsamount_0+$x.goodsamount_5+$x.goodsamount_12+$x.goodsamount_18}
             </tr>
         {/foreach}
-<tr>
+<tr style="font-weight: bolder;">
     <td colspan="8">Total :</td>
     <td align="right">{$goodsamount_0|string_format:"%.2f"}</td>
     <td align="right">{$goodsamount_5|string_format:"%.2f"}</td><td align="right">{$sgst_5|string_format:"%.2f"}</td><td align="right">{$cgst_5|string_format:"%.2f"}</td>

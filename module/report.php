@@ -108,7 +108,7 @@ class report extends common {
         $other = $this->m->sql_getall($sql, 1, "", "id_reservation", "id_taxmaster");
 
         $sql = "SELECT *, 'Room' AS rtype FROM {$this->prefix}reservation WHERE (date >= '$sdate' AND date <= '$edate') 
-                AND completion=1 ORDER BY date, no";
+                AND completion=1 AND cancel_by=0 ORDER BY date, no";
         $data = $this->m->sql_getall($sql);
         foreach ($data as $k => $v) {
             $stay = $v['daysstay'] ? $v['daysstay'] : 1;
