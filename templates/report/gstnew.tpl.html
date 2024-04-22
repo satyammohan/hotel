@@ -27,7 +27,7 @@
             <th style="text-align: center;" colspan="3">GST 5%</th>
             <th style="text-align: center;" colspan="3">GST 12%</th>
             <th style="text-align: center;" colspan="3">GST 18%</th>
-            <th colspan="3">&nbsp;</th>
+            <th colspan="5">&nbsp;</th>
         </tr>
         <tr>
             <th>Sl</th><th>Type</th><th>Bill No</th><th>Bill Date</th><th>Name</th><th>GSTIN</th>
@@ -36,14 +36,14 @@
             <th>5% GST Taxable Value</th><th>SGST</th><th>CGST</th>
             <th>12% GST Taxable Value</th><th>SGST</th><th>CGST</th>
             <th>18% GST Taxable Value</th><th>SGST</th><th>CGST</th>
-            <th>Net Amount</th><th>Total GST Amount</th><th>Total</th><th>Discount</th>
+            <th>Net Amount</th><th>Total GST Amount</th><th>Total</th><th>Discount</th><th>Refund</th>
         </tr>
         </thead>
         {$total=0}{$goods=0}{$gst=0}
         {$goodsamount_0=0}{$discount=0}
         {$goodsamount_5=0}{$sgst_5=0}{$cgst_5=0}
         {$goodsamount_12=0}{$sgst_12=0}{$cgst_12=0}
-        {$goodsamount_18=0}{$sgst_18=0}{$cgst_18=0}
+        {$goodsamount_18=0}{$sgst_18=0}{$cgst_18=0}{$refund_amount=0}
         {$s=1}
         {foreach item=x name=it from=$data}
             <tr>
@@ -61,6 +61,7 @@
                 <td align="right">{($x.sgst_5+$x.sgst_12+$x.sgst_18+$x.cgst_5+$x.cgst_12+$x.cgst_18)|string_format:"%.2f"}</td>
                 <td align="right">{$x.total|string_format:"%.2f"}</td>
                 <td align="right">{$x.discount|string_format:"%.2f"}</td>
+                <td align="right">{$x.refund_amount|string_format:"%.2f"}</td>
 
                 {$goodsamount_0=$goodsamount_0+$x.goodsamount_0}
                 {$goodsamount_5=$goodsamount_5+$x.goodsamount_5}
@@ -75,21 +76,23 @@
 
                 {$total=$total+$x.total}
                 {$discount=$discount+$x.discount}
+                {$refund_amount=$refund_amount+$x.refund_amount}
                 {$gst=$gst+$x.sgst_5+$x.sgst_12+$x.sgst_18+$x.cgst_5+$x.cgst_12+$x.cgst_18}
                 {$goods=$goods+$x.goodsamount_0+$x.goodsamount_5+$x.goodsamount_12+$x.goodsamount_18}
             </tr>
         {/foreach}
-<tr style="font-weight: bolder;">
-    <td colspan="8">Total :</td>
-    <td align="right">{$goodsamount_0|string_format:"%.2f"}</td>
-    <td align="right">{$goodsamount_5|string_format:"%.2f"}</td><td align="right">{$sgst_5|string_format:"%.2f"}</td><td align="right">{$cgst_5|string_format:"%.2f"}</td>
-    <td align="right">{$goodsamount_12|string_format:"%.2f"}</td><td align="right">{$sgst_12|string_format:"%.2f"}</td><td align="right">{$cgst_12|string_format:"%.2f"}</td>
-    <td align="right">{$goodsamount_18|string_format:"%.2f"}</td><td align="right">{$sgst_18|string_format:"%.2f"}</td><td align="right">{$cgst_18|string_format:"%.2f"}</td>
-    <td align="right">{$goods|string_format:"%.2f"}</td>
-    <td align="right">{$gst|string_format:"%.2f"}</td>
-    <td align="right">{$total|string_format:"%.2f"}</td>
-    <td align="right">{$discount|string_format:"%.2f"}</td>
-</tr>
-
+        <tr style="font-weight: bolder;">
+            <td colspan="8">Total :</td>
+            <td align="right">{$goodsamount_0|string_format:"%.2f"}</td>
+            <td align="right">{$goodsamount_5|string_format:"%.2f"}</td><td align="right">{$sgst_5|string_format:"%.2f"}</td><td align="right">{$cgst_5|string_format:"%.2f"}</td>
+            <td align="right">{$goodsamount_12|string_format:"%.2f"}</td><td align="right">{$sgst_12|string_format:"%.2f"}</td><td align="right">{$cgst_12|string_format:"%.2f"}</td>
+            <td align="right">{$goodsamount_18|string_format:"%.2f"}</td><td align="right">{$sgst_18|string_format:"%.2f"}</td><td align="right">{$cgst_18|string_format:"%.2f"}</td>
+            <td align="right">{$goods|string_format:"%.2f"}</td>
+            <td align="right">{$gst|string_format:"%.2f"}</td>
+            <td align="right">{$total|string_format:"%.2f"}</td>
+            <td align="right">{$discount|string_format:"%.2f"}</td>
+            <td align="right">{$refund_amount|string_format:"%.2f"}</td>
+            
+        </tr>
     </table>
 </div>

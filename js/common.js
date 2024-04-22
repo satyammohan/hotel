@@ -89,3 +89,14 @@ function callauto(id, url, hid, headers = '') {
         }
     });
 }
+function toggle_sidemenu() {
+    if ($(".sidemenu").is(":visible")) {
+        $("#menuitem").removeClass("fa-toggle-on").addClass("fa-toggle-off");
+        $(".sidemenu").hide();
+        $(".div_sidemenu").removeClass("col-10").addClass("col-12");
+    } else {
+        $("#menuitem").removeClass("fa-toggle-off").addClass("fa-toggle-on");
+        $(".sidemenu").show();
+        $(".div_sidemenu").addClass("col-10").removeClass("col-12");
+    }
+}

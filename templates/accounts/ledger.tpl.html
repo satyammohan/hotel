@@ -38,12 +38,11 @@
 <br />
 <div class="print_content">
     {$smarty.session.cname}<br>
-    Ledger of <b>{$head1[0].name}&nbsp;{$head1[0].address1}&nbsp;{$head1[0].address2}&nbsp</b><br>
-    Period {$smarty.request.start_date|date_format:"%d/%m/%Y"} - {$smarty.request.end_date|date_format:"%d/%m/%Y"}
-    <br /><br />
     {if $data }
-    {include file="accounts/ledger{$smarty.request.option}.tpl.html"}
+        Ledger of <b>{$head1[0].name}&nbsp;{$head1[0].address1}&nbsp;{$head1[0].address2}&nbsp</b><br>
+        Period {$smarty.request.start_date|date_format:"%d/%m/%Y"} - {$smarty.request.end_date|date_format:"%d/%m/%Y"}<br><br>
+        {include file="accounts/ledger{$smarty.request.option}.tpl.html"}
     {else}
-    <b>No Record Found!</b>
+        <b>No Record Found!</b>
     {/if}
 </div>
