@@ -60,3 +60,11 @@ html, body {
   width: 200px;
   font-size: 10px;
 }
+@media print {
+  table, td, tr {
+      color: black;
+  }
+  .no-print, .no-print * {
+      display: none !important;
+  }
+}

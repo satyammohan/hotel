@@ -30,7 +30,7 @@ class accounts extends common {
         $_REQUEST[ 'option' ] = isset( $_REQUEST[ 'option' ] ) ? $_REQUEST[ 'option' ] : '1';
         $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
         $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
-        $_REQUEST[ 'id' ] = $cash = 3;
+        $_REQUEST[ 'id' ] = $cash = $_SESSION['config']['CASH'];
         $this->fetchdata( $cash, $sdate, $edate );
         $this->sm->assign( 'page', 'accounts/cashbook.tpl.html' );
     }
