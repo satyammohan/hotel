@@ -1,0 +1,25 @@
+<input type="button" class="print" value="Print" />
+<input type="hidden" id="excelfile" value="CashBalance" />
+<input type="button" class="excel" value="Download" title="Download as Excel" />
+<div class="print_content">
+    <h2>Daily Cash Balance Statement</h2>
+    <table border="1" id="report">
+        <thead>
+            <tr><th>Date</th><th>Opening</th><th>Debit</th><th>Credit</th><th>Balance</th><th class="no-print">Detail</th></tr>
+        </thead>
+        {$debit=0} {$total=0} {$credit=0}
+        {section name=x loop=$data}
+        <tr>
+            <td>{if $data[x].date}{$data[x].date|date_format:$smarty_date}{else}Opening Balance{/if}</td>
+            <td align="right">{abs($total)|string_format:"%.2f"} {if $total<0}CR{else}DB{/if}</td>
+            <td align="right">{$data[x].debit|string_format:"%.2f"}</td>
+            <td align="right">{$data[x].credit|string_format:"%.2f"}</td>
+            {$debit=$debit+$data[x].debit}
+            {$credit=$credit+$data[x].credit}
+            {$total=$total+$data[x].debit-$data[x].credit}
+            <td align="right">{abs($total)|string_format:"%.2f"} {if $total<0}CR{else}DB{/if}</td>
+            <td class="no-print" align="center"><a href="index.php?module=accounts&func=cashbalance_detail&date={$data[x].date}"><button>Detail</button></a></td>
+        </tr>
+        {/section}
+    </table>
+</div>

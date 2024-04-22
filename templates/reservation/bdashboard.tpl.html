@@ -59,12 +59,13 @@
         });
     }
     function showdetails(room, date) {
+        alert(date)
         $.post("index.php?module=reservation&func=showguest", { room: room, date: date }, function (resp) {
             if (resp == "null") {
                 json_data = "Some issue, while getting data from Server.";
             } else {
                 data = JSON.parse(resp);
-                json_data = "<table class='table table-bordered table-striped'>";
+                json_data = "<h2>Booking Detail</h2><table class='table table-bordered table-striped'>";
                 for (i in data) {
                     json_data = json_data + "<tr><th>" + i.toUpperCase() + "</th><td>" + data[i] + "</td></tr>";
                 }
@@ -125,7 +126,9 @@
                         curdate = day+"-"+(thismonth+1)+"-"+type;
                         dday = day < 10 ? "0"+day : day;
                         if (datedata[curdate]) {
-                            html += "<span class='occupy'>"+dday+"</span>";
+                            room = datedata[curdate];
+                            mydate = thisyear+"-"+(thismonth+1)+"-"+dday;
+                            html += "<span class='occupy' onclick='showdetails("+room+", \""+mydate+"\")'>"+dday+"</span>";
                         } else {
                             html += dday;
                         }

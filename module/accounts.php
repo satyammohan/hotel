@@ -11,30 +11,6 @@ class accounts extends common {
     function _default() {
         $this->sm->assign( 'page', 'common/comming.tpl.html' );
     }
-
-    function profit() {
-        $startdate = $_SESSION[ 'start_date' ];
-        $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
-        $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
-        // $sql = "SELECT g.name AS gname,h.id_head, h.name, h.address1, SUM(l.opening) AS opening, SUM(l.debit) AS debit, SUM(l.credit) AS credit, SUM(l.cbal) AS closing
-        //   FROM `{$this->prefix}group` g, `{$this->prefix}head` h, (
-        //   SELECT dhead AS id_head, SUM(IF(date<'$startdate', -1, 0)*total) AS opening, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS debit, 
-        //     0.00 AS credit, SUM(IF(date<='$sdate', -1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$sdate' GROUP BY 1
-        //   UNION ALL 
-        //   SELECT chead AS id_head, SUM(IF(date<'$startdate', 1, 0)*total) AS opening, 0.00 AS debit, SUM(IF(date>='$startdate' AND date<='$sdate', 1, 0)*total) AS credit, 
-        //     SUM(IF(date<='$sdate', 1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$sdate' GROUP BY 1) l
-        //   WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY h.name";
-        $sql = "SELECT g.name AS gname,h.id_head, h.name, h.address1, SUM(l.opening) AS opening, SUM(l.debit) AS debit, SUM(l.credit) AS credit, SUM(l.cbal) AS closing
-          FROM `{$this->prefix}group` g, `{$this->prefix}head` h, (
-          SELECT dhead AS id_head, SUM(IF(date<'$sdate', -1, 0)*total) AS opening, SUM(IF(date>='$sdate' AND date<='$edate', 1, 0)*total) AS debit, 
-            0.00 AS credit, SUM(IF(date<='$edate', -1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$edate' GROUP BY 1
-          UNION ALL 
-          SELECT chead AS id_head, SUM(IF(date<'$sdate', 1, 0)*total) AS opening, 0.00 AS debit, SUM(IF(date>='$sdate' AND date<='$edate', 1, 0)*total) AS credit, 
-            SUM(IF(date<='$edate', 1, 0)*total) AS cbal FROM `{$this->prefix}ledger` WHERE date<='$edate' GROUP BY 1) l
-          WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY h.name";
-        $res = $this->m->sql_getall( $sql );
-        $this->sm->assign( 'data', $res );
-    }
     function balance() {
         $startdate = $_SESSION[ 'start_date' ];
         $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
@@ -50,7 +26,6 @@ class accounts extends common {
         $res = $this->m->sql_getall( $sql );
         $this->sm->assign( 'data', $res );
     }
-
     function cashbook() {
         $_REQUEST[ 'option' ] = isset( $_REQUEST[ 'option' ] ) ? $_REQUEST[ 'option' ] : '1';
         $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
@@ -59,7 +34,6 @@ class accounts extends common {
         $this->fetchdata( $cash, $sdate, $edate );
         $this->sm->assign( 'page', 'accounts/cashbook.tpl.html' );
     }
-
     function gethead() {
         $search = isset( $_REQUEST[ 'search' ] ) ? $_REQUEST[ 'search' ] : '';
         $sql = "SELECT id_head AS value, concat(name,' ',address1, ' ', IF(debtor, '(DB)', ''), ' ', IF(creditor, '(CR)', '')) AS text FROM {$this->prefix}head WHERE name LIKE '%{$search}%' ORDER BY name LIMIT 100";
@@ -67,17 +41,15 @@ class accounts extends common {
         echo json_encode( $data );
         exit;
     }
-
     function ledger() {
         $_REQUEST[ 'option' ] = isset( $_REQUEST[ 'option' ] ) ? $_REQUEST[ 'option' ] : '1';
         $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
-	$edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
-	if (@$_REQUEST['id']) {
-	        $this->fetchdata( @$_REQUEST[ 'id' ], $sdate, $edate );
-	}
-	$this->sm->assign( 'page', 'accounts/ledger.tpl.html' );
+        $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
+        if (@$_REQUEST['id']) {
+          $this->fetchdata( @$_REQUEST[ 'id' ], $sdate, $edate );
+        }
+        $this->sm->assign( 'page', 'accounts/ledger.tpl.html' );
     }
-
     function fetchdata( $id="", $sdate, $edate ) {
         $sql = "SELECT id_head AS id, concat(name,' ',address1) AS name FROM {$this->prefix}head ORDER BY name";
         $this->sm->assign( 'head', $this->m->sql_getall( $sql, 2, 'name', 'id' ) );
@@ -105,7 +77,6 @@ class accounts extends common {
         $this->sm->assign( 'data', $res );
         return $res;
     }
-
     function gledger() {
         $sdate = $_REQUEST[ 'start_date' ] = isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'Y-m-d' );
         $edate = $_REQUEST[ 'end_date' ] = isset( $_REQUEST[ 'end_date' ] ) ? $_REQUEST[ 'end_date' ] : date( 'Y-m-d' );
@@ -138,7 +109,6 @@ class accounts extends common {
         $this->sm->assign( 'group', $this->m->sql_getall( "SELECT id_group AS id, name FROM {$this->prefix}group ORDER BY name", 2, 'name', 'id' ) );
         $this->sm->assign( 'data', $res );
     }
-
     function trial() {
         $_REQUEST[ 'option' ] = isset( $_REQUEST[ 'option' ] ) ? $_REQUEST[ 'option' ] : '2';
         $startdate = $_SESSION[ 'start_date' ];
@@ -169,7 +139,6 @@ class accounts extends common {
         $res = $this->m->sql_getall( $sql );
         $this->sm->assign( 'data', $res );
     }
-
     function repparty() {
         $startdate = $_SESSION[ 'start_date' ];
         $sdate = $this->format_date( isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'd/m/Y' ) );
@@ -226,5 +195,65 @@ class accounts extends common {
             $this->sm->assign( 'data', $all );
         }
     }
+    function profit() {
+      ini_set('display_errors', 'On');
+      $_REQUEST['end_date'] = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("d/m/Y");
+      $name = $this->prefix."CLOSING_STOCK";
+      if (isset($_REQUEST['CLOSING_STOCK'])) {
+          $value = $_REQUEST['CLOSING_STOCK'];
+          $sql = "SELECT * FROM `configuration` WHERE name='$name'";
+          $exists = $this->m->sql_getall($sql);
+          if ($exists) {
+              $sql = "UPDATE `configuration` SET `value`='$value'  WHERE name='$name'";
+          } else {
+              $sql = "INSERT INTO `configuration` (name, `value`) VALUES ('$name', '$value')";
+          }
+          $_SESSION['config'][$name] = $value;
+          $this->m->query($sql);
+      } else {
+          $_REQUEST['CLOSING_STOCK'] = $_SESSION['config'][$name];
+      }
+      $edate = $this->format_date($_REQUEST['end_date']);
+      $sql = "CREATE TEMPORARY TABLE temp_ledg SELECT id_head, SUM(total) AS cbal FROM 
+              (SELECT dhead AS id_head, SUM(total) AS total FROM `{$this->prefix}ledger` WHERE date<='$edate' GROUP BY 1 UNION ALL
+              SELECT chead AS id_head, SUM(-total) AS total FROM `{$this->prefix}ledger` WHERE date<='$edate' GROUP BY 1) l GROUP BY 1 HAVING cbal<>0 ";
+      $this->m->query($sql);
+      $sql = "SELECT g.id_group, g.name AS gname, h.id_head, h.name, h.address1, SUM(l.cbal) AS closing
+        FROM `{$this->prefix}group` g, `{$this->prefix}head` h, temp_ledg l
+        WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY g.id_group, h.name";
+      $data = $this->m->sql_getall($sql, 1, "", "gname", "id_head");
+      $id = $_SESSION['config']['SALE AC'];
+      if (!$id) {
+          echo ("Add in configuration 'SALE AC', 'PURCHASE AC', 'OPENING STOCK' (id from head)<br>");
+          echo ("'INCOME GROUP', 'EXPENSES GROUP' give the group names comma separated from group.");
+      }
+      $saleac = $_SESSION['config']['SALE AC'];
+      $data['sales'] = $data['REVENUE'][$saleac]['closing'];
+      $data['purchase'] = $data['REVENUE'][$_SESSION['config']['PURCHASE AC']]['closing'];
+      $data['opening_stock'] = $data['CURRENT ASSETS'][$_SESSION['config']['OPENING STOCK']]['closing'];
+      $this->sm->assign("income", explode(",",$_SESSION['config']['INCOME GROUP']));
+      $this->sm->assign("expense", explode(",",$_SESSION['config']['EXPENSES GROUP']));
+      $this->sm->assign("data", $data);
+  }
+  function cashbalance() {
+      $id = $_SESSION['config']['CASH'];
+      $sql = "CREATE TEMPORARY TABLE temp_cashbook SELECT date, SUM(debit) AS debit, SUM(credit) AS credit FROM 
+              (SELECT date, 0 AS debit, SUM(total) AS credit FROM `{$this->prefix}ledger` WHERE chead='$id' GROUP BY 1 UNION ALL
+              SELECT date, SUM(total) AS debit, 0 AS credit FROM `{$this->prefix}ledger` WHERE dhead='$id' GROUP BY 1) l GROUP BY 1";
+      $this->m->query($sql);
+      $sql = "SELECT * FROM temp_cashbook ORDER BY date";
+      $data = $this->m->sql_getall($sql);
+      $this->sm->assign("data", $data);
+  }
+  function cashbalance_detail() {
+      $id = $_SESSION['config']['CASH'];
+      $date = $_REQUEST['date'];
+      $sql = "SELECT id_head AS id, concat(name,' ',address1) AS name FROM {$this->prefix}head ORDER BY name";
+      $this->sm->assign("head", $this->m->sql_getall($sql, 2, "name", "id"));
+
+      $sql = "SELECT * FROM `{$this->prefix}ledger` WHERE (chead='$id' OR dhead='$id') AND date='$date'";
+      $data = $this->m->sql_getall($sql);
+      $this->sm->assign("data", $data);
+  }
 }
 ?>

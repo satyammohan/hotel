@@ -1,20 +1,22 @@
 <?php
 
 class util extends common {
-
     function __construct() {
         $this->checklogin();
         $this->table_prefix();
         parent:: __construct();
+        //ini_set('display_errors', 'On');
     }
-    function checkindex() {
-        $this->m->query("ALTER TABLE {$this->prefix}reservation ADD COLUMN refund_amount decimal(16,2) DEFAULT 0;");
+    function checkall() {
+        $sdate = $_SESSION['start_date'];
+        $edate = $_SESSION['end_date'];
+        $this->m->query("ALTER TABLE {$this->prefix}reservation ADD COLUMN IF NOT EXISTS refund_amount decimal(16,2) DEFAULT 0;");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}ledger`");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}tb`");
         $sql = "CREATE view `{$this->prefix}ledger` AS
-                SELECT 'V' AS type, id_voucher AS id, no AS refno, date, id_head_credit AS chead, id_head_debit AS dhead, total, memo FROM `{$this->prefix}voucher`
+                SELECT 'V' AS type, id_voucher AS id, no AS refno, date, id_head_credit AS chead, id_head_debit AS dhead, total, memo FROM `{$this->prefix}voucher` WHERE date BETWEEN '$sdate' AND '$edate'
                 UNION ALL
-                SELECT 'V' AS type, id, no AS refno, date, 7 AS chead, 3 AS dhead, amount AS total, 'Money Receipt' AS memo FROM `{$this->prefix}mr` WHERE type=1 AND cancel_date IS NULL
+                SELECT 'V' AS type, id, no AS refno, date, 7 AS chead, 3 AS dhead, amount AS total, 'Money Receipt' AS memo FROM `{$this->prefix}mr` WHERE type=1 AND cancel_date IS NULL AND (date BETWEEN '$sdate' AND '$edate')
                 UNION ALL
                 SELECT 'H' AS type, id_head AS id, '' AS refno, date('0000-00-00') AS date, IF(otype='D' OR otype='0', 0, id_head) AS chead, IF(otype='D' OR otype='0', id_head, 0) AS dhead, opening_balance AS total, '' AS memo FROM {$this->prefix}head";
         $this->m->query( $sql );
@@ -23,11 +25,8 @@ class util extends common {
                   UNION ALL 
                   SELECT chead AS id_head, 0 AS debit, ROUND(SUM(total),2) AS credit FROM `{$this->prefix}ledger` GROUP BY 1";
         $this->m->query( $sql );
-        $this->sm->assign( 'msg', '<b>Check All</b><br><br>Ledger View create/replace.<br>TB View create/replace.<br>' );
-        $this->sm->assign( 'page', 'util/check.tpl.html' );
-    }
-    function autoincrement() {
-        $msg = '<b>Autoincrement Checking</b><br><br>';
+        $msg = '<b>Check All</b><br><br>Ledger View re-created.<br>Trial Balance View re-created.<br><br>';
+        $msg .= '<b>Autoincrement Checking</b><br><br>';
         $prefix = $this->prefix;
         $exclude = array( $prefix . 'ledger', $prefix . 'product_ledger', $prefix . 'product_ledger_summary', $prefix . 'tb' );
         $sql = "SHOW TABLES LIKE '{$prefix}_%'";
@@ -219,5 +218,4 @@ class util extends common {
         }
     }
 }
-
 ?>

@@ -1,15 +1,32 @@
+<style>
+    .tab {
+      display: inline-block;
+      margin-left: 2em;
+    }
+    .level0 {
+      text-decoration: overline underline;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .level2 {
+      font-size: 14px;
+      font-weight: bold;
+    }
+</style>
 <fieldset>
     <legend>Profit & Loss Statement</legend>
     <form method="post">
         <table>
             <tr>
-                <td>Start Date :</td>
-                <td><input type="date" name="start_date" value='{$smarty.request.start_date}' /></td>
-                <td>End Date :</td>
-                <td><input type="date" name="end_date" value='{$smarty.request.end_date}' /></td>
+                <td>As on Date :</td>
+                <td><input type="text" name="end_date" size="8" class="dtpick" value='{$smarty.request.end_date}'/></td>
+                <td>Closing Stock :</td>
+                <td><input type="text" style="text-align: right;" name="CLOSING_STOCK" size="10" value='{$smarty.request.CLOSING_STOCK|string_format:"%.2f"}'/></td>
                 <td align="center">
-                    <input type="submit" value="Go" />&nbsp;
+                    <input type="submit" value="Go" />
                     <input type="button" class="print" value="Print" />
+                    <input type="hidden" id="excelfile" value="Profit&Loss" />
+                    <input type="button" class="excel" value="Download" title="Download as Excel" />
                 </td>
             </tr>
         </table>
@@ -17,12 +34,72 @@
 </fieldset>
 <br />
 <div class="print_content">
-    {$smarty.session.cname}<br>
-    Profit & Loss Statement Period {$smarty.request.start_date|date_format:"%d/%m/%Y"} - {$smarty.request.end_date|date_format:"%d/%m/%Y"}
+    {$smarty.session.cname} {$smarty.session.fyear}<br>
+    Profit & Loss Statement as on {$smarty.request.end_date}
     <br /><br />
-    {if $data}
-    {include file="accounts/profit1.tpl.html"}
-    {else}
-    <b>No Record Found!</b>
-    {/if}
+    <table border="0">
+        <tr><th class="level0" colspan="2">PARTICULARS</th><th class="level0" style="width: 150px;text-align: right;">AMOUNT</th></tr>
+        <tr><td class="level2" colspan="3">INCOME</td></tr>
+        <tr><td colspan="2">SALES</td><td align="right">{abs($data.sales)|string_format:"%.2f"}</td></tr>
+        <tr><td colspan="2">CLOSING STOCK</td><td align="right">{$smarty.request.CLOSING_STOCK|string_format:"%.2f"}</td></tr>
+        {$income_side = -$data.sales+$smarty.request.CLOSING_STOCK}
+        {$income_values=0}
+        {foreach item=v key=k from=$income}
+            {$income_array = $data[$v]}
+            {if $income_array}
+                <tr><td colspan="3">{$v}</td></tr>
+                {foreach item=v1 key=k1 from=$income_array}
+                    <tr>
+                        <td><span class="tab"></span>{$v1['name']}</td>
+                        <td align="right"><span class="tab"></span>{abs($v1['closing'])|string_format:"%.2f"}</td>
+                        <td>&nbsp;</td>
+                        {$income_values=$income_values-$v1['closing']}
+                        {$income_side=$income_side-$v1['closing']}
+                    </tr>
+                {/foreach}
+                <tr>
+                    <td colspan="2"></td><td align="right">{$income_values|string_format:"%.2f"}</td>
+                </tr>
+            {/if}
+        {/foreach}
+        <tr><td colspan="3">&nbsp;</td></tr>
+        <tr><td colspan="2" class="level2">T O T A L</td><td class="level2" align="right">{($income_side)|string_format:"%.2f"}</td></tr>
+    
+        <tr><td colspan="3">&nbsp;</td></tr>
+        <tr><td colspan="3">&nbsp;</td></tr>
+        <tr><td class="level2" colspan="3">EXPENDITURE</td></tr>
+        <tr><td colspan="2">PURCHASE</td><td align="right">{$data.purchase|string_format:"%.2f"}</td></tr>
+        <tr><td colspan="2">OPENING STOCK</td><td align="right">{$data.opening_stock|string_format:"%.2f"}</td></tr>
+        {$expense_side=$data.purchase+$data.opening_stock}
+        {$expense_values=0}
+        {foreach item=v key=k from=$expense}
+            {$expense_array = $data[$v]}
+            {if $expense_array}
+                <tr><td colspan="3">{$v}</td></tr>
+                {foreach item=v1 key=k1 from=$expense_array}
+                    <tr>
+                        <td><span class="tab"></span>{$v1['name']}</td>
+                        <td align="right"><span class="tab"></span>{abs($v1['closing'])|string_format:"%.2f"}</td>
+                        <td>&nbsp;</td>
+                        {$expense_values=$expense_values+$v1['closing']*1}
+                        {$expense_side=$expense_side+$v1['closing']}
+                    </tr>
+                {/foreach}
+                <tr>
+                    <td colspan="2"></td><td align="right">{$expense_values|string_format:"%.2f"}</td>
+                </tr>
+            {/if}
+        {/foreach}
+
+        <tr><td colspan="3">&nbsp;</td></tr>
+        <tr><td colspan="2" class="level2">T O T A L</td><td class="level2" align="right">{($expense_side)|string_format:"%.2f"}</td></tr>
+        <tr><td colspan="3">&nbsp;</td></tr>
+        <tr><td colspan="3">&nbsp;</td></tr>
+        {if $income_side-$expense_side<0}
+            <tr><td colspan="2" class="level0">NET LOSS BROUGHT DOWN</td><td class="level0" align="right">{($expense_side-$income_side)|string_format:"%.2f"}</td>
+        {else}
+            <tr><td colspan="2" class="level0">NET PROFIT BROUGHT DOWN</td><td class="level0" align="right">{($income_side-$expense_side)|string_format:"%.2f"}</td>
+        {/if}
+        </tr>
+    </table>
 </div>

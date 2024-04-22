@@ -151,7 +151,6 @@ class reservation extends common {
         $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
                 WHERE date='{$date}' AND (time='' OR time IS NULL) AND !cancel_by";
         $data = $this->m->fetch_assoc($sql);
-        $data = $this->m->fetch_assoc($sql);
         if ($data['roomnumber']) {
             $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
             $data['roomnumber'] = str_replace(";", ",", $data['roomnumber']);
@@ -474,8 +473,8 @@ class reservation extends common {
         ob_clean();
         $room = $_REQUEST['room'];
         $date = $_REQUEST['date'] ? $_REQUEST['date'] : date("Y-m-d");
-        $sql = "SELECT no, roomnumber, person, daysstay, name, mobile, address, discount, gstamt, total FROM {$this->prefix}reservation 
-                WHERE FIND_IN_SET({$room}, roomnumber) AND !cancel_by AND depature_date IS NULL";
+        $sql = "SELECT no, date, roomnumber, person, daysstay, name, mobile, address, discount, gstamt, total FROM {$this->prefix}reservation 
+                WHERE date='$date' AND roomnumber='$room' AND !cancel_by AND depature_date IS NULL";
         $data = $this->m->fetch_assoc($sql);
         echo json_encode($data);
         exit;
