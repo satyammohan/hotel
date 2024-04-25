@@ -1,5 +1,4 @@
 <div class="col-7 card">
-
     <div class="d-inline p-2">
         <div onclick="prev();" title="Previous" class="btn btn-primary" style="font-size:16px;float:left;"><<</div>
         <div onclick="next();" title="Next" class="btn btn-primary" style="font-size:16px;float:right;">>></div>
@@ -18,6 +17,8 @@
     <div class="remark"><span class="vacant">&nbsp;&nbsp;&nbsp;&nbsp;</span> : Vacant, <span class="occupy">&nbsp;&nbsp;&nbsp;&nbsp;</span> : Full Occupied, <span class="first">&nbsp;&nbsp;&nbsp;&nbsp;</span> : First Half, <span class="second">&nbsp;&nbsp;&nbsp;&nbsp;</span> : Second Half</div>
 </div>
 <script>
+    var type = 1;
+    var datedata, month, year;
     function prev() {
         month = month - 3;
         if (month < 1) {
@@ -34,13 +35,12 @@
         }
         draw();
     }
-    var type = 1;
     function draw() {
         getbooking(month, year);
     }
-    var datedata;
     function getbooking(month, year) {
         console.clear();
+        console.log(month, year);
         $.post("index.php?module=reservation&func=getbooking", { month: month, year : year }, function (resp) {
             if (resp == "null") {
                 json_data = "Some issue, while getting data from Server.";
@@ -59,7 +59,6 @@
         });
     }
     function showdetails(room, date) {
-        alert(date)
         $.post("index.php?module=reservation&func=showguest", { room: room, date: date }, function (resp) {
             if (resp == "null") {
                 json_data = "Some issue, while getting data from Server.";
@@ -108,14 +107,10 @@
             var monthName = cal_months_labels[thismonth];
             var monthLength = cal_days_in_month[thismonth];
             html += '<table class="calendar-table">';
-            html += '<tr><th colspan="7" class="calender-month">';
-            html += monthName + "&nbsp;" + thisyear;
-            html += '</th></tr>';
+            html += '<tr><th colspan="7" class="calender-month">' + monthName + "&nbsp;" + thisyear + '</th></tr>';
             html += '<tr class="calendar-header">';
             for (var i = 0; i <= 6; i++) {
-                html += '<td class="calendar-header-day">';
-                html += cal_days_labels[i];
-                html += '</td>';
+                html += '<td class="calendar-header-day">' + cal_days_labels[i] + '</td>';
             }
             html += '</tr><tr>';
             var day = 1;
@@ -128,7 +123,7 @@
                         if (datedata[curdate]) {
                             room = datedata[curdate];
                             mydate = thisyear+"-"+(thismonth+1)+"-"+dday;
-                            html += "<span class='occupy' onclick='showdetails("+room+", \""+mydate+"\")'>"+dday+"</span>";
+                             html += "<span class='occupy' onclick='showdetails("+type+", \""+mydate+"\")'>"+dday+"</span>";
                         } else {
                             html += dday;
                         }

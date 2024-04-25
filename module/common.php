@@ -477,6 +477,11 @@ class common {
         $sql = "INSERT INTO {$this->prefix}log (date, type, `previous`, `current`, `change`) VALUES (NOW(), '$type', '$p', '$c', '$d') ";
         $this->m->query( $sql );
     }
+    function getfinancialyear($sdate, $edate) {
+        $sql = "SELECT * FROM info WHERE start_date>='$sdate' AND end_date>='$edate' LIMIT 1";
+        $data = $this->m->getall($this->m->query($sql));
+        return $data[0]['prefix'];
+    }
 }
 function pr($data) {
     print "<pre>";

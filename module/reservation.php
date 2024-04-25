@@ -139,38 +139,55 @@ class reservation extends common {
         $this->sm->assign("other", $data);
     }
     function bdashboard() {
-        if (isset($_REQUEST['date'])) {
-            $date = $_REQUEST['date'];
-        } else {
-            $date = $_REQUEST['date'] = date('Y-m-d');
-        }
-        $sql = "SELECT * FROM {$this->prefix}rooms ORDER BY name";
-        $rooms = $this->m->getall($this->m->query($sql));
-        $this->sm->assign("rooms", $rooms);
-
-        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
-                WHERE date='{$date}' AND (time='' OR time IS NULL) AND !cancel_by";
-        $data = $this->m->fetch_assoc($sql);
-        if ($data['roomnumber']) {
-            $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
-            $data['roomnumber'] = str_replace(";", ",", $data['roomnumber']);
-            $data['roomnumber'] = str_replace(":", ",", $data['roomnumber']);
-            $rroom =  explode(',', $data['roomnumber']);
-            $this->sm->assign("reserve", array_flip($rroom));
-        }
-
-        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
-                WHERE (('{$date}' BETWEEN date AND depature_date) OR (date <= '{$date}' AND depature_date IS NULL)) AND !cancel_by";
-        $data = $this->m->fetch_assoc($sql);
-        if ($data['roomnumber']) {
-            $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
-            $data['roomnumber'] = str_replace(";", ",", $data['roomnumber']);
-            $data['roomnumber'] = str_replace(":", ",", $data['roomnumber']);
-            $aroom =  explode(',', $data['roomnumber']);
-            $this->sm->assign("data", array_flip($aroom));
-        }
+        $date = $_REQUEST['date'] = (isset($_REQUEST['date'])) ? $_REQUEST['date'] : date('Y-m-d');
     }
-
+    function getbooking() {
+        ob_clean();
+        $month = $_REQUEST['month']+1;
+        $year = $_REQUEST['year'];
+        if ($month>12) {
+            $year = $year+1;
+            $month = $month-12;
+        }
+        $sdate = "$year-$month-01";
+        $month = $month+2;
+        $edate = date("Y-m-t", strtotime("$year-$month-01"));
+        $prefix = $this->getfinancialyear($sdate, $edate);
+        $sql = "SELECT date, group_concat(roomnumber) AS roomnumber FROM {$prefix}__reservation WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
+        pr($sql);exit;
+        $data1 = $this->m->getall($this->m->query($sql));
+        $data = array();
+        foreach($data1 as $k => $v) {
+            $dt = date("j-n", strtotime($v['date']));
+            $rooms = ",".$v['roomnumber'].",";
+            if (strpos($rooms, ",1,") !== false) {
+                $data["$dt-1"] = '1';
+            }
+            if (strpos($rooms, ",2,") !== false) {
+                $data["$dt-2"] = '1';
+            }
+        }
+        echo json_encode($data);
+        exit;
+    }
+    function showguest() {
+        ob_clean();
+        $room = ",".$_REQUEST['room'].",";
+        $date = $_REQUEST['date'] ? $_REQUEST['date'] : date("Y-m-d");
+        $sql = "SELECT no, date, roomnumber, person, daysstay, name, mobile, address, discount, gstamt, total FROM {$this->prefix}reservation 
+                WHERE date='$date' AND concat(',',roomnumber,',') LIKE '%$room%' AND !cancel_by AND depature_date IS NULL";
+        $data = $this->m->fetch_assoc($sql);
+        echo json_encode($data);
+        exit;
+    }
+    function getguestdetails() {
+        $mobile = isset($_REQUEST['mobile']) ? trim($_REQUEST['mobile']) : "";
+        $sql = "SELECT * FROM {$this->prefix}reservation WHERE mobile='$mobile'";
+        $data = $this->m->fetch_assoc($sql);
+        ob_clean();
+        echo json_encode($data);
+        exit;
+    }
     function dashboard() {
         if (isset($_REQUEST['date'])) {
             $date = $_REQUEST['date'];
@@ -369,7 +386,6 @@ class reservation extends common {
         $sql = "SELECT r.*, u.name AS username FROM {$this->prefix}reservation r LEFT JOIN user u ON r.id_create=u.id_user  WHERE r.id_reservation='{$id}'";
         $data = $this->m->fetch_assoc($sql);
         $json = json_decode($data['json']);
-        //pr($json);
         $t = array();
         foreach ($json as $value) {
             if ($value->name==1 || $value->name==2) {
@@ -381,21 +397,16 @@ class reservation extends common {
             @$t[$gst]['gst_per'] = $value->tax_per;
             $value->discount = $value->discount ? $value->discount : 0;
             @$t[$gst]['withtax'] += ($value->price - $value->discount) * @$data['daysstay'];
-            $pr = round((($value->price - $value->discount)*$data['daysstay']));
             $p = round((($value->price - $value->discount)*$data['daysstay']) * $value->tax_per / 100,2);
-
             @$t[$gst]['gstamt'] += $p;
-            //@$t[$gst]['total'] += $pr + $p;
             @$t[$gst]['total'] += $value->total;
         }
         $data['json'] = $t;
         $data['w'] = $this->convert_number($data['total']);
-        //pr($data);exit;
         $this->sm->assign("data", $data);
     }
     function savechangedroom() {
         $id = $_REQUEST['id'];
-
         $sql = "SELECT roomnumber FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
         $roomnumbers = $this->m->fetch_assoc($sql);
         $room = explode(',', $roomnumbers['roomnumber']);
@@ -403,13 +414,7 @@ class reservation extends common {
             $sql = "UPDATE {$this->prefix}rooms SET status=0 WHERE name='$rname'";
             $this->m->query($sql);
         }
-
         $data['roomnumber'] = trim($_REQUEST['newid'], ",");
-        $room = explode(',', $data['roomnumber']);
-        foreach ($room as $rname) {
-            //$sql = "UPDATE {$this->prefix}rooms SET status=3 WHERE name='$rname'";
-            //$this->m->query($sql);
-        }
         $data['id_modify'] = $_SESSION['id_user'];
         $data['modify_date'] = date("Y-m-d");
         $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='{$id}'");
@@ -422,7 +427,6 @@ class reservation extends common {
         $this->pr($sql);
         $reservation = $this->m->getall($this->m->query($sql));
         $this->pr($reservation);
-
         foreach ($reservation as $v) {
             $id = $v['id_reservation'];
             $days = $v['daysstay'] ? $v['daysstay'] : 1;
@@ -439,55 +443,6 @@ class reservation extends common {
         }
         exit;
     }
-    function getbooking() {
-        ob_clean();
-        $month = $_REQUEST['month'];
-        $year = $_REQUEST['year'];
-        $sdate = "$year-$month-01";
-
-        $month = $month+3;
-        $year = $month>12 ? $year+1 : $year;
-        $month = $month>12 ? $month-12 : $month;
-        $edate = date("Y-m-t", strtotime("$year-$month-01"));
-        $sql = "SELECT date, group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
-                WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
-                //pr($sql);
-        $data1 = $this->m->getall($this->m->query($sql));
-        $data = array();
-        foreach($data1 as $k => $v) {
-            $dt = $v['date'];
-            $dt = date("j-n", strtotime($dt));
-            $r = ",".$v['roomnumber'].",";
-            $rx = "";
-            if (strpos($r, ",1,") !== false) {
-                $data["$dt-1"] = '1';
-            }
-            if (strpos($r, ",2,") !== false) {
-                $data["$dt-2"] = '1';
-            }
-        }
-        echo json_encode($data);
-        exit;
-    }
-    function showguest() {
-        ob_clean();
-        $room = $_REQUEST['room'];
-        $date = $_REQUEST['date'] ? $_REQUEST['date'] : date("Y-m-d");
-        $sql = "SELECT no, date, roomnumber, person, daysstay, name, mobile, address, discount, gstamt, total FROM {$this->prefix}reservation 
-                WHERE date='$date' AND roomnumber='$room' AND !cancel_by AND depature_date IS NULL";
-        $data = $this->m->fetch_assoc($sql);
-        echo json_encode($data);
-        exit;
-    }
-    function getguestdetails() {
-        $mobile = isset($_REQUEST['mobile']) ? trim($_REQUEST['mobile']) : "";
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE mobile='$mobile'";
-        $data = $this->m->fetch_assoc($sql);
-        ob_clean();
-        echo json_encode($data);
-        exit;
-    }
-    
     function cancel() {
         if (isset($_REQUEST['id'])) {
             $id = $_REQUEST['id'];
