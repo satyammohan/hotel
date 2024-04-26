@@ -151,10 +151,13 @@ class reservation extends common {
         }
         $sdate = "$year-$month-01";
         $month = $month+2;
+        if ($month>12) {
+            $year = $year+1;
+            $month = $month-12;
+        }
         $edate = date("Y-m-t", strtotime("$year-$month-01"));
         $prefix = $this->getfinancialyear($sdate, $edate);
         $sql = "SELECT date, group_concat(roomnumber) AS roomnumber FROM {$prefix}__reservation WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
-        pr($sql);exit;
         $data1 = $this->m->getall($this->m->query($sql));
         $data = array();
         foreach($data1 as $k => $v) {

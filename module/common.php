@@ -478,8 +478,13 @@ class common {
         $this->m->query( $sql );
     }
     function getfinancialyear($sdate, $edate) {
-        $sql = "SELECT * FROM info WHERE start_date>='$sdate' AND end_date>='$edate' LIMIT 1";
+        $sql = "SELECT * FROM info WHERE start_date<='$sdate' ORDER BY start_date DESC LIMIT 1";
         $data = $this->m->getall($this->m->query($sql));
+        //pr($sdate."----".$edate);  pr($sql);  pr($data);
+        if (!$data[0]['prefix']) {
+            $sql = "SELECT * FROM info ORDER BY start_date DESC LIMIT 1";
+            $data = $this->m->getall($this->m->query($sql));
+        }
         return $data[0]['prefix'];
     }
 }
