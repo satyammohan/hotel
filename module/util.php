@@ -8,9 +8,10 @@ class util extends common {
         //ini_set('display_errors', 'On');
     }
     function checkall() {
-        ini_set('display_errors', 'On');
+        //ini_set('display_errors', 'On');
         $sdate = $_SESSION['start_date'];
         $edate = $_SESSION['end_date'];
+        //$this->m->query("ALTER TABLE reservation ADD COLUMN IF NOT EXISTS refund_amount decimal(16,2) DEFAULT 0;");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}ledger`");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}tb`");
         $sql = "CREATE view `{$this->prefix}ledger` AS
