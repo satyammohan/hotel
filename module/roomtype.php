@@ -8,25 +8,25 @@ class roomtype extends common {
     function insert() {
         $this->image();
         $data = $_REQUEST['rt'];
-        $res = $this->m->query($this->create_insert("{$this->prefix}roomtype", $data));
+        $res = $this->m->query($this->create_insert("roomtype", $data));
         $_SESSION['msg'] = "Record Successfully Inserted";
         $this->redirect("index.php?module=roomtype&func=listing");
     }
     function update() {
         $this->image();
         $data = $_REQUEST['rt'];
-        $sql = $this->create_update("{$this->prefix}roomtype", $data, "id_roomtype='{$_REQUEST['id']}'");
+        $sql = $this->create_update("roomtype", $data, "id_roomtype='{$_REQUEST['id']}'");
         $res = $this->m->query($sql);
         $_SESSION['msg'] = "Record Successfully Updated";
         $this->redirect("index.php?module=roomtype&func=listing");
     }
     function edit() {
         $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "0";
-        $sql = "SELECT id_taxmaster AS id, tax_per FROM {$this->prefix}taxmaster ORDER BY tax_per";
+        $sql = "SELECT id_taxmaster AS id, tax_per FROM taxmaster ORDER BY tax_per";
         $tax = $this->m->getall($this->m->query($sql), 2, "tax_per", "id");
         $this->sm->assign("tax", $tax);
 
-        $sql = $this->create_select("{$this->prefix}roomtype", "id_roomtype='{$id}'");
+        $sql = $this->create_select("roomtype", "id_roomtype='{$id}'");
         $data = $this->m->fetch_assoc($sql);
         $this->sm->assign("data", $data);
     }
@@ -44,7 +44,7 @@ class roomtype extends common {
         $this->redirect("index.php?module=roomtype&func=listing");
     }
     function listing() {
-        $sql = "SELECT r.*, t.tax_per FROM {$this->prefix}roomtype r LEFT JOIN {$this->prefix}taxmaster t ON r.id_taxmaster=t.id_taxmaster ORDER BY id_roomtype";
+        $sql = "SELECT r.*, t.tax_per FROM roomtype r LEFT JOIN taxmaster t ON r.id_taxmaster=t.id_taxmaster ORDER BY id_roomtype";
         $profile = $this->m->getall($this->m->query($sql));
         $this->sm->assign("roomtype", $profile);
     }

@@ -8,42 +8,29 @@ class reservation extends common {
     function insert() {
         $_SESSION['msg'] = "This option not used any more.";
         $this->redirect("index.php?module=reservation&func=listing");
-        // $data = $_REQUEST['t'];
-        // $data['id_create'] = $_SESSION['id_user'];
-        // $data['create_date'] = date("Y-m-d");
-        // $sql = $this->create_insert("{$this->prefix}reservation", $data);
-        // $this->m->query($sql);
-        // $_SESSION['msg'] = "Room Booking Added Successfully.";
-        // $this->redirect("index.php?module=reservation&func=listing");
     }
     function update() {
         $_SESSION['msg'] = "This option not used any more.";
-        $this->redirect("index.php?module=reservation&func=listing");        $data = $_REQUEST['t'];
-        // $data['id_modify'] = $_SESSION['id_user'];
-        // $data['modify_date'] = date("Y-m-d");
-        // $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='{$_REQUEST['id']}'");
-        // $this->m->query($sql);
-        // $_SESSION['msg'] = "Room Booking Updated Successfully.";
-        // $this->redirect("index.php?module=reservation&func=listing");
+        $this->redirect("index.php?module=reservation&func=listing");
     }
     function edit() {
         $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "0";
-        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM {$this->prefix}taxmaster";
+        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM taxmaster";
         $tax = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("tax", $tax);
-        $sql = "SELECT id_roomtype AS id, name FROM {$this->prefix}roomtype ORDER BY name";
+        $sql = "SELECT id_roomtype AS id, name FROM roomtype ORDER BY name";
         $rt = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("rt", $rt);
-        $sql = "SELECT id_corporate AS id, name FROM {$this->prefix}corporate ORDER BY name";
+        $sql = "SELECT id_corporate AS id, name FROM corporate ORDER BY name";
         $rt = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("cor", $rt);
-        $sql = $this->create_select("{$this->prefix}reservation", "id_reservation='{$id}'");
+        $sql = $this->create_select("reservation", "id_reservation='{$id}'");
         $data = $this->m->fetch_assoc($sql);
         $this->sm->assign("data", $data);
     }
     function editinfo() {
         $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "0";
-        $sql = $this->create_select("{$this->prefix}reservation", "id_reservation='{$id}'");
+        $sql = $this->create_select("reservation", "id_reservation='{$id}'");
         $data = $this->m->fetch_assoc($sql);
         $this->sm->assign("data", $data);
     }
@@ -54,12 +41,12 @@ class reservation extends common {
         } else {
             $limit = " LIMIT 20 ";
         }
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE cancel_by=0 $wcond ORDER BY date DESC, no $limit";
+        $sql = "SELECT * FROM reservation WHERE cancel_by=0 $wcond ORDER BY date DESC, no $limit";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("rooms", $data);
     }
     function cancellist() {
-        $sql = "SELECT r.*, u.name AS uname FROM {$this->prefix}reservation r, user u
+        $sql = "SELECT r.*, u.name AS uname FROM reservation r, user u
             WHERE r.cancel_by=u.id_user AND r.cancel_by ORDER BY cancel_date, cin, name";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("rooms", $data);
@@ -71,15 +58,15 @@ class reservation extends common {
         } else {
             $limit = " LIMIT 20 ";
         }
-        $sql = "SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}mr m, {$this->prefix}reservation r WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' $wcond
+        $sql = "SELECT r.roomnumber, r.name, m.* FROM mr m, reservation r WHERE m.id_reservation=r.id_reservation AND m.mrtype!='B' $wcond
                 UNION ALL
-                SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}mr m, {$this->prefix}banquet r WHERE m.id_reservation=r.id_banquet AND m.mrtype='B' $wcond
+                SELECT r.roomnumber, r.name, m.* FROM mr m, banquet r WHERE m.id_reservation=r.id_banquet AND m.mrtype='B' $wcond
                 ORDER BY date DESC $limit";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("mr", $data);
     }
     function addmr() {
-        $sql = "SELECT MAX(no*1) AS no FROM {$this->prefix}mr m";
+        $sql = "SELECT MAX(no*1) AS no FROM mr m";
         $data = $this->m->getall($this->m->query($sql));
         $data[0]['no']=($data[0]['no']*1)+1;
         $this->sm->assign("data", $data[0]);
@@ -88,20 +75,20 @@ class reservation extends common {
         $data = $_REQUEST['mr'];
         $data['id_user'] = $_SESSION['id_user'];
         $data['ip'] = $_SERVER['REMOTE_ADDR'];
-        $this->m->query($this->create_insert("{$this->prefix}mr", $data));
+        $this->m->query($this->create_insert("mr", $data));
         $_SESSION['msg'] = "MR Successfully Saved.";
         $this->redirect("index.php?module=reservation&func=listing");
     }
     function printmr() {
         $id = $_REQUEST['id'];
-        $sql = "SELECT r.roomnumber, r.name, r.address, r.phone, r.email, m.*, u.name AS username FROM {$this->prefix}mr m LEFT JOIN user u ON m.id_user=u.id_user, {$this->prefix}reservation r 
+        $sql = "SELECT r.roomnumber, r.name, r.address, r.phone, r.email, m.*, u.name AS username FROM mr m LEFT JOIN user u ON m.id_user=u.id_user, reservation r 
             WHERE m.id_reservation=r.id_reservation AND m.id='$id' ORDER BY m.date DESC";
         $data = $this->m->getall($this->m->query($sql));
         $data[0]['w'] = $this->convert_number($data[0]['amount']);
         $this->sm->assign("data", $data[0]);
     }
     function addfood() {
-        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM {$this->prefix}taxmaster";
+        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM taxmaster";
         $tax = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("tax", $tax);
     }
@@ -109,18 +96,18 @@ class reservation extends common {
         $data = $_REQUEST['food'];
         $data['id_user'] = $_SESSION['id_user'];
         $data['ip'] = $_SERVER['REMOTE_ADDR'];
-        $this->m->query($this->create_insert("{$this->prefix}food", $data));
+        $this->m->query($this->create_insert("food", $data));
         $_SESSION['msg'] = "Food Bill Successfully Saved.";
         $this->redirect("index.php?module=reservation&func=listing");
     }
     function foodlist() {
-        $sql = "SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}food m, {$this->prefix}reservation r 
+        $sql = "SELECT r.roomnumber, r.name, m.* FROM food m, reservation r 
                 WHERE m.id_reservation=r.id_reservation ORDER BY m.date DESC";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("food", $data);
     }
     function addother() {
-        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM {$this->prefix}taxmaster";
+        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM taxmaster";
         $tax = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("tax", $tax);
     }
@@ -128,13 +115,12 @@ class reservation extends common {
         $data = $_REQUEST['other'];
         $data['id_user'] = $_SESSION['id_user'];
         $data['ip'] = $_SERVER['REMOTE_ADDR'];
-            $this->m->query($this->create_insert("{$this->prefix}other", $data));
+        $this->m->query($this->create_insert("other", $data));
         $_SESSION['msg'] = "Other Bill Successfully Saved.";
         $this->redirect("index.php?module=reservation&func=listing");
     }
     function otherlist() {
-        $sql = "SELECT r.roomnumber, r.name, m.* FROM {$this->prefix}other m, {$this->prefix}reservation r 
-                WHERE m.id_reservation=r.id_reservation ORDER BY m.date DESC";
+        $sql = "SELECT r.roomnumber, r.name, m.* FROM other m, reservation r WHERE m.id_reservation=r.id_reservation ORDER BY m.date DESC";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("other", $data);
     }
@@ -156,8 +142,7 @@ class reservation extends common {
             $month = $month-12;
         }
         $edate = date("Y-m-t", strtotime("$year-$month-01"));
-        $prefix = $this->getfinancialyear($sdate, $edate);
-        $sql = "SELECT date, group_concat(roomnumber) AS roomnumber FROM {$prefix}__reservation WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
+        $sql = "SELECT date, group_concat(roomnumber) AS roomnumber FROM reservation WHERE (date BETWEEN '$sdate' AND '$edate') AND !cancel_by GROUP BY date";
         $data1 = $this->m->getall($this->m->query($sql));
         $data = array();
         foreach($data1 as $k => $v) {
@@ -177,7 +162,7 @@ class reservation extends common {
         ob_clean();
         $room = ",".$_REQUEST['room'].",";
         $date = $_REQUEST['date'] ? $_REQUEST['date'] : date("Y-m-d");
-        $sql = "SELECT no, date, roomnumber, person, daysstay, name, mobile, address, discount, gstamt, total FROM {$this->prefix}reservation 
+        $sql = "SELECT no, date, roomnumber, person, daysstay, name, mobile, address, discount, gstamt, total FROM reservation 
                 WHERE date='$date' AND concat(',',roomnumber,',') LIKE '%$room%' AND !cancel_by AND depature_date IS NULL";
         $data = $this->m->fetch_assoc($sql);
         echo json_encode($data);
@@ -185,7 +170,7 @@ class reservation extends common {
     }
     function getguestdetails() {
         $mobile = isset($_REQUEST['mobile']) ? trim($_REQUEST['mobile']) : "";
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE mobile='$mobile'";
+        $sql = "SELECT * FROM reservation WHERE mobile='$mobile'";
         $data = $this->m->fetch_assoc($sql);
         ob_clean();
         echo json_encode($data);
@@ -197,11 +182,11 @@ class reservation extends common {
         } else {
             $date = $_REQUEST['date'] = date('Y-m-d');
         }
-        $sql = "SELECT * FROM {$this->prefix}rooms ORDER BY name";
+        $sql = "SELECT * FROM rooms ORDER BY name";
         $rooms = $this->m->getall($this->m->query($sql));
         $this->sm->assign("rooms", $rooms);
 
-        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
+        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM reservation 
                 WHERE date='{$date}' AND (time='' OR time IS NULL) AND !cancel_by";
         $data = $this->m->fetch_assoc($sql);
         $data = $this->m->fetch_assoc($sql);
@@ -211,7 +196,7 @@ class reservation extends common {
         $rroom =  explode(',', $data['roomnumber']);
         $this->sm->assign("reserve", array_flip($rroom));
 
-        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM {$this->prefix}reservation 
+        $sql = "SELECT group_concat(roomnumber) AS roomnumber FROM reservation 
                 WHERE (('{$date}' BETWEEN date AND depature_date) OR (date <= '{$date}' AND depature_date IS NULL)) AND !cancel_by";
         $data = $this->m->fetch_assoc($sql);
         $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
@@ -222,10 +207,10 @@ class reservation extends common {
     }
     function changeroom() {
         $id = $_REQUEST['id'];
-        $sql = "SELECT * FROM {$this->prefix}rooms ORDER BY name";
+        $sql = "SELECT * FROM rooms ORDER BY name";
         $rooms = $this->m->getall($this->m->query($sql));
         $this->sm->assign("rooms", $rooms);
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE id_reservation='{$id}'";
+        $sql = "SELECT * FROM reservation WHERE id_reservation='{$id}'";
         $data = $this->m->fetch_assoc($sql);
         $this->sm->assign("guest", $data);
         $data['roomnumber'] = str_replace(".", ",", $data['roomnumber']);
@@ -246,17 +231,17 @@ class reservation extends common {
     }
     function checkin() {
         $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "0";
-        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM {$this->prefix}taxmaster";
+        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM taxmaster";
         $tax = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("tax", $tax);
-        $sql = "SELECT id_roomtype AS id, name FROM {$this->prefix}roomtype ORDER BY name";
+        $sql = "SELECT id_roomtype AS id, name FROM roomtype ORDER BY name";
         $rt = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("rt", $rt);
         if ($id) {
-            $sql = $this->create_select("{$this->prefix}reservation", "id_reservation='{$id}'");
+            $sql = $this->create_select("reservation", "id_reservation='{$id}'");
             $data = $this->m->fetch_assoc($sql);
         } else {
-            $sql = "SELECT max(no*1) AS no, max(grcno*1) AS grcno FROM {$this->prefix}reservation";
+            $sql = "SELECT max(no*1) AS no, max(grcno*1) AS grcno FROM reservation";
             $data = $this->m->fetch_assoc($sql);
             $data['no'] = $data['no'] + 1;
             $data['grcno'] = $data['grcno'] + 1;
@@ -272,7 +257,7 @@ class reservation extends common {
         $rooms = str_replace(";", ",", $rooms);
         $rooms = str_replace(":", ",", $rooms);
         $sql = "SELECT r.name, t.id_taxmaster, t.price, x.tax_per 
-                FROM {$this->prefix}rooms r, {$this->prefix}roomtype t, {$this->prefix}taxmaster x
+                FROM rooms r, roomtype t, taxmaster x
                 WHERE r.status=0 AND r.id_roomtype=t.id_roomtype AND t.id_taxmaster=x.id_taxmaster AND r.name in ($rooms) ORDER BY r.id_rooms";
         $data = $this->m->getall($this->m->query($sql));
         ob_clean();
@@ -295,10 +280,10 @@ class reservation extends common {
         }
         foreach ($room as $v) {
             $rid = $v['name'];
-            //$sql = "UPDATE {$this->prefix}rooms SET status=3 WHERE name='$rid'";
+            //$sql = "UPDATE rooms SET status=3 WHERE name='$rid'";
             //$this->m->query($sql);
         }
-        $sql = $this->create_insert("{$this->prefix}reservation", $data);
+        $sql = $this->create_insert("reservation", $data);
         $this->m->query($sql);
         $_SESSION['msg'] = "Guest Registration Added Successfully.";
         $this->redirect("index.php?module=reservation&func=listing");
@@ -311,42 +296,42 @@ class reservation extends common {
         $data['json'] = json_encode($room);
         
         $id = $_REQUEST['id'];
-        $prev = $this->m->fetch_assoc( "SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id'" );
+        $prev = $this->m->fetch_assoc( "SELECT * FROM reservation WHERE id_reservation='$id'" );
         $this->register_log($prev, $data, "B");
         
-        $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='$id'");
+        $sql = $this->create_update("reservation", $data, "id_reservation='$id'");
         $this->m->query($sql);
         $_SESSION['msg'] = "Guest Registration Updated Successfully.";
         $this->redirect("index.php?module=reservation&func=listing");
     }
     function checkout() {
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL ORDER BY no DESC, name";
+        $sql = "SELECT * FROM reservation WHERE cancel_by=0 AND depature_date IS NULL ORDER BY no DESC, name";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("rooms", $data);
     }
     function checkoute() {
         $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "0";
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
+        $sql = "SELECT * FROM reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
         $data = $this->m->fetch_assoc($sql);
         $this->sm->assign("data", $data);
     }
     function savecheckout() {
         $data = $_REQUEST['t'];
         $id=$_REQUEST['id'];
-        $sql = "SELECT roomnumber FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
+        $sql = "SELECT roomnumber FROM reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
         $roomnumbers = $this->m->fetch_assoc($sql);
         $room = explode(',', $roomnumbers['roomnumber']);
         foreach ($room as $rname) {
-            $sql = "UPDATE {$this->prefix}rooms SET status=1 WHERE name='$rname'";
+            $sql = "UPDATE rooms SET status=1 WHERE name='$rname'";
             $this->m->query($sql);
         }
         $data['id_modify'] = $_SESSION['id_user'];
         $data['modify_date'] = date("Y-m-d");
-        $sql = "SELECT max(billno) AS billno FROM {$this->prefix}reservation";
+        $sql = "SELECT max(billno) AS billno FROM reservation";
         $bill = $this->m->fetch_assoc($sql);
         $data['billno'] = $bill['billno'] + 1;
 
-        $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='{$id}'");
+        $sql = $this->create_update("reservation", $data, "id_reservation='{$id}'");
         $this->m->query($sql);
         $_SESSION['msg'] = "Room Checkout Updated Successfully.";
         $this->redirect("index.php?module=reservation&func=checkout");
@@ -360,7 +345,7 @@ class reservation extends common {
                 $data['cancel_reason'] = $_REQUEST['reason'];
                 $data['cancel_by'] = $_SESSION['id_user'];
                 $data['cancel_date'] = date("Y-m-d");
-                $sql = $this->create_update("{$this->prefix}mr", $data, "id='$id'");
+                $sql = $this->create_update("mr", $data, "id='$id'");
                 $this->m->query($sql);
                 $_SESSION['msg'] = "MR Cancellation Successfully.";
             }
@@ -374,19 +359,19 @@ class reservation extends common {
         $noother = isset($_REQUEST['noother']) ?  $_REQUEST['noother'] : 0;
         if ($noother!=1) {
             $sql = "SELECT id_reservation, SUM(goodsvalue) AS ogoodsvalue, MAX(gstper) AS ogstpep, SUM(gstamount) AS ogstamount, SUM(amount) AS oamount
-                    FROM {$this->prefix}other WHERE id_reservation='{$id}'";
+                    FROM other WHERE id_reservation='{$id}'";
             $data = $this->m->fetch_assoc($sql);
             $this->sm->assign("other", $data);
             $sql = "SELECT id_reservation, SUM(goodsvalue) AS fgoodsvalue, MAX(gstper) AS fgstpep, SUM(gstamount) AS fgstamount, SUM(amount) AS famount
-                    FROM {$this->prefix}food WHERE id_reservation='{$id}'";
+                    FROM food WHERE id_reservation='{$id}'";
             $data = $this->m->fetch_assoc($sql);
             $this->sm->assign("food", $data);
         }
-        $sql = "SELECT id_reservation, GROUP_CONCAT(no) AS nos, SUM(amount) AS total  FROM {$this->prefix}mr WHERE id_reservation='{$id}' AND cancel_date IS NULL ";
+        $sql = "SELECT id_reservation, GROUP_CONCAT(no) AS nos, SUM(amount) AS total  FROM mr WHERE id_reservation='{$id}' AND cancel_date IS NULL ";
         $data = $this->m->fetch_assoc($sql);
         $this->sm->assign("mr", $data);
 
-        $sql = "SELECT r.*, u.name AS username FROM {$this->prefix}reservation r LEFT JOIN user u ON r.id_create=u.id_user  WHERE r.id_reservation='{$id}'";
+        $sql = "SELECT r.*, u.name AS username FROM reservation r LEFT JOIN user u ON r.id_create=u.id_user  WHERE r.id_reservation='{$id}'";
         $data = $this->m->fetch_assoc($sql);
         $json = json_decode($data['json']);
         $t = array();
@@ -410,23 +395,23 @@ class reservation extends common {
     }
     function savechangedroom() {
         $id = $_REQUEST['id'];
-        $sql = "SELECT roomnumber FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
+        $sql = "SELECT roomnumber FROM reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
         $roomnumbers = $this->m->fetch_assoc($sql);
         $room = explode(',', $roomnumbers['roomnumber']);
         foreach ($room as $rname) {
-            $sql = "UPDATE {$this->prefix}rooms SET status=0 WHERE name='$rname'";
+            $sql = "UPDATE rooms SET status=0 WHERE name='$rname'";
             $this->m->query($sql);
         }
         $data['roomnumber'] = trim($_REQUEST['newid'], ",");
         $data['id_modify'] = $_SESSION['id_user'];
         $data['modify_date'] = date("Y-m-d");
-        $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='{$id}'");
+        $sql = $this->create_update("reservation", $data, "id_reservation='{$id}'");
         $this->m->query($sql);
         $_SESSION['msg'] = "Change Room Updated Successfully.";
         $this->redirect("index.php?module=reservation&func=listing");
     }
     function updatejson() {
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE json='' OR json IS NULL ORDER BY id_reservation";
+        $sql = "SELECT * FROM reservation WHERE json='' OR json IS NULL ORDER BY id_reservation";
         $this->pr($sql);
         $reservation = $this->m->getall($this->m->query($sql));
         $this->pr($reservation);
@@ -440,7 +425,7 @@ class reservation extends common {
             $t[0]['gstamt'] = $v['gstamt'];;
             $t[0]['total'] = $v['total'];
             $json = json_encode($t);
-            $sql = "UPDATE {$this->prefix}reservation SET json='{$json}' WHERE id_reservation='{$id}'";
+            $sql = "UPDATE reservation SET json='{$json}' WHERE id_reservation='{$id}'";
             $this->pr($sql);
             $this->m->query($sql);
         }
@@ -450,19 +435,19 @@ class reservation extends common {
         if (isset($_REQUEST['id'])) {
             $id = $_REQUEST['id'];
             if (!isset($_REQUEST['save'])) {
-                $sql = "SELECT r.*, SUM(m.amount) AS amount_paid FROM {$this->prefix}reservation r LEFT JOIN {$this->prefix}mr m
+                $sql = "SELECT r.*, SUM(m.amount) AS amount_paid FROM reservation r LEFT JOIN mr m
                         ON r.id_reservation=m.id_reservation
                          WHERE r.id_reservation='$id'";
                 $data = $this->m->getall($this->m->query($sql));
                 $this->sm->assign("rooms", $data);
                 return;
             }
-            $sql = "SELECT json, roomnumber FROM {$this->prefix}reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
+            $sql = "SELECT json, roomnumber FROM reservation WHERE cancel_by=0 AND depature_date IS NULL AND id_reservation='{$id}'";
             $roomnumbers = $this->m->fetch_assoc($sql);
             $room = explode(',', $roomnumbers['roomnumber']);
             $json = $roomnumbers['json'];
             foreach ($room as $rname) {
-                $sql = "UPDATE {$this->prefix}rooms SET status=0 WHERE name='$rname'";
+                $sql = "UPDATE rooms SET status=0 WHERE name='$rname'";
                 $this->m->query($sql);
             }    
             $data['date'] = $_REQUEST['cancel_date'];
@@ -481,10 +466,10 @@ class reservation extends common {
                 $data['json'] = '[{"name":"1","tax_per":"'.$gstper.'","price":"'.$beforegst.'","discount":"0","gstamt":"'.$data['gstamt'].'","total":"'.$data['total'].'"}]';
                 //[{"name":"1","tax_per":"18","price":"28898.31","discount":"0","gstamt":"5201.70","total":"34100.01"}]
             }
-            $sql = $this->create_update("{$this->prefix}reservation", $data, "id_reservation='$id'");
+            $sql = $this->create_update("reservation", $data, "id_reservation='$id'");
             $this->m->query($sql);
 
-            $prev = $this->m->fetch_assoc("SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id'");
+            $prev = $this->m->fetch_assoc("SELECT * FROM reservation WHERE id_reservation='$id'");
             $this->register_log($prev, $data, "B");
             $_SESSION['msg'] = "Booking Cancellation Successfully.";
         } else {
@@ -493,31 +478,31 @@ class reservation extends common {
         $this->redirect("index.php?module=reservation&func=listing");
     }
     function completion() {
-        $sql = "SHOW COLUMNS FROM {$this->prefix}reservation LIKE 'completion'";
+        $sql = "SHOW COLUMNS FROM reservation LIKE 'completion'";
         $uid = $this->m->num_rows( $this->m->query( $sql ) ) == 0 ? 0 : 1;
         if ( $uid != 1 ) {
-            $sql = "ALTER TABLE {$this->prefix}reservation ADD `completion` TINYINT NULL DEFAULT '0';";
+            $sql = "ALTER TABLE reservation ADD `completion` TINYINT NULL DEFAULT '0';";
             $this->m->query($sql);
-            $sql = "UPDATE {$this->prefix}reservation SET completion='1' WHERE date<'2023-04-01'";
+            $sql = "UPDATE reservation SET completion='1' WHERE date<'2023-04-01'";
             $this->m->query($sql);
         }
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE completion=0 AND cancel_date IS NULL ORDER BY date, id_reservation";
+        $sql = "SELECT * FROM reservation WHERE completion=0 AND cancel_date IS NULL ORDER BY date, id_reservation";
         $data = $this->m->getall($this->m->query($sql));
         $this->sm->assign("noncomplete", $data);
     }    
     function completion_save() {
         $id = $_REQUEST['id'];
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE id_reservation='$id' LIMIT 1";
+        $sql = "SELECT * FROM reservation WHERE id_reservation='$id' LIMIT 1";
         $data = $this->m->getall($this->m->query($sql));
         $date = $data[0]['date'];
         $lastno = $this->getlastno($date, $id);
-        $sql = "UPDATE {$this->prefix}reservation SET no='$lastno', completion=1 WHERE id_reservation='$id'";
+        $sql = "UPDATE reservation SET no='$lastno', completion=1 WHERE id_reservation='$id'";
         $this->m->query($sql);
         $_SESSION['msg'] = "Bill No. $lastno updated for completed Booking.";
         $this->redirect("index.php?module=reservation&func=completion");
     }
     function getlastno() {
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE no LIKE 'YG%' ORDER BY no DESC LIMIT 1";
+        $sql = "SELECT * FROM reservation WHERE no LIKE 'YG%' ORDER BY no DESC LIMIT 1";
         $data = $this->m->getall($this->m->query($sql));
         $lastno = @$data[0]['no'];
         if (!$lastno) {

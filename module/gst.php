@@ -42,16 +42,10 @@ class gst extends common {
                 $wcond1 = " AND sd.tax_per!=0 ";
                 break;
         }
-        /*$sql = "SELECT s.id_sale, s.invno, s.party_name, s.challan_no, s.date, s.total, h.gstin, h.state, sd.tax_per, SUM(sd.goods_amount) AS tax_amount, SUM(sd.cessamt) AS cessamt
-                FROM `{$this->prefix}saledetail` sd, `{$this->prefix}taxmaster` m, `{$this->prefix}sale` s 
-                    LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
-                WHERE ($wcond) AND sd.id_taxmaster=m.id_taxmaster AND s.id_sale=sd.id_sale
-                GROUP BY s.id_sale, sd.tax_per ORDER BY s.date, s.invno, sd.tax_per ";*/
-
         $sql = "SELECT s.id_sale, s.invno, s.party_name, s.challan_no, s.date, s.total, h.gstin, h.state, sd.tax_per, SUM(sd.goods_amount) AS tax_amount, SUM(sd.cessamt) AS cessamt
                 FROM `{$this->prefix}sale` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
                     LEFT JOIN `{$this->prefix}saledetail` sd ON s.id_sale=sd.id_sale {$wcond1}
-                    LEFT JOIN `{$this->prefix}taxmaster` m ON sd.id_taxmaster=m.id_taxmaster
+                    LEFT JOIN `taxmaster` m ON sd.id_taxmaster=m.id_taxmaster
                     WHERE ($wcond)
                 GROUP BY s.id_sale, sd.tax_per ORDER BY s.date, s.invno, s.id_sale, sd.tax_per ";
         $this->sm->assign("data", $this->m->sql_getall($sql));
@@ -61,7 +55,7 @@ class gst extends common {
         $edate = $this->getenddate();
         $wcond = " s.date >= '$sdate' AND s.date <= '$edate' ";
         $sql = "SELECT s.id_sale, s.invno, s.date, s.total, h.gstin, h.state, sd.tax_per, SUM(sd.goods_amount) AS tax_amount, SUM(sd.cessamt) AS cessamt
-                FROM `{$this->prefix}saledetail` sd, `{$this->prefix}taxmaster` m, `{$this->prefix}sale` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
+                FROM `{$this->prefix}saledetail` sd, `taxmaster` m, `{$this->prefix}sale` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
                 WHERE ($wcond) AND sd.id_taxmaster=m.id_taxmaster AND s.id_sale=sd.id_sale
                 GROUP BY s.id_sale, sd.tax_per ORDER BY s.date, s.invno, sd.tax_per ";
         $res = $this->m->sql_getall($sql);
@@ -74,7 +68,7 @@ class gst extends common {
         $edate = $this->getenddate();
         $wcond = " s.date >= '$sdate' AND s.date <= '$edate' ";
         $sql = "SELECT sd.tax_per, SUM(sd.goods_amount) AS tax_amount, SUM(sd.cessamt) AS cessamt
-                FROM `{$this->prefix}saledetail` sd, `{$this->prefix}taxmaster` m, `{$this->prefix}sale` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
+                FROM `{$this->prefix}saledetail` sd, `taxmaster` m, `{$this->prefix}sale` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
                 WHERE ($wcond) AND sd.id_taxmaster=m.id_taxmaster AND s.id_sale=sd.id_sale AND (h.gstin='' OR h.gstin IS NULL) AND s.total<250000
                 GROUP BY sd.tax_per ORDER BY sd.tax_per ";
         $res = $this->m->sql_getall($sql);
@@ -86,7 +80,7 @@ class gst extends common {
         $edate = $this->getenddate();
         $wcond = " s.date >= '$sdate' AND s.date <= '$edate' ";
         $sql = "SELECT s.id_sale, s.invno, s.date, s.total, h.gstin, h.state, sd.tax_per, SUM(sd.goods_amount) AS tax_amount, SUM(sd.cessamt) AS cessamt
-                FROM `{$this->prefix}saledetail` sd, `{$this->prefix}taxmaster` m, `{$this->prefix}sale` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
+                FROM `{$this->prefix}saledetail` sd, `taxmaster` m, `{$this->prefix}sale` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
                 WHERE ($wcond) AND sd.id_taxmaster=m.id_taxmaster AND s.id_sale=sd.id_sale AND (h.gstin='' OR h.gstin IS NULL) AND s.total>=250000
                 GROUP BY s.id_sale, sd.tax_per ORDER BY s.date, s.invno, sd.tax_per ";
         $res = $this->m->sql_getall($sql);
@@ -252,7 +246,7 @@ class gst extends common {
             break;
         case 3:
             $sql = "SELECT p.hsncode, $field, t.name AS taxname
-                FROM {$this->prefix}{$file} s1, `{$this->prefix}product` p, `{$this->prefix}taxmaster` t, `{$this->prefix}{$file}detail` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
+                FROM {$this->prefix}{$file} s1, `{$this->prefix}product` p, `taxmaster` t, `{$this->prefix}{$file}detail` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
                 WHERE $wcond AND s.id_product=p.id_product AND s.id_taxmaster=t.id_taxmaster
                                 GROUP BY p.hsncode, h.local, s.id_taxmaster ORDER BY 1, 2 ";
             break;
@@ -308,7 +302,7 @@ class gst extends common {
 	    break;
         case 3:
             $sql = "SELECT p.hsncode, $field, t.name AS taxname
-                FROM `{$this->prefix}product` p, `{$this->prefix}taxmaster` t, `{$this->prefix}{$file}detail` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
+                FROM `{$this->prefix}product` p, `$this->prefix}taxmaster` t, `{$this->prefix}{$file}detail` s LEFT JOIN `{$this->prefix}head` h ON h.id_head=s.id_head 
                 WHERE $wcond AND s.id_product=p.id_product AND s.id_taxmaster=t.id_taxmaster
 				GROUP BY p.hsncode, h.local, s.id_taxmaster ORDER BY 1, 2 ";
 	    break;
@@ -346,7 +340,7 @@ class gst extends common {
     }    
     function hsnregister($file, $wcond) {
         $sql = "SELECT DISTINCT s.id_taxmaster AS id, t.name, t.tax_per, 0000000000000.00 AS gm, 0000000000000.00 AS vm  
-            FROM `{$this->prefix}{$file}detail` s, `{$this->prefix}taxmaster` t 
+            FROM `{$this->prefix}{$file}detail` s, `taxmaster` t 
             WHERE $wcond AND s.id_taxmaster = t.id_taxmaster ORDER BY t.tax_per";
         $tax = $this->m->sql_getall($sql, 1, "", "id");
         $this->sm->assign("tax", $tax);

@@ -7,15 +7,6 @@
             $("#tcsper").attr("readonly", false);
         }
     }
-	function showdet() {
-		id = $("#gstin").val();
-		url = "index.php?module=head&func=getgstdetails&gstin="+id;
-		if (id) {
-			$.post( url, function( res ) {
-				$("#detail").html(res);
-			});
-		}
-	}
     function form_valid() {
         var fvalid=$("#add_head").validate({
             rules:{
@@ -32,19 +23,8 @@
         var x = fvalid.form();
         return x;
     }
-    function show_detail() {
-            if ($("#debtor").attr('checked') || $("#creditor").attr('checked')){
-                    $("#sh").show();
-            } else {
-                    $("#sh").hide();
-            }
-    }
     $(document).ready(function() {
         callauto("gname", "index.php?module=head&func=getgroup&ce=0", "id_group");
-        $(".cst_date").datepicker({
-            dateFormat:js_date
-        });
-        show_detail();
         $("#name").focus();
     });
 </script>
@@ -53,98 +33,87 @@
         <legend>{if $data.id_head}Edit{else}Add{/if} Head</legend>
         <table  border="0" cellspacing="2" cellpadding="2">
             <tr>
-                <td valign="top">
-                    <fieldset>
-                        <table>
-                            <tr>
-                                <td><b>Name:</b></td>
-                                <td><input type="text" name="head[name]" id="name" value="{$data.name}" size="30"/>
-                                    <label for="name"></label></td>
-                            </tr>
-                            <tr>
-                                <td><b>Group:</b></td>
-                                <td> <select name="head[id_group]" id="group">
-                                        {html_options  options=$group selected=$data.id_group } 
-                                    </select></td>
-                            </tr>
-                            <tr>
-                                <td><b>Debtor:</b></td>
-                                <td><input type="checkbox" value="1" name="head[debtor]" id="debtor" {if $data.debtor==1}checked="checked"{/if} value="{$data.debtor}" onchange="show_detail()" /></td>
-                            </tr>
-                            <tr>
-                                <td><b>Creditor:</b></td>
-                                <td><input type="checkbox" value="1" name="head[creditor]" id="creditor" {if $data.creditor==1}checked="checked"{/if} value="{$data.creditor}" onchange="show_detail()" /></td>
-                            </tr>
-                            <tr>
-                                <td><b>Address1:</b></td>
-                                <td><input type="text"  name="head[address1]" value='{$data.address1}'><br>
-                                    <input type="text"  name="head[address2]" value='{$data.address2}'><br>
-                                    <input type="text"  name="head[address3]" value='{$data.address3}'>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><b>Opening Balance:</b></td>
-                                <td><spam><input type="text" size="12" name="head[opening_balance]" value="{$data.opening_balance}"/></spam>
-                                    <spam><select name="head[otype]" >
-                                    {html_options  options=$ini.balance_type selected=$data.otype } 
-                                </select></spam>
-                            </tr>
-                            <tr>
-                                <td><b style="color: red">State Code:</b></td>
-                                <td><input type="text" name="head[statecode]" value="{$data.statecode}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b style="color: red">State :</b></td>
-                                <td><input type="text" name="head[state]"  value="{$data.state}" /></td>
-                            </tr>
-                            <tr>
-                                <td><b style="color: red">Pin Code:</b></td>
-                                <td><input type="text" name="head[pincode]" value="{$data.pincode}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b style="color: red">Location:</b></td>
-                                <td><input type="text" name="head[location]" value="{$data.location}"/></td>
-                            </tr>                            
-                            <tr>
-                                <td><b>Contact Person:</b></td>
-                                <td><input type="text" name="head[contact_person]" value="{$data.contact_person}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b>Phone:</b></td>
-                                <td><input type="text" name="head[phone]"  value="{$data.phone}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b>Mobile:</b></td>
-                                <td><input type="text" name="head[mobile]"  value="{$data.mobile}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b>E-mail:</b></td>
-                                <td><input type="text" name="head[email]"  value="{$data.email}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b style="color: red">GSTIN :</b></td>
-                                <td><input type="text" name="head[gstin]" id="gstin"  value="{$data.gstin}"  style="color: red"/><input type="button" onclick="showdet();" value="Check GSTIN"></td>
-                            </tr>
-                            <tr>
-                                <td><b>Pan No:</b></td>
-                                <td><input type="text" name="head[panno]" value="{$data.panno}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b>Adhar Card:</b></td>
-                                <td><input type="text" name="head[adhar]" value="{$data.adhar}"/></td>
-                            </tr>
-                            <tr>
-                                <td><b style="color: red">TCS Applicable:</b></td>
-                                <td><select name="head[tcs]" onchange="updatetcs(this.value)">
-                                        <option {if $data.tcs!=1}selected="selected"{/if} value="0">No</option>
-                                        <option {if $data.tcs==1}selected="selected"{/if} value="1">Yes</option>
-                                    </select>
-                                    <input {if $data.tcs!=1}readonly="readonly"{/if} type="text" style="text-align: right;" name="head[tcsper]" value="{$data.tcsper}" size="3" id="tcsper" />%
-                                </td>
-                            </tr>
-                        </table>
-                    </fieldset>
-                </td>         
+                <td><b>Name:</b></td>
+                <td><input type="text" name="head[name]" id="name" value="{$data.name}" size="30"/><label for="name"></label></td>
+            </tr>
+            <tr>
+                <td><b>Group:</b></td>
+                <td><select name="head[id_group]" id="group">{html_options  options=$group selected=$data.id_group}</select></td>
+            </tr>
+            <tr>
+                <td><b>Debtor:</b></td>
+                <td><input type="checkbox" value="1" name="head[debtor]" id="debtor" {if $data.debtor==1}checked="checked"{/if} value="{$data.debtor}" /></td>
+            </tr>
+            <tr>
+                <td><b>Creditor:</b></td>
+                <td><input type="checkbox" value="1" name="head[creditor]" id="creditor" {if $data.creditor==1}checked="checked"{/if} value="{$data.creditor}" /></td>
+            </tr>
+            <tr>
+                <td><b>Address1:</b></td>
+                <td><input type="text"  name="head[address1]" value='{$data.address1}'><br>
+                    <input type="text"  name="head[address2]" value='{$data.address2}'><br>
+                    <input type="text"  name="head[address3]" value='{$data.address3}'>
+                </td>
+            </tr>
+            <tr>
+                <td><b>Opening Balance:</b></td>
+                <td><spam><input type="text" size="12" name="head[opening_balance]" value="{$data.opening_balance}"/></spam>
+                    <spam><select name="head[otype]" >
+                    {html_options  options=$ini.balance_type selected=$data.otype } 
+                </select></spam>
+            </tr>
+            <tr>
+                <td><b style="color: red">State Code:</b></td>
+                <td><input type="text" name="head[statecode]" value="{$data.statecode}"/></td>
+            </tr>
+            <tr>
+                <td><b style="color: red">State :</b></td>
+                <td><input type="text" name="head[state]"  value="{$data.state}" /></td>
+            </tr>
+            <tr>
+                <td><b style="color: red">Pin Code:</b></td>
+                <td><input type="text" name="head[pincode]" value="{$data.pincode}"/></td>
+            </tr>
+            <tr>
+                <td><b style="color: red">Location:</b></td>
+                <td><input type="text" name="head[location]" value="{$data.location}"/></td>
+            </tr>                            
+            <tr>
+                <td><b>Contact Person:</b></td>
+                <td><input type="text" name="head[contact_person]" value="{$data.contact_person}"/></td>
+            </tr>
+            <tr>
+                <td><b>Phone:</b></td>
+                <td><input type="text" name="head[phone]"  value="{$data.phone}"/></td>
+            </tr>
+            <tr>
+                <td><b>Mobile:</b></td>
+                <td><input type="text" name="head[mobile]"  value="{$data.mobile}"/></td>
+            </tr>
+            <tr>
+                <td><b>E-mail:</b></td>
+                <td><input type="text" name="head[email]"  value="{$data.email}"/></td>
+            </tr>
+            <tr>
+                <td><b style="color: red">GSTIN :</b></td>
+                <td><input type="text" name="head[gstin]" id="gstin"  value="{$data.gstin}"  style="color: red"/></td>
+            </tr>
+            <tr>
+                <td><b>Pan No:</b></td>
+                <td><input type="text" name="head[panno]" value="{$data.panno}"/></td>
+            </tr>
+            <tr>
+                <td><b>Adhar Card:</b></td>
+                <td><input type="text" name="head[adhar]" value="{$data.adhar}"/></td>
+            </tr>
+            <tr>
+                <td><b style="color: red">TCS Applicable:</b></td>
+                <td><select name="head[tcs]" onchange="updatetcs(this.value)">
+                        <option {if $data.tcs!=1}selected="selected"{/if} value="0">No</option>
+                        <option {if $data.tcs==1}selected="selected"{/if} value="1">Yes</option>
+                    </select>
+                    <input {if $data.tcs!=1}readonly="readonly"{/if} type="text" style="text-align: right;" name="head[tcsper]" value="{$data.tcsper}" size="3" id="tcsper" />%
+                </td>
             </tr>
             <tr>
                 <td align="center" colspan="2">

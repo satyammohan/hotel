@@ -314,7 +314,6 @@ class common {
             $this->redirect('index.php');
         }
     }
-
     function addfield($fld, $tbl, $qstring) {
         $sql = "SHOW COLUMNS FROM {$tbl} LIKE '{$fld}'";
         $uid = $this->m->num_rows($this->m->query($sql)) == 0 ? 0 : 1;
@@ -323,7 +322,6 @@ class common {
             $this->m->query($sql);
         }
     }
-
     function startdate() {
         if (date() >= $_SESSION['sdate'] AND date() <= $_SESSION['edate']) {
             $dt = $this->format_date(isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("01/m/Y"));
@@ -332,95 +330,24 @@ class common {
         }
         return $dt;
     }
-
-    function getcomp() {
-        $filt = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : "";
-        $id = isset($_REQUEST['id']) && $_REQUEST['id'] ? "AND p.id_company='{$_REQUEST['id']}'" : "";
-        $sql = "SELECT p.name as `value`, p.id_product AS col0, p.seller_price AS col1, t.tax_per AS col2, p.id_taxmaster_sale AS col3, p.closing_stock AS col4 
-            FROM {$this->prefix}product p, {$this->prefix}taxmaster t WHERE p.name LIKE '%{$filt}%' AND p.id_taxmaster_sale=t.id_taxmaster {$id}  ORDER BY p.name";
-        $data = $this->m->sql_getall($sql);
-        echo json_encode($data);
-        exit;
-    }
-
-    function getparty() {
-        $filt = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : "";
-        $sql = "SELECT concat(h.name, ',', h.address1, ',', h.address2, ',', IFNULL(address3, '')) as `value`, h.id_head AS col0, h.address1 AS col1, h.address2 AS col2, h.id_area AS col3, h.vattype AS col4, h.vatno AS col5, h.id_transport AS col6, h.dealer AS col7 FROM {$this->prefix}head h WHERE h.name LIKE '{$filt}%' AND h.debtor ORDER BY h.name";
-        $data = $this->m->sql_getall($sql);
-        echo json_encode($data);
-        exit;
-    }
-
-    function getbatch() {
-        $filt = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : "";
-        $id = "AND b.id_product='{$_REQUEST['id']}'";
-        $dealer = isset($_REQUEST['dealer']) ? $_REQUEST['dealer'] : '0';
-        $price = ($dealer == "1") ? ' b.distributor_price ' : ' b.seller_price ';
-        $sql = "SELECT b.batch_no as `value`, b.id_batch AS col0, b.expiry_date AS col1, $price AS col2  FROM {$this->prefix}batch b WHERE b.batch_no LIKE '%{$filt}%' {$id} ORDER BY b.batch_no";
-        $data = $this->m->sql_getall($sql);
-        echo json_encode($data);
-        exit;
-    }
-
-    function option_val() {
-        $opt = "SELECT id_transport AS id,name FROM {$this->prefix}transport ORDER BY name";
-        $transport = $this->m->sql_getall($opt, 2, "name", "id");
-        $this->sm->assign("transport", $transport);
-        $opt2 = "SELECT id_area AS id,name FROM {$this->prefix}area ORDER BY name";
-        $area = $this->m->sql_getall($opt2, 2, "name", "id");
-        $this->sm->assign("area", $area);
-        $opt4 = "SELECT id_company AS id,name FROM {$this->prefix}company ORDER BY name";
-        $company = $this->m->sql_getall($opt4, 2, "name", "id");
-        $this->sm->assign("company", $company);
-        $opt6 = "SELECT id_represent AS id,name FROM {$this->prefix}represent ORDER BY name";
-        $salesman = $this->m->sql_getall($opt6, 2, "name", "id");
-        $this->sm->assign("salesman", $salesman);
-    }
-    
     function getstartdate() {
         $rd = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("01/m/Y");
         if (!($rd>=$_SESSION['start_date'] AND $rd>=$_SESSION['end_date']) ) {
-  //          $rd = date("Y/m/01", strtotime($_SESSION['end_date']));
+            // $rd = date("Y/m/01", strtotime($_SESSION['end_date']));
         }
-//        $_REQUEST['start_date'] = $rd = $this->format_date($rd);
+        // $_REQUEST['start_date'] = $rd = $this->format_date($rd);
         $rd = $this->format_date($rd);
         return $rd;
-    }
-    
+    }    
     function getenddate() {
         $rd = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("d/m/Y");
         if (!($rd>=$_SESSION['start_date'] AND $rd>=$_SESSION['end_date']) ) {
-//            $rd = $_SESSION['end_date'];
+            // $rd = $_SESSION['end_date'];
         }
-//        $_REQUEST['end_date'] = $rd = $this->format_date($rd);
+        // $_REQUEST['end_date'] = $rd = $this->format_date($rd);
         $rd = $this->format_date($rd);
         return $rd;
     }
-
-	function sendsms($numbers, $message) {
-		// Account details
-		$apiKey = urlencode('2pbVSJ66pQs-ogahSlrFhF4SLOSZJ7ySdVYxulvIFQ');
-		
-		// Message details
-		$sender = urlencode('TXTLCL');
-		$message = rawurlencode($message);
-	 
-		//$numbers = implode(',', $numbers);
-	 
-		// Prepare data for POST request
-		$data = array('apikey' => $apiKey, 'numbers' => $numbers, "sender" => $sender, "message" => $message);
-	 
-		// Send the POST request with cURL
-		$ch = curl_init('https://api.textlocal.in/send/');
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		$response = curl_exec($ch);
-		curl_close($ch);
-		
-		// Process your response here
-		return $response;
-	}
     function approve() {
         if ($_SESSION['is_approve']==1) {
             $tbl = $_REQUEST['table'];
@@ -474,7 +401,7 @@ class common {
         }
         $p = addslashes(json_encode($p));
         $c = addslashes(json_encode($c));
-        $sql = "INSERT INTO {$this->prefix}log (date, type, `previous`, `current`, `change`) VALUES (NOW(), '$type', '$p', '$c', '$d') ";
+        $sql = "INSERT INTO log (date, type, `previous`, `current`, `change`) VALUES (NOW(), '$type', '$p', '$c', '$d') ";
         $this->m->query( $sql );
     }
     function getfinancialyear($sdate, $edate) {

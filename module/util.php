@@ -10,13 +10,13 @@ class util extends common {
     function checkall() {
         $sdate = $_SESSION['start_date'];
         $edate = $_SESSION['end_date'];
-        $this->m->query("ALTER TABLE {$this->prefix}reservation ADD COLUMN IF NOT EXISTS refund_amount decimal(16,2) DEFAULT 0;");
+        $this->m->query("ALTER TABLE reservation ADD COLUMN IF NOT EXISTS refund_amount decimal(16,2) DEFAULT 0;");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}ledger`");
         $this->m->query("DROP view IF EXISTS `{$this->prefix}tb`");
         $sql = "CREATE view `{$this->prefix}ledger` AS
                 SELECT 'V' AS type, id_voucher AS id, no AS refno, date, id_head_credit AS chead, id_head_debit AS dhead, total, memo FROM `{$this->prefix}voucher` WHERE date BETWEEN '$sdate' AND '$edate'
                 UNION ALL
-                SELECT 'V' AS type, id, no AS refno, date, 7 AS chead, 3 AS dhead, amount AS total, 'Money Receipt' AS memo FROM `{$this->prefix}mr` WHERE type=1 AND cancel_date IS NULL AND (date BETWEEN '$sdate' AND '$edate')
+                SELECT 'V' AS type, id, no AS refno, date, 7 AS chead, 3 AS dhead, amount AS total, 'Money Receipt' AS memo FROM mr WHERE type=1 AND cancel_date IS NULL AND (date BETWEEN '$sdate' AND '$edate')
                 UNION ALL
                 SELECT 'H' AS type, id_head AS id, '' AS refno, date('0000-00-00') AS date, IF(otype='D' OR otype='0', 0, id_head) AS chead, IF(otype='D' OR otype='0', id_head, 0) AS dhead, opening_balance AS total, '' AS memo FROM {$this->prefix}head";
         $this->m->query( $sql );

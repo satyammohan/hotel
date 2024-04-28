@@ -49,11 +49,11 @@ class management extends common {
         $_REQUEST['start_date'] = $sdate = isset($_REQUEST['start_date']) ? $_REQUEST['start_date'] : date("Y-m-01");
         $_REQUEST['end_date'] = $edate = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("Y-m-d");
 
-        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM {$this->prefix}taxmaster";
+        $sql = "SELECT id_taxmaster AS id, tax_per AS name FROM taxmaster";
         $tax = $this->m->getall($this->m->query($sql), 2, "name", "id");
         $this->sm->assign("tax", $tax);
 
-        $sql = "SELECT * FROM {$this->prefix}reservation WHERE (depature_date >= '$sdate' AND depature_date <= '$edate') ORDER BY depature_date";
+        $sql = "SELECT * FROM reservation WHERE (depature_date >= '$sdate' AND depature_date <= '$edate') ORDER BY depature_date";
         $data = $this->m->sql_getall($sql);
         $this->sm->assign("data", $data);
     }	

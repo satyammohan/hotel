@@ -138,21 +138,7 @@ class accounts extends common {
         }
         $res = $this->m->sql_getall( $sql );
         $this->sm->assign( 'data', $res );
-    }
-    function repparty() {
-        $startdate = $_SESSION[ 'start_date' ];
-        $sdate = $this->format_date( isset( $_REQUEST[ 'start_date' ] ) ? $_REQUEST[ 'start_date' ] : date( 'd/m/Y' ) );
-        $wcond = " date<='$sdate' ";
-        $ocond = ( $_REQUEST[ 'option' ] == 1 ) ? ' h.name, h.address1 ' : ' g.name ';
-        $sql = "SELECT r.name AS rname, h.*, t.id_head, SUM(t.debit) AS debit, SUM(t.credit) AS credit, SUM(t.debit-t.credit) AS balance
-           FROM (SELECT dhead AS id_head, ROUND(SUM(total),2) AS debit, 0 AS credit  FROM `{$this->prefix}ledger` WHERE $wcond GROUP BY 1
-           UNION ALL 
-           SELECT chead AS id_head, 0 AS debit, ROUND(SUM(total),2) AS credit FROM `{$this->prefix}ledger` WHERE $wcond GROUP BY 1
-           ) t, `{$this->prefix}head` h, `{$this->prefix}area` a, `{$this->prefix}represent` r
-            WHERE h.id_head=t.id_head AND h.debtor AND h.id_area=a.id_area AND a.id_represent=r.id_represent GROUP BY h.id_head  HAVING balance<>0 ORDER BY r.name, h.name, h.address1";
-        $res = $this->m->sql_getall( $sql );
-        $this->sm->assign( 'data', $res );
-    }
+    }    
     function oneac( $ac, $sdate, $edate ) {
         $sql = "SELECT $ac AS id_head, h.name, concat(h.address2, ' ', IFNULL(address3, '')) as address, l.* FROM {$this->prefix}ledger l, {$this->prefix}head  h 
             WHERE `date`>='$sdate' AND `date`<='$edate' AND (dhead='$ac' OR chead='$ac') AND h.id_head=IF(dhead='$ac', chead, dhead) ORDER BY date";

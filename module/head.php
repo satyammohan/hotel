@@ -34,8 +34,6 @@ class head extends common {
             $this->get_permission("head", "UPDATE");
         $data = $this->m->fetch_assoc($this->create_select("{$this->prefix}head", "id_head='{$id}'"));
 
-        $res1 = $this->m->query("SELECT * FROM {$this->prefix}area WHERE status=0 ORDER BY name");
-        $this->sm->assign("area", $this->m->getall($res1, 2, "name", "id_area"));
         $res3 = $this->m->query("SELECT * FROM `{$this->prefix}group` WHERE status=0  ORDER BY name");
         $this->sm->assign("group", $this->m->getall($res3, 2, "name", "id_group"));
 
@@ -60,9 +58,7 @@ class head extends common {
     }
     function listing() {
         $this->get_permission("head", "REPORT");
-        $sql = "SELECT h.*, g.name AS gname, a.name AS area
-                FROM {$this->prefix}head h LEFT JOIN {$this->prefix}group g ON h.id_group=g.id_group  
-                    LEFT JOIN {$this->prefix}area a ON h.id_area=a.id_area";
+        $sql = "SELECT h.*, g.name AS gname FROM {$this->prefix}head h LEFT JOIN {$this->prefix}group g ON h.id_group=g.id_group";
         $profile = $this->m->getall($this->m->query($sql));
         $this->sm->assign("head", $profile);
     }

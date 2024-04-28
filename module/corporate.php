@@ -7,20 +7,20 @@ class corporate extends common {
     }
     function insert() {
         $data = $_REQUEST['c'];
-        $res = $this->m->query($this->create_insert("{$this->prefix}corporate", $data));
+        $res = $this->m->query($this->create_insert("corporate", $data));
         $_SESSION['msg'] = "Record Successfully Inserted";
         $this->redirect("index.php?module=corporate&func=listing");
     }
     function update() {
         $data = $_REQUEST['c'];
-        $sql = $this->create_update("{$this->prefix}corporate", $data, "id_corporate='{$_REQUEST['id']}'");
+        $sql = $this->create_update("corporate", $data, "id_corporate='{$_REQUEST['id']}'");
         $res = $this->m->query($sql);
         $_SESSION['msg'] = "Record Successfully Updated";
         $this->redirect("index.php?module=corporate&func=listing");
     }
     function edit() {
         $id = isset($_REQUEST['id']) ? $_REQUEST['id'] : "0";
-        $sql = $this->create_select("{$this->prefix}corporate", "id_corporate='{$id}'");
+        $sql = $this->create_select("corporate", "id_corporate='{$id}'");
         $this->sm->assign("data", $this->m->fetch_assoc($sql));
     }
     function delete() {
@@ -28,7 +28,7 @@ class corporate extends common {
         $this->redirect("index.php?module=corporate&func=listing");
     }
     function listing() {
-        $sql = "SELECT * FROM {$this->prefix}corporate ORDER BY id_corporate";
+        $sql = "SELECT * FROM corporate ORDER BY id_corporate";
         $profile = $this->m->getall($this->m->query($sql));
         $this->sm->assign("corporate", $profile);
     }
