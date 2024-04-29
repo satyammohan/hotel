@@ -182,7 +182,6 @@ class accounts extends common {
         }
     }
     function profit() {
-      ini_set('display_errors', 'On');
       $_REQUEST['end_date'] = isset($_REQUEST['end_date']) ? $_REQUEST['end_date'] : date("d/m/Y");
       $name = $this->prefix."CLOSING_STOCK";
       if (isset($_REQUEST['CLOSING_STOCK'])) {
