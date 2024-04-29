@@ -204,8 +204,8 @@ class accounts extends common {
               SELECT chead AS id_head, SUM(-total) AS total FROM `{$this->prefix}ledger` WHERE date<='$edate' GROUP BY 1) l GROUP BY 1 HAVING cbal<>0 ";
       $this->m->query($sql);
       $sql = "SELECT g.id_group, g.name AS gname, h.id_head, h.name, h.address1, SUM(l.cbal) AS closing
-        FROM `{$this->prefix}group` g, `{$this->prefix}head` h, temp_ledg l
-        WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY g.id_group, h.name";
+                FROM `{$this->prefix}group` g, `{$this->prefix}head` h, temp_ledg l
+                WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY g.id_group, h.name";
       $data = $this->m->sql_getall($sql, 1, "", "gname", "id_head");
       $id = $_SESSION['config']['SALE AC'];
       if (!$id) {
