@@ -207,8 +207,7 @@ class accounts extends common {
                 FROM `{$this->prefix}group` g, `{$this->prefix}head` h, temp_ledg l
                 WHERE l.id_head=h.id_head AND h.id_group=g.id_group GROUP BY h.id_head ORDER BY g.id_group, h.name";
       $data = $this->m->sql_getall($sql, 1, "", "gname", "id_head");
-      $id = $_SESSION['config']['SALE AC'];
-      if (!$id) {
+      if (!isset($_SESSION['config']['SALE AC'])) {
           echo ("Add in configuration 'SALE AC', 'PURCHASE AC', 'OPENING STOCK' (id from head)<br>");
           echo ("'INCOME GROUP', 'EXPENSES GROUP' give the group names comma separated from group.");
       }
