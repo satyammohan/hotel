@@ -1,18 +1,3 @@
-<style>
-    .tab {
-      display: inline-block;
-      margin-left: 2em;
-    }
-    .level0 {
-      text-decoration: overline underline;
-      font-size: 16px;
-      font-weight: bold;
-    }
-    .level2 {
-      font-size: 14px;
-      font-weight: bold;
-    }
-</style>
 <fieldset>
     <legend>Profit & Loss Statement</legend>
     <form method="post">
@@ -34,6 +19,21 @@
 </fieldset>
 <br />
 <div class="print_content">
+    <style>
+        .tab {
+          display: inline-block;
+          margin-left: 2em;
+        }
+        .level0 {
+          text-decoration: overline underline;
+          font-size: 16px;
+          font-weight: bold;
+        }
+        .level2 {
+          font-size: 14px;
+          font-weight: bold;
+        }
+    </style>
     {$smarty.session.cname} {$smarty.session.fyear}<br>
     Profit & Loss Statement as on {$smarty.request.end_date}
     <br /><br />
