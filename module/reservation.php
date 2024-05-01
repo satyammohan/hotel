@@ -502,17 +502,20 @@ class reservation extends common {
         $this->redirect("index.php?module=reservation&func=completion");
     }
     function getlastno() {
-        $sql = "SELECT * FROM reservation WHERE no LIKE 'YG%' ORDER BY no DESC LIMIT 1";
+	$s = date("y", strtotime($_SESSION['sdate']));
+	$e = date("y", strtotime($_SESSION['edate']));
+	$se = "/$s-$e";
+        $sql = "SELECT * FROM reservation WHERE no LIKE 'YG%' ORDER BY date DESC LIMIT 1";
         $data = $this->m->getall($this->m->query($sql));
         $lastno = @$data[0]['no'];
         if (!$lastno) {
-            $lastno = "YG001/23-24";
+            $lastno = "YG001/$se";
         } else {
             $lastno = str_replace("YG","", $lastno);
-            $lastno = str_replace("/23-24","", $lastno);
+            $lastno = str_replace($se,"", $lastno);
             $lastno = $lastno*1 + 1;
-            $lastno = "YG".sprintf('%03d', $lastno)."/23-24";
-        }
+            $lastno = "YG".sprintf('%03d', $lastno)."$se";
+	}
         return $lastno;
     }
 }

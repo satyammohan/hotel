@@ -58,8 +58,8 @@
                     <a class="btn btn-primary" href="index.php?module=reservation&func=changeroom&id={$mod.id_reservation}" title="Change Room"><i class="fa fa-exchange"></i></a>
                 {/if}
                 {if $smarty.session.is_admin}
-                    <a class="btn btn-success" href="index.php?module=reservation&func=editinfo&id={$mod.id_reservation}" title="Edit Other Info"><i class="fa fa-edit"></i></a>
                 {/if} -->
+                    <a class="btn btn-success" href="index.php?module=reservation&func=checkin&id={$mod.id_reservation}" title="Edit Other Info"><i class="fa fa-edit"></i></a>
             </td>
         </tr>
         {/foreach}
